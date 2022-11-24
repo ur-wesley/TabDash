@@ -8,6 +8,8 @@ services:
     environment:
       - VITE_COMPANION_BASE=https://tabdash.wesley.fyi
       - VITE_IS_EXTENSION=false
+      - VITE_OPENWEATHER_API_KEY=${WEATHER_API_KEY}
+      - VITE_UNSPLASH_API_KEY=${UNSPLASH_API_KEY}
     ports:
       - '3003:3003'
     labels:
