@@ -404,6 +404,21 @@ const SettingContent: Component<Prop> = (props) => {
             error={messages['incorrect id'][locale()]}
           />
         </Show>
+        <Show when={!navigator.userAgent.includes('Chrome')}>
+          <Input
+            label={messages['setting input'][locale()]}
+            onInput={(settings) => {
+              if (JSON.parse(settings)) {
+                props.onUpdate(JSON.parse(settings));
+              }
+              sendToast(
+                messages['import success clipboard'][locale()],
+                'success',
+                5000
+              );
+            }}
+          />
+        </Show>
         <TextButton
           onClick={async () => {
             try {
@@ -482,21 +497,6 @@ const SettingContent: Component<Prop> = (props) => {
         >
           {messages.export[locale()]}
         </TextButton>
-        <Show when={!navigator.userAgent.includes('Chrome')}>
-          <Input
-            label={messages['setting input'][locale()]}
-            onInput={(settings) => {
-              if (JSON.parse(settings)) {
-                props.onUpdate(JSON.parse(settings));
-              }
-              sendToast(
-                messages['import success clipboard'][locale()],
-                'success',
-                5000
-              );
-            }}
-          />
-        </Show>
         <TextButton
           onClick={async () => {
             props.onUpdate((await createSettings.getDefault()).settings);
