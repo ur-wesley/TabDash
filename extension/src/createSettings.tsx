@@ -65,7 +65,7 @@ function createSettings() {
       _s = new Storage(state.settings!.general.sync || false);
     else _s = new LocalStorage();
     const _api: string = 'https://api.unsplash.com';
-    const _apiKey: string = '9P5xO9KHShS2W5uCsdCWBnlpLTYZKwi3x7iNC4HfOLo';
+    const _apiKey: string = import.meta.env.VITE_UNSPLASH_API_KEY;
     const response = await fetch(
       `${_api}/photos/random?collections=${state.settings!.background.collections.join(
         ','

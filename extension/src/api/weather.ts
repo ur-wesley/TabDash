@@ -3,7 +3,7 @@ import { Storage, LocalStorage } from "./storage.js";
 
 class Weather {
   private basePath: string = "https://api.openweathermap.org/data/2.5/weather";
-  private appID: string = "01126e22201f176e80d2317d8e8d3d76"; //process.env.WEATHER_API_KEY;
+  private appID: string = import.meta.env.VITE_OPENWEATHER_API_KEY;
   public unit: WeatherUnit;
   public lang: string;
   constructor(unit: WeatherUnit, lang: string) {
