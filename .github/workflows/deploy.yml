@@ -13,9 +13,9 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.PRIVATE_KEY }}
+          password: ${{ secrets.PASSWORD }}
           port: 22
           script: |
-            cd ~/opt/tabdash
+            cd /opt/tabdash
             git clone https://github.com/ur-wesley/tabdash.git
-            docker compose up -d
+            WEATHER_API_KEY=${{secrets.OPENWEATHER_API_KEY}} UNSPLASH_API_KEY=${{secrets.UNSPLASH_API_KEY}} docker compose up -d
