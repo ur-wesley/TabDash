@@ -2,6 +2,7 @@ version: '3'
 
 services:
   tabdash-extension:
+    restart: unless-stopped
     build:
       context: ./extension
       dockerfile: ./Dockerfile
@@ -21,6 +22,7 @@ services:
       - traefik_default
 
   tabdash-companion:
+    restart: unless-stopped
     build:
       context: ./companion
       dockerfile: ./Dockerfile
