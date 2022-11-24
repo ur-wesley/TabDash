@@ -3,7 +3,7 @@ name: Deploy TabDash
 on:
   push:
     branches: [main]
-
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,6 +16,6 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           script: |
-            cd /opt/tabdash
-            git clone https://github.com/ur-wesley/tabdash.git
-            WEATHER_API_KEY=${{secrets.OPENWEATHER_API_KEY}} UNSPLASH_API_KEY=${{secrets.UNSPLASH_API_KEY}} docker compose up -d
+            cd /opt/TabDash
+            git pull
+            echo ${{ secrets.PASSWORD }} | sudo -S WEATHER_API_KEY=${{secrets.OPENWEATHER_API_KEY}} UNSPLASH_API_KEY=${{secrets.UNSPLASH_API_KEY}} docker compose up -d
