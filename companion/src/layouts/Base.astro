@@ -1,0 +1,41 @@
+---
+import GeneralMenu from '../components/GeneralMenu.astro';
+---
+
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width' />
+    <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
+    <title>TabDash</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;300;400;500;600;700;800;900&display=swap');
+    </style>
+  </head>
+  <body>
+    <GeneralMenu />
+    <slot />
+    <style>
+      body {
+        margin: 0;
+        height: calc(100vh - 4rem);
+      }
+    </style>
+    <style is:global>
+      html {
+        font-family: 'Inconsolata', monospace;
+        background-color: #f6f6f6;
+        margin: 0;
+      }
+      code {
+        font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
+          DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+        background-color: gainsboro;
+        padding: 4px;
+        font-size: small;
+        border-radius: 4px;
+      }
+    </style>
+  </body>
+</html>

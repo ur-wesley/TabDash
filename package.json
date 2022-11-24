@@ -1,0 +1,23 @@
+{
+  "name": "tabdash",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "extension",
+    "companion"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "devDependencies": {
+    "prettier": "latest",
+    "turbo": "latest"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {},
+  "packageManager": "pnpm@7.14.2"
+}

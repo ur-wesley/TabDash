@@ -1,0 +1,24 @@
+{
+    "manifest_version": 2,
+    "name": "__MSG_extensionName__",
+    "short_name": "TabDash",
+    "version": "0.0.1",
+    "description": "__MSG_extensionDesc__",
+    "default_locale": "en",
+    "chrome_url_overrides": {
+        "newtab": "index.html"
+    },
+    "background": {
+        "scripts": [
+            "background.js"
+        ]
+    },
+    "permissions": [
+        "storage",
+        "unlimitedStorage",
+        "geolocation",
+        "search",
+        "clipboardRead",
+        "bookmarks"
+    ]
+}

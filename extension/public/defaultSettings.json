@@ -1,0 +1,62 @@
+{
+    "id": "0",
+    "general": {
+        "theme": "light",
+        "locale": "de",
+        "username": "User",
+        "favicon": "",
+        "title": "TabDash"
+    },
+    "background": {
+        "active": false,
+        "backdropActive": false,
+        "backdrop": {
+            "blur": "0px",
+            "saturate": "100%",
+            "brightness": "100%"
+        },
+        "collections": [
+            "11649432"
+        ],
+        "image": {
+            "src": "",
+            "author": "",
+            "profile": "",
+            "orgin": ""
+        }
+    },
+    "shortcutAppereance": {
+        "style": "large",
+        "elementsPerLine": 5,
+        "iconOnly": false
+    },
+    "shortcuts": [
+        {
+            "name": "duckduck",
+            "icon": "data:image/png;base64,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",
+            "link": "https://duckduckgo.com",
+            "newTab": false
+        }
+    ],
+    "layout": {
+        "showClock": true,
+        "showDate": true,
+        "showGreeting": true,
+        "showSearchbar": true,
+        "showShortcuts": true,
+        "showWeather": true
+    },
+    "clock": {
+        "showSeconds": false
+    },
+    "date": {
+        "weekday": "long",
+        "date": "2-digit",
+        "month": "long"
+    },
+    "weather": {
+        "unit": "metric",
+        "showIcon": true,
+        "showText": false
+    }
+}

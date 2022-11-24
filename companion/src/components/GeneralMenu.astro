@@ -1,0 +1,73 @@
+---
+import LangSelect from './LangSelect.jsx';
+import Link from './Link.jsx';
+const url = Astro.url;
+const onlineVersion = `${url.protocol}//online.${url.host}`;
+---
+
+<div class='menu'>
+  <h3>
+    <Link client:load href='/'>TabDash</Link>
+  </h3>
+  <ul>
+    <li>
+      <LangSelect client:load />
+    </li>
+    <li>
+      <Link client:load href='/docs/'>Docs</Link>
+    </li>
+    <li>
+      <a href={onlineVersion}>Online Version</a>
+    </li>
+    <li>
+      <a href='https://github.com/ur-wesley/tabdash'>GitHub</a>
+    </li>
+  </ul>
+</div>
+<style lang='scss'>
+  .menu {
+    position: fixed;
+    top: 0;
+    width: calc(100% - 4rem);
+    display: flex;
+    padding: 0 2rem;
+    height: 4rem;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(197, 197, 197, 0.25);
+  }
+  ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    gap: 2rem;
+    a {
+      cursor: pointer;
+      transition: all 300ms;
+      text-decoration: none;
+      color: deepskyblue;
+      font-weight: 600;
+      letter-spacing: 2px;
+      font-size: 1.5rem;
+      height: 100%;
+      width: 100%;
+      &:hover {
+        text-decoration: underline;
+      }
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+  h3 {
+    & a {
+      font-size: 2rem;
+      letter-spacing: 2px;
+      color: cadetblue;
+      text-decoration: none;
+    }
+  }
+</style>

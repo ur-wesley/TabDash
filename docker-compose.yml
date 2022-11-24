@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  tabdash-extension:
+    build:
+      context: ./extension
+      dockerfile: ./Dockerfile
+    environment:
+      - VITE_COMPANION_BASE=https://tabdash.wesley.fyi
+      - VITE_IS_EXTENSION=false
+    ports:
+      - '3003:3003'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tabdashextension.rule=Host(`online.tabdash.wesley.fyi`)"
+      - "traefik.http.routers.tabdashextension.entrypoints=websecure"
+      - "traefik.http.routers.tabdashextension.tls.certresolver=le"
+    networks:
+      - traefik_default
+
+  tabdash-companion:
+    build:
+      context: ./companion
+      dockerfile: ./Dockerfile
+    environment:
+      - SECRET_DB_LOCATION=./
+    ports:
+      - '3000:3000'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tabdashcompanion.rule=Host(`tabdash.wesley.fyi`)"
+      - "traefik.http.routers.tabdashcompanion.entrypoints=websecure"
+      - "traefik.http.routers.tabdashcompanion.tls.certresolver=le"
+    networks:
+      - traefik_default
+
+networks:
+  traefik_default:
+    external: true

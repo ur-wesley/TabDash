@@ -1,0 +1,80 @@
+---
+const _len = Astro.url.toString().split('/');
+const title = _len[_len.length - 1];
+const allSettings = await Astro.glob('../pages/docs/**/*.md');
+const settings = allSettings.filter((s) => {
+  const l = s.file?.split('/');
+  const lang = l[l.length - 2];
+  return lang == _len[4];
+});
+---
+
+<aside>
+  <ul>
+    {
+      settings
+        .sort((a, b) => a.frontmatter.title - b.frontmatter.title)
+        .map((p) => {
+          if (!p.frontmatter.title) return;
+          const f = p.url!.split('/');
+          const file = f[f.length - 1];
+          return (
+            <a href={p.url}>
+              <li
+                class={`${
+                  file.replace('.md', '').toLowerCase() == title.toLowerCase()
+                    ? 'active'
+                    : ''
+                }`}
+              >
+                {p.frontmatter.title}
+              </li>
+            </a>
+          );
+        })
+    }
+  </ul>
+</aside>
+<style>
+  aside {
+    grid-area: menu;
+    display: flex;
+    justify-content: center;
+    padding: 0 12px;
+  }
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin: 1rem 0;
+    padding: 0;
+    max-width: max-content;
+  }
+  li {
+    list-style: none;
+    background-color: slategray;
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: all 300ms;
+    border: 2px solid transparent;
+    box-sizing: border-box;
+  }
+  a {
+    text-decoration: none;
+    color: white;
+  }
+  li:hover {
+    background-color: cornflowerblue;
+  }
+  .active {
+    background-color: transparent;
+    border: 2px solid slategray;
+    color: slategray;
+  }
+  .active:hover {
+    border: 2px solid transparent;
+    color: white;
+  }
+</style>

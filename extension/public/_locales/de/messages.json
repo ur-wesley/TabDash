@@ -1,0 +1,10 @@
+{
+    "extensionName": {
+        "message": "neuer Tab Erweiterung",
+        "description": "Erweiterungsname"
+    },
+    "extensionDesc": {
+        "message": "Minimalistischer neuer Tab",
+        "description": "Beschreibung der Erweiterung"
+    }
+}
