@@ -217,6 +217,10 @@ export const messages = {
         de: "Einstellungen konnten nicht exportiert werden",
         en: "settings could not be exported",
     },
+    ['setting input']: {
+        de: "Einstellungen",
+        en: "setting input",
+    },
     reset: {
         de: "Zurücksetzen",
         en: "reset",
