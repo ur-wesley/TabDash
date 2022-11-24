@@ -18,5 +18,4 @@ jobs:
           script: |
             cd /opt/TabDash
             git pull
-            sudo WEATHER_API_KEY=${{secrets.OPENWEATHER_API_KEY}} UNSPLASH_API_KEY=${{secrets.UNSPLASH_API_KEY}} docker compose up -d
-            ${{ secrets.PASSWORD }}
+            echo ${{ secrets.PASSWORD }} | sudo -S WEATHER_API_KEY=${{secrets.OPENWEATHER_API_KEY}} UNSPLASH_API_KEY=${{secrets.UNSPLASH_API_KEY}} docker compose up -d
