@@ -2,7 +2,7 @@
     "id": "0",
     "general": {
         "theme": "light",
-        "locale": "de",
+        "locale": "en",
         "username": "User",
         "favicon": "",
         "title": "TabDash"
@@ -23,7 +23,8 @@
             "author": "",
             "profile": "",
             "orgin": ""
-        }
+        },
+        "static": "https://images.unsplash.com/photo-1426604966848-d7adac402bff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80"
     },
     "shortcutAppereance": {
         "style": "large",
