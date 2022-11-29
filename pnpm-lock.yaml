@@ -45,9 +45,11 @@ importers:
     specifiers:
       '@iconify-json/carbon': ^1.1.9
       '@iconify-json/mdi': ^1.1.34
+      '@nanostores/solid': ^0.3.0
       '@types/chrome': ^0.0.199
       '@unocss/preset-attributify': ^0.45.29
       '@unocss/preset-uno': ^0.45.29
+      nanostores: ^0.7.1
       solid-js: ^1.5.1
       typescript: ^4.8.2
       unocss: ^0.45.29
@@ -55,6 +57,8 @@ importers:
       vite-plugin-solid: ^2.3.0
       web-ext: ^7.3.1
     dependencies:
+      '@nanostores/solid': 0.3.0_krmmgcs2xvbh5bldrnc2b2pynm
+      nanostores: 0.7.1
       solid-js: 1.6.2
     devDependencies:
       '@iconify-json/carbon': 1.1.10
