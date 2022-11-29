@@ -23,7 +23,7 @@ const getSettings = async (setting: any): Promise<void> => {
   else _s = new LocalStorage();
   // _s.remove('settings');
   const x = (await _s.get('settings')).settings
-  const settings: Setting = !!x['general'] ? x : (await getDefault());
+  const settings: Setting = !!x ? x : (await getDefault());
   const w = new Weather(settings.weather.unit, settings.general.locale);
   let weather;
   if (setting.refresh == 'refresh') weather = await w.refreshWeather();
