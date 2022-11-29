@@ -41,9 +41,12 @@ export default defineConfig(({ command, mode }) => {
   }
 });
 
+import pkg from './package.json';
+import manifest from './public/manifest.json';
 const buildBackgroundJS = async (mode: string) => {
+  const newManifest = { ...manifest, version: pkg.version };
   const env = loadEnv(mode, process.cwd(), '');
-
+  await writeFile('./public/manifest.json', JSON.stringify(newManifest, null, 2));
   await writeFile('./public/background.js',
     `const isOnChrome = navigator.userAgent.includes('Chrome');
   const newTab = () => chrome.tabs.create({ url: 'chrome://newtab' });
