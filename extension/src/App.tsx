@@ -46,8 +46,8 @@ const App: Component = () => {
   const setFavicon = async () => {
     const file =
       import.meta.env.VITE_IS_EXTENSION == 'true'
-        ? chrome.runtime.getURL('logo.svg')
-        : '/logo.svg';
+        ? chrome.runtime.getURL('favicon.png')
+        : '/favicon.png';
     const favicon = $store()?.general.favicon || file;
     const faviconEl = document.getElementById('favicon')! as HTMLLinkElement;
     faviconEl.href = favicon!;
