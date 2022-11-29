@@ -46,7 +46,6 @@ const SettingToggle: Component<Prop> = (props) => {
       >
         <SettingContent
           settings={props.settings}
-          onUpdate={(s) => props.onUpdate(s)}
           addShortcut={(s) => props.addShortcut(s)}
           onRefreshImage={() => props.onRefreshImage()}
           onWeatherUpdate={() => props.onWeatherUpdate()}
@@ -60,7 +59,6 @@ export default SettingToggle;
 
 interface Prop {
   settings: Setting;
-  onUpdate: (settings: Setting) => void;
   addShortcut: (shortcut: ShortcutSetting) => void;
   onRefreshImage: () => void;
   onWeatherUpdate: () => void;
