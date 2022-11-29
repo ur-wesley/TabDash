@@ -1,12 +1,16 @@
 # TabDash
 
-[install for Chrome]() [install for Firefox]()
+![Mozilla Add-on](https://img.shields.io/amo/v/tabdash?label=TabDash&style=for-the-badge)
 
 an open source, [Bonjourr]() inspired browser extension.
 
 ## Features
 
 tbd
+
+![main page](screenshots/Screenshot_1.png)
+
+![setting page](screenshots/Screenshot_2.png)
 
 ## Repo Overview
 
