@@ -1,21 +1,21 @@
-import { Component, createEffect, createSignal, Show } from "solid-js";
+import { Component, createEffect, createSignal, Show } from 'solid-js';
 import {
   ShortcutAppereance,
   ShortcutSetting,
-} from "../../../types/settings.js";
-import { AvailableLanguages, messages } from "../../lang.js";
-import TextButton from "../controls/button.jsx";
-import Input from "../controls/input.jsx";
-import Toggle from "../controls/toggle.jsx";
+} from '../../../types/settings.js';
+import { AvailableLanguages, messages } from '../../lang.js';
+import TextButton from '../controls/button.jsx';
+import Input from '../controls/input.jsx';
+import Toggle from '../controls/toggle.jsx';
 
 const Shortcut: Component<Prop> = (props) => {
   const size = (): number => {
     switch (props.style.style) {
-      case "large":
+      case 'large':
         return 125;
-      case "medium":
+      case 'medium':
         return 100;
-      case "small":
+      case 'small':
         return 75;
       default:
         return 0;
@@ -30,9 +30,9 @@ const Shortcut: Component<Prop> = (props) => {
         setShowMenu(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   });
   const locale = props.locale;
@@ -43,16 +43,15 @@ const Shortcut: Component<Prop> = (props) => {
           flex: `0 0 ${props.col}%`,
           width: `${size() * 1.2}px`,
           height: `${props.style.iconOnly ? size() * 1.3 : size() * 1.5}px`,
-          "grid-auto-flow": "column",
-          display: "flex",
-          "justify-content": "center",
+          'grid-auto-flow': 'column',
+          display: 'flex',
+          'justify-content': 'center',
         }}
       >
         <a
-          // class={`z-20 widget overflow-hidden flex flex-col justify-center items-center decoration-none transition hover:scale-110 grid-cols-${props.col.toString()}`}
           class={`z-20 widget grow overflow-hidden flex flex-col justify-center items-center decoration-none transition hover:scale-105`}
           href={props.settings.link}
-          target={props.settings.newTab ? "_blank" : "_self"}
+          target={props.settings.newTab ? '_blank' : '_self'}
           onContextMenu={(e) => {
             e.preventDefault();
             let x = 0;
@@ -68,11 +67,11 @@ const Shortcut: Component<Prop> = (props) => {
               src={props.settings.icon}
               width={size()}
               height={size()}
-              alt="shortcut image"
+              alt='shortcut image'
             />
           </Show>
           <Show when={!props.style.iconOnly}>
-            <span class="p-2 color-base text-lg">{props.settings.name}</span>
+            <span class='p-2 color-base text-lg'>{props.settings.name}</span>
           </Show>
         </a>
       </div>
@@ -81,42 +80,54 @@ const Shortcut: Component<Prop> = (props) => {
           ref={shortcut!}
           class={`absolute z-30 p-4 bg-base-glass`}
           style={{
-            top: pos().y + "px",
-            left: pos().x + "px",
+            top: pos().y + 'px',
+            left: pos().x + 'px',
           }}
         >
           <Input
-            label={messages["shortcut name"][locale]}
+            label={messages['shortcut name'][locale]}
             value={props.settings.name}
             onInput={(s) => {
-              props.settings.name = s;
+              props.settings = {
+                ...props.settings,
+                name: s,
+              };
             }}
           />
           <Input
-            label={messages["shortcut link"][locale]}
+            label={messages['shortcut link'][locale]}
             value={props.settings.link}
             onInput={(s) => {
-              props.settings.link = s;
+              props.settings = {
+                ...props.settings,
+                link: s,
+              };
             }}
           />
           <Input
-            label={messages["shortcut icon"][locale]}
+            label={messages['shortcut icon'][locale]}
             value={props.settings.icon}
             onInput={(s) => {
-              props.settings.icon = s;
+              props.settings = {
+                ...props.settings,
+                icon: s,
+              };
             }}
           />
           <Toggle
-            label={messages["shortcut new tab"][locale]}
+            label={messages['shortcut new tab'][locale]}
             checked={props.settings.newTab}
             onChange={(s) => {
-              props.settings.newTab = s;
+              props.settings = {
+                ...props.settings,
+                newTab: s,
+              };
             }}
           />
-          <div class="flex justify-between">
+          <div class='flex justify-between'>
             <TextButton
               background={true}
-              type="error"
+              type='error'
               onClick={() => {
                 props.onRemove(props.settings);
               }}
@@ -125,9 +136,10 @@ const Shortcut: Component<Prop> = (props) => {
             </TextButton>
             <TextButton
               background={true}
-              type="success"
+              type='success'
               onClick={() => {
                 props.onEdit(props.settings);
+                setShowMenu(false);
               }}
             >
               {messages.save[locale]}

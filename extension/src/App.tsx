@@ -9,7 +9,6 @@ import {
   Suspense,
 } from 'solid-js';
 import { Theme } from '../types/settings.js';
-import Settings from './api/settings.js';
 import NotificationList from './components/notificationList.jsx';
 import { AvailableLanguages, messages } from './lang.js';
 const Backdrop = lazy(() => import('./components/widgets/backdrop.jsx'));
@@ -22,49 +21,51 @@ const WeatherWidget = lazy(() => import('./components/widgets/weather.jsx'));
 const Author = lazy(() => import('./components/widgets/author.jsx'));
 const Shortcut = lazy(() => import('./components/widgets/shortcut.jsx'));
 
-import createSettings from './createSettings.jsx';
+// import createSettings from './createSettings.jsx';
+import {
+  addShortcut,
+  editShortcut,
+  getSettings,
+  refreshImage,
+  removeShortcut,
+  settingStore,
+  weatherStore,
+} from './api/settingStore';
+import { useStore } from '@nanostores/solid';
 
 const App: Component = () => {
+  const $store = useStore(settingStore);
+  const $weather = useStore(weatherStore);
   const [theme, setTheme] = createSignal<Theme>();
-  // const [settings, { mutate }] = createResource(
-  //   { init: 'init', sync: false },
-  //   Settings.getSettings,
-  //   {}
-  // );
   createEffect(async () => {
-    setTheme(createSettings.state.settings?.general.theme);
-    setFavicon();
-    if (createSettings.state.settings?.background.active)
-      createSettings.state.settings.background.image =
-        await createSettings.getImage();
+    if ($store().general) {
+      setTheme($store()?.general.theme ?? 'light');
+      setFavicon();
+    }
   });
   const setFavicon = async () => {
     const file =
       import.meta.env.VITE_IS_EXTENSION == 'true'
         ? chrome.runtime.getURL('logo.svg')
         : '/logo.svg';
-    const favicon = createSettings.state.settings?.general.favicon || file;
+    const favicon = $store()?.general.favicon || file;
     const faviconEl = document.getElementById('favicon')! as HTMLLinkElement;
     faviconEl.href = favicon!;
-    document.title = createSettings.state.settings?.general.title || 'TabDash';
+    document.title = $store()?.general.title || 'TabDash';
   };
   return (
-    <Show when={createSettings.state.settings}>
-      <div class='absolute top-1/2 bg-green-200'>
-        {JSON.stringify(createSettings.state.settings!.background)}
-      </div>
+    <Show when={!!$store().general}>
       <NotificationList />
       <div
         style={{
           background:
-            !createSettings.state.settings!.background.active &&
-            !createSettings.state.settings!.background.static
-              ? createSettings.state.settings!.background.color
+            !$store()!.background.active && !$store()!.background.static
+              ? $store()!.background.color
               : undefined,
-          'background-image': createSettings.state.settings!.background.active
-            ? `url('${createSettings.state.settings!.background.image.src}')`
-            : createSettings.state.settings!.background.static
-            ? `url('${createSettings.state.settings!.background.static}')`
+          'background-image': $store()!.background.active
+            ? `url('${$store()!.background.image.src}')`
+            : $store()!.background.static
+            ? `url('${$store()!.background.static}')`
             : undefined,
           'background-size': 'cover',
           'background-position': 'center',
@@ -77,82 +78,38 @@ const App: Component = () => {
         >
           <Show
             when={
-              (createSettings.state.settings!.layout.showClock ||
-                createSettings.state.settings!.layout.showDate) ??
-              false
+              ($store()!.layout.showClock || $store()!.layout.showDate) ?? false
             }
           >
             <Clock
-              locale={createSettings.state.settings!.general.locale ?? 'en'}
-              settings={createSettings.state.settings!.clock}
-              showDate={createSettings.state.settings?.layout.showDate}
-              showTime={createSettings.state.settings?.layout.showClock}
+              locale={$store()!.general.locale ?? 'en'}
+              settings={$store()!.clock}
+              showDate={$store()?.layout.showDate}
+              showTime={$store()?.layout.showClock}
             />
           </Show>
-          <Show
-            when={
-              createSettings.state.settings!.background.backdropActive ?? false
-            }
-          >
+          <Show when={$store()!.background.backdropActive ?? false}>
             <Backdrop
-              blur={
-                createSettings.state.settings!.background.backdrop.blur ?? '0px'
-              }
-              brightness={
-                createSettings.state.settings!.background.backdrop.brightness ??
-                '100%'
-              }
-              saturate={
-                createSettings.state.settings!.background.backdrop.saturate ??
-                '100%'
-              }
+              blur={$store()!.background.backdrop.blur ?? '0px'}
+              brightness={$store()!.background.backdrop.brightness ?? '100%'}
+              saturate={$store()!.background.backdrop.saturate ?? '100%'}
             />
           </Show>
-          <Show
-            when={createSettings.state.settings!.layout.showGreeting ?? false}
-          >
+          <Show when={$store()!.layout.showGreeting ?? false}>
             <Greeting
-              name={createSettings.state.settings!.general.username}
-              locale={
-                createSettings.state.settings!.general
-                  .locale as AvailableLanguages
-              }
+              name={$store()!.general.username}
+              locale={$store()!.general.locale as AvailableLanguages}
             />
           </Show>
-          {/* <Show
-            when={
-              createSettings.state?.settings?.settings.layout.showGreeting ??
-              false
-            }
-          >
-            <Greeting
-              name={
-                createSettings.state?.settings?.settings.general.username ?? ''
-              }
-              locale={
-                createSettings.state?.settings?.settings.general
-                  .locale as AvailableLanguages
-              }
-            />
-          </Show> */}
-          <Show
-            when={createSettings.state.settings!.layout.showWeather ?? false}
-          >
+          <Show when={$store()!.layout.showWeather ?? false}>
             <Suspense>
-              <WeatherWidget
-                setting={createSettings.state.settings!.weather}
-                data={createSettings.state.weatherData!}
-              />
+              <WeatherWidget setting={$store()!.weather} data={$weather()} />
             </Suspense>
           </Show>
-          <Show
-            when={createSettings.state.settings!.layout.showSearchbar ?? false}
-          >
-            <Searchbar lang={createSettings.state.settings!.general.locale} />
+          <Show when={$store()!.layout.showSearchbar ?? false}>
+            <Searchbar lang={$store()!.general.locale} />
           </Show>
-          <Show
-            when={createSettings.state.settings!.layout.showShortcuts ?? false}
-          >
+          <Show when={$store()!.layout.showShortcuts ?? false}>
             <div
               style={{
                 display: 'flex',
@@ -161,50 +118,25 @@ const App: Component = () => {
                 'flex-wrap': 'wrap',
               }}
             >
-              <For each={createSettings.state.settings!.shortcuts} fallback=''>
+              <For each={$store()!.shortcuts} fallback=''>
                 {(shortcut, index) => (
                   <Shortcut
                     settings={shortcut}
-                    // col={Math.floor(
-                    //   index() /
-                    //     createSettings.state.settings!.shortcutAppereance.elementsPerLine
-                    // )}
-                    col={
-                      100 /
-                        createSettings.state.settings!.shortcutAppereance
-                          .elementsPerLine -
-                      5
-                    }
-                    locale={
-                      createSettings.state.settings!.general
-                        .locale as AvailableLanguages
-                    }
-                    style={createSettings.state.settings!.shortcutAppereance}
+                    col={100 / $store()!.shortcutAppereance.elementsPerLine - 5}
+                    locale={$store()!.general.locale as AvailableLanguages}
+                    style={$store()!.shortcutAppereance}
                     onEdit={async (s) => {
-                      createSettings.editShortcut(index(), s);
-                      // mutate(
-                      //   await Settings.getSettings({
-                      //     refresh: 'init',
-                      //     sync: false,
-                      //   })
-                      // );
+                      editShortcut(index(), s);
                     }}
                     onRemove={async (s) => {
                       if (
                         confirm(
                           messages['confirm delete'][
-                            createSettings.state.settings!.general
-                              .locale as AvailableLanguages
+                            $store()!.general.locale as AvailableLanguages
                           ]
                         )
                       ) {
-                        createSettings.removeShortcut(s);
-                        // mutate(
-                        //   await Settings.getSettings({
-                        //     refresh: 'init',
-                        //     sync: false,
-                        //   })
-                        // );
+                        removeShortcut(s);
                       }
                     }}
                   />
@@ -213,56 +145,32 @@ const App: Component = () => {
             </div>
           </Show>
         </div>
-        <Show when={createSettings.state.settings!.background.active}>
-          {/* <Author information={createSettings.state.settings!.background.image} /> */}
+        <Show when={$store()!.background.active}>
           <Author
-            information={createSettings.state.settings!.background.image}
+            information={$store()!.background.image}
+            locale={$store()!.general.locale as AvailableLanguages}
           />
         </Show>
         <ThemeToggle
           update={(t: Theme) => {
-            createSettings.setTheme(t);
+            setTheme(t);
             setTheme(t);
           }}
           theme={theme()!}
         />
         <SettingToggle
-          settings={createSettings.state.settings!}
-          onUpdate={async (s) => {
-            // createSettings.settings = s;
-            // createSettings.save();
-            createSettings.updateSettings(s);
-            // mutate(
-            //   await Settings.getSettings({
-            //     refresh: 'init',
-            //     sync: settings()?.settings.general.sync,
-            //   })
-            // );
-            setFavicon();
-          }}
+          settings={$store()!}
           addShortcut={async (shortcut) => {
-            createSettings.addShortcut(shortcut);
-            // mutate(
-            //   await Settings.getSettings({
-            //     refresh: 'init',
-            //     sync: settings()?.settings.general.sync,
-            //   })
-            // );
+            addShortcut(shortcut);
           }}
           onRefreshImage={async () => {
-            await createSettings.refreshImage();
-            // mutate(
-            //   await Settings.getSettings({
-            //     refresh: 'init',
-            //     sync: settings()?.settings.general.sync,
-            //   })
-            // );
+            console.log('refreshing image');
+            await refreshImage();
           }}
           onWeatherUpdate={async () => {
-            // mutate(await Settings.getSettings('refresh'));
-            await createSettings.getSettings({
+            await getSettings({
               refresh: 'refresh',
-              sync: createSettings.state.settings?.general.sync ?? false,
+              sync: $store()?.general.sync ?? false,
             });
           }}
         />
