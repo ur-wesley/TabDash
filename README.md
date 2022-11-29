@@ -1,7 +1,9 @@
 # TabDash
 
 ![Mozilla Add-on](https://img.shields.io/amo/v/tabdash?label=TabDash&style=for-the-badge)
-![online version](https://img.shields.io/badge/TabDash-view%20online-blue?style=for-the-badge)
+<object>
+![online version](https://img.shields.io/badge/TabDash-view%20online-blue?style=for-the-badge&link=https://online.tabdash.wesley.fyi&link=https://online.tabdash.wesley.fyi)
+</object>
 
 an open source, [Bonjourr]() inspired browser extension.
 
