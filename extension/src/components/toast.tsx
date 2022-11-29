@@ -1,34 +1,34 @@
-import { Component, createEffect, createSignal, onCleanup } from "solid-js";
-import { Notification, NotificationType } from "../../types/notification.js";
+import { Component, createEffect, createSignal, onCleanup } from 'solid-js';
+import { Notification, NotificationType } from '../../types/notification.js';
 
 const Toast: Component<Prop> = (props) => {
   const notificationStyle = (type: NotificationType): string => {
     switch (type) {
-      case "success":
-        return "bg-green-400/20 text-black";
-      case "error":
-        return "bg-red-400/20 text-black";
-      case "info":
-        return "bg-blue-400/20 text-black";
+      case 'success':
+        return 'bg-green-400/20 text-black';
+      case 'error':
+        return 'bg-red-400/20 text-black';
+      case 'info':
+        return 'bg-blue-400/20 text-black';
       default:
-        return "bg-blue-400/20 text-black";
+        return 'bg-blue-400/20 text-black';
     }
   };
 
   const barStyle = (type: NotificationType): string => {
     switch (type) {
-      case "success":
-        return "bg-green-800";
-      case "error":
-        return "bg-red-800";
-      case "info":
-        return "bg-blue-800";
+      case 'success':
+        return 'bg-green-800';
+      case 'error':
+        return 'bg-red-800';
+      case 'info':
+        return 'bg-blue-800';
       default:
-        return "bg-blue-800";
+        return 'bg-blue-800';
     }
   };
 
-  let intervall: number | undefined;
+  let intervall: any;
   const [duration, setDuration] = createSignal(
     props.notification.duration || 5000
   );
@@ -56,7 +56,7 @@ const Toast: Component<Prop> = (props) => {
     >
       <span>{props.notification.msg}</span>
       <button
-        class="border-none bg-transparent absolute top-0 right-0 cursor-pointer p-1"
+        class='border-none bg-transparent absolute top-0 right-0 cursor-pointer p-1'
         onclick={() => props.remove(props.notification.id)}
       >
         x
