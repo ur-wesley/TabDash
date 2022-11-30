@@ -70,18 +70,23 @@ const refreshImage = async (): Promise<BackgroundData> => {
   else _s = new LocalStorage();
   const _api: string = 'https://api.unsplash.com';
   const _apiKey: string = import.meta.env.VITE_UNSPLASH_API_KEY;
+  const { width, height } = screen;
+  const size = width > height ? width : height;
   const response = await fetch(
     `${_api}/photos/random?collections=${settingStore.get().background.collections.join(',') ?? ''
     }&client_id=${_apiKey}`
   )
     .then((r) => r.json())
     .catch(() => (settingStore.get().background.active = false));
-  const src = response.urls.full ?? '';
+  const src = `${response.urls.raw}&w=${size}&dpr=${window.devicePixelRatio}` ?? '';
   const author = response.user.name ?? '';
   const profile = response.user.links.html ?? '';
   const origin = response.links.html ?? '';
   const bg = { src, author, profile, origin };
-  settingStore.get().background.image = bg;
+  settingStore.setKey('background', {
+    ...settingStore.get().background,
+    image: bg
+  })
   save();
   _s.set({ bgtimestamp: Date.now() });
   return bg;
