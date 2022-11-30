@@ -187,7 +187,7 @@ export const messages = {
     },
     import: {
         de: "importieren",
-        en: "imoport",
+        en: "import",
     },
     "import success clipboard": {
         de: "Einstellungen wurden erfolgreich aus der Zwischenablage importiert",
