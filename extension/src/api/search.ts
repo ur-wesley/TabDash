@@ -14,13 +14,13 @@ class Search {
     else {
       const link = `${searchEngine.find(s => s.name == setting.engine)?.link.replace('$s', query)}`;
       if (setting.newTab)
-        window.location.href = link;
-      else {
         Object.assign(document.createElement('a'), {
           target: '_blank',
           rel: 'noopener noreferrer',
           href: link,
         }).click();
+      else {
+        window.location.href = link;
       }
     }
   }
