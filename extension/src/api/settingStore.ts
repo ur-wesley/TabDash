@@ -74,7 +74,12 @@ const refreshImage = async (): Promise<BackgroundData> => {
   const size = width > height ? width : height;
   const response = await fetch(
     `${_api}/photos/random?collections=${settingStore.get().background.collections.join(',') ?? ''
-    }&client_id=${_apiKey}`
+    }`,
+    {
+      headers: {
+        Authorization: `Client-ID ${_apiKey}`
+      }
+    }
   )
     .then((r) => r.json())
     .catch(() => (settingStore.get().background.active = false));
