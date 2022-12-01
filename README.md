@@ -4,7 +4,7 @@
 
 <a href="https://online.tabdash.wesley.fyi">![view online](https://img.shields.io/badge/TabDash-view%20online-blue?style=for-the-badge&logo=Firefox-Browser)</a>
 
-an open source, [Bonjourr]() inspired browser extension.
+an open source, [Bonjourr](https://github.com/victrme/Bonjourr) inspired browser extension.
 
 ## Features
 
