@@ -115,7 +115,7 @@ const Shortcut: Component<Prop> = (props) => {
             }}
           />
           <Toggle
-            label={messages['shortcut new tab'][locale]}
+            label={messages['new tab'][locale]}
             checked={props.settings.newTab}
             onChange={(s) => {
               props.settings = {
