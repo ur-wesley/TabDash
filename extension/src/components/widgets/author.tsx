@@ -8,18 +8,22 @@ const Author: Component<Prop> = (props) => {
       <a
         class='decoration-none color-fade'
         href={
-          props.information?.origin + '?utm_source=Tabdash&utm_medium=referral'
+          props.information?.origin + '?utm_source=TabDash&utm_medium=referral'
         }
       >
-        {messages['photo by'][props.locale]} &nbsp;
+        {messages['photo by'][props.locale]}&nbsp;
       </a>
       <a
         class='color-fade'
         href={
-          props.information?.profile + '?utm_source=Tabdash&utm_medium=referral'
+          props.information?.profile + '?utm_source=TabDash&utm_medium=referral'
         }
       >
         {props.information?.author}
+      </a>
+      <span class='color-fade'>&nbsp;on&nbsp;</span>
+      <a class='color-fade' href='https://unsplash.com'>
+        Unsplash
       </a>
     </span>
   );

@@ -84,6 +84,12 @@ const refreshImage = async (): Promise<BackgroundData> => {
   )
     .then((r) => r.json())
     .catch(() => (settingStore.get().background.active = false));
+  await fetch(response.links.download_location,
+    {
+      headers: {
+        Authorization: `Client-ID ${_apiKey}`
+      }
+    })
   const src = `${response.urls.raw}&w=${size}&dpr=${window.devicePixelRatio}` ?? '';
   const author = response.user.name ?? '';
   const profile = response.user.links.html ?? '';
