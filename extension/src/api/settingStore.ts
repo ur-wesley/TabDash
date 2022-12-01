@@ -197,17 +197,18 @@ class SettingObject implements Setting {
   }
 
   public static async fromJson(json: any): Promise<SettingObject> {
+    const settings = await getDefault();
     return new SettingObject(
-      json.id,
-      json.general,
-      json.background,
-      json.shortcutAppereance,
-      json.shortcuts,
-      json.layout,
-      json.clock,
-      json.date,
-      json.weather,
-      json.search || (await getDefault()).search
+      json.id || settings.id,
+      json.general || settings.general,
+      json.background || settings.background,
+      json.shortcutAppereance || settings.shortcutAppereance,
+      json.shortcuts || settings.shortcuts,
+      json.layout || settings.layout,
+      json.clock || settings.clock,
+      json.date || settings.date,
+      json.weather || settings.weather,
+      json.search || settings.search
     );
   }
 }
