@@ -14,7 +14,21 @@ export const helpLinks = {
     date: "/date",
     management: "/management",
     weather: "/weather",
+    search: "/search",
 };
+
+export const searchEngine = [
+    {
+        name: 'Startpage',
+        link: 'https://www.startpage.com/sp/search?q=$s'
+    }, {
+        name: 'Ecosia',
+        link: 'https://www.ecosia.org/search?method=index&q=$s'
+    }, {
+        name: 'DuckDuckGo',
+        link: 'https://duckduckgo.com/?q=$s'
+    }
+]
 
 export const messages = {
     general: {
@@ -145,7 +159,7 @@ export const messages = {
         de: "nur Symbol",
         en: "icon only",
     },
-    "shortcut new tab": {
+    "new tab": {
         de: "im neuen Tab öffnen",
         en: "open in new tab",
     },
@@ -272,5 +286,17 @@ export const messages = {
     "incorrect id": {
         de: "ID hat falsches Format",
         en: "incorrect id formatting",
+    },
+    "search settings": {
+        de: "Sucheinstellungen",
+        en: "search settings",
+    },
+    "focus search": {
+        de: "Suche fokussieren",
+        en: "focus searchbar",
+    },
+    "search engine": {
+        de: "Suchmaschine",
+        en: "search engine",
     },
 };
