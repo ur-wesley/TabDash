@@ -107,7 +107,10 @@ const App: Component = () => {
             </Suspense>
           </Show>
           <Show when={$store()!.layout.showSearchbar ?? false}>
-            <Searchbar lang={$store()!.general.locale} />
+            <Searchbar
+              lang={$store()!.general.locale}
+              settings={$store().search}
+            />
           </Show>
           <Show when={$store()!.layout.showShortcuts ?? false}>
             <div

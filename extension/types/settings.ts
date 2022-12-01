@@ -10,6 +10,7 @@ export interface Setting {
   clock: ClockSetting;
   date: DateSetting;
   weather: WeatherSetting;
+  search: SearchSetting;
 }
 
 export interface GeneralSetting {
@@ -80,6 +81,12 @@ export interface WeatherSetting {
   unit: WeatherUnit;
   showIcon: boolean;
   showText: boolean;
+}
+
+export interface SearchSetting {
+  focus: boolean;
+  newTab: boolean;
+  engine: string;
 }
 
 export type Theme = "light" | "dark";

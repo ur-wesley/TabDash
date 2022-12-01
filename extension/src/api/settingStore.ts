@@ -5,6 +5,7 @@ import {
   DateSetting,
   GeneralSetting,
   LayoutSetting,
+  SearchSetting,
   Setting,
   ShortcutAppereance,
   ShortcutSetting,
@@ -28,7 +29,7 @@ const getSettings = async (setting: any): Promise<void> => {
   let weather;
   if (setting.refresh == 'refresh') weather = await w.refreshWeather();
   else weather = await w.getWeather();
-  settingStore.set(SettingObject.fromJson(settings));
+  settingStore.set(await SettingObject.fromJson(settings));
   weatherStore.set(weather);
 };
 
@@ -169,6 +170,7 @@ class SettingObject implements Setting {
   clock: ClockSetting;
   date: DateSetting;
   weather: WeatherSetting;
+  search: SearchSetting;
 
   constructor(
     id: string,
@@ -179,7 +181,8 @@ class SettingObject implements Setting {
     layout: LayoutSetting,
     clock: ClockSetting,
     date: DateSetting,
-    weather: WeatherSetting
+    weather: WeatherSetting,
+    search: SearchSetting
   ) {
     this.id = id;
     this.general = general;
@@ -190,9 +193,10 @@ class SettingObject implements Setting {
     this.clock = clock;
     this.date = date;
     this.weather = weather;
+    this.search = search;
   }
 
-  public static fromJson(json: any): SettingObject {
+  public static async fromJson(json: any): Promise<SettingObject> {
     return new SettingObject(
       json.id,
       json.general,
@@ -202,7 +206,8 @@ class SettingObject implements Setting {
       json.layout,
       json.clock,
       json.date,
-      json.weather
+      json.weather,
+      json.search || (await getDefault()).search
     );
   }
 }

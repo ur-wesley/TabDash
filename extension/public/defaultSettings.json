@@ -59,5 +59,10 @@
         "unit": "metric",
         "showIcon": true,
         "showText": false
+    },
+    "search": {
+        "focus": false,
+        "newTab": false,
+        "engine": "Startpage"
     }
 }

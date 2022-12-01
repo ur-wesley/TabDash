@@ -12,6 +12,7 @@ import {
   helpLinks,
   AvailableLanguages,
   availableLanguages,
+  searchEngine,
 } from '../lang.js';
 import TextButton from './controls/button.jsx';
 import Categorie from './controls/categorie.jsx';
@@ -308,10 +309,10 @@ const SettingContent: Component<Prop> = (props) => {
             });
           }}
           options={[
-            { value: 'large', name: 'large' },
-            { value: 'medium', name: 'medium' },
-            { value: 'small', name: 'small' },
-            { value: 'text', name: 'text' },
+            { value: 'large', name: messages.large[locale()] },
+            { value: 'medium', name: messages.medium[locale()] },
+            { value: 'small', name: messages.small[locale()] },
+            { value: 'text', name: messages.text[locale()] },
           ]}
         />
         <Slider
@@ -355,7 +356,7 @@ const SettingContent: Component<Prop> = (props) => {
           }}
         />
         <Toggle
-          label={messages['shortcut new tab'][locale()]}
+          label={messages['new tab'][locale()]}
           onChange={(e) => {
             newShortcut().newTab = e;
           }}
@@ -404,20 +405,46 @@ const SettingContent: Component<Prop> = (props) => {
         />
       </Categorie>
       <Categorie
+        name={messages['search settings'][locale()]}
+        helpLink={helpLinks.base + locale() + helpLinks.search}
+      >
+        <Toggle
+          label={messages['focus search'][locale()]}
+          checked={props.settings.search.focus}
+          onChange={(e) => {
+            settingStore.setKey('search', {
+              ...props.settings.search,
+              focus: e,
+            });
+          }}
+        />
+        <Toggle
+          label={messages['new tab'][locale()]}
+          checked={props.settings.search.newTab}
+          onChange={(e) => {
+            settingStore.setKey('search', {
+              ...props.settings.search,
+              newTab: e,
+            });
+          }}
+        />
+        <Select
+          label={messages['search engine'][locale()]}
+          value={props.settings.search.engine}
+          placeholder={props.settings.search.engine}
+          options={searchEngine.map((s) => ({ name: s.name, value: s.name }))}
+          onInput={(e) => {
+            settingStore.setKey('search', {
+              ...props.settings.search,
+              engine: e,
+            });
+          }}
+        />
+      </Categorie>
+      <Categorie
         name={messages.weather[locale()]}
         helpLink={helpLinks.base + locale() + helpLinks.weather}
       >
-        <Toggle
-          label={messages.imperial[locale()]}
-          checked={props.settings.weather.unit == 'imperial'}
-          onChange={(e) => {
-            settingStore.setKey('weather', {
-              ...props.settings.weather,
-              unit: e ? 'imperial' : 'metric',
-            });
-            props.onWeatherUpdate();
-          }}
-        />
         <Toggle
           label={messages['show weather icon'][locale()]}
           checked={props.settings.weather.showIcon}
