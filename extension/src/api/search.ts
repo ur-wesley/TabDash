@@ -1,5 +1,3 @@
-import { sendToast } from "../../types/notification.js";
-
 class Search {
   public static query(query: string) {
     if (import.meta.env.VITE_IS_EXTENSION == 'true')
@@ -10,7 +8,9 @@ class Search {
         },
         () => { }
       );
-    else sendToast('not supported right now. Install the official extension to get this feature.', 'info', 5000)
+    else {
+      window.location.href = `https://www.startpage.com/sp/search?q=${query}`;
+    }
   }
 }
 
