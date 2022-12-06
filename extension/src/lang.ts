@@ -303,4 +303,12 @@ export const messages = {
         de: "auf",
         en: "on",
     },
+    "select export password": {
+        de: "Passwort für die Verschlüsselung eingeben",
+        en: "Set password for data encryption"
+    },
+    "import password": {
+        de: "Passwort für die Entschlüsselung eingeben",
+        en: "Enter password for data decryption"
+    }
 };

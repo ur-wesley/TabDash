@@ -513,16 +513,20 @@ const SettingContent: Component<Prop> = (props) => {
           onClick={async () => {
             try {
               if (inCloud()) {
-                const pw = prompt('select password');
+                const pw = prompt(messages['select export password'][locale()]);
                 const key = props.settings.id;
                 const res = await fetch(
                   `${
                     import.meta.env.VITE_COMPANION_BASE
-                  }/api/setting/${key}?p=${pw}`
+                  }/api/setting/${key}?p=${pw}`,
+                  {
+                    method: 'GET',
+                    headers: {
+                      'Access-Control-Allow-Origin': '*',
+                    },
+                  }
                 ).then((r) => r.json());
-                if (res)
-                  // props.onUpdate(res);
-                  settingStore.set(res);
+                if (res) settingStore.set(res);
                 sendToast(
                   messages['import success cloud'][locale()],
                   'success',
@@ -550,7 +554,7 @@ const SettingContent: Component<Prop> = (props) => {
           onClick={async () => {
             try {
               if (inCloud()) {
-                const pw = prompt('select password');
+                const pw = prompt(messages['import password'][locale()]);
                 const key =
                   props.settings.id == '0'
                     ? crypto.randomUUID()
@@ -563,7 +567,9 @@ const SettingContent: Component<Prop> = (props) => {
                   {
                     method: 'POST',
                     body: JSON.stringify(props.settings),
-                    mode: 'cors',
+                    headers: {
+                      'Access-Control-Allow-Origin': '*',
+                    },
                   }
                 );
                 sendToast(
