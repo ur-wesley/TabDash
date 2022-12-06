@@ -1,6 +1,6 @@
 {
   "name": "@ur-wesley/tabdash-extension",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "browser extension for a minimal new tab page.",
   "scripts": {
     "start": "vite --host",
