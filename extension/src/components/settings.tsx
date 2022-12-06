@@ -85,16 +85,18 @@ const SettingContent: Component<Prop> = (props) => {
             });
           }}
         />
-        <Toggle
-          label={messages['browser sync'][locale()]}
-          onChange={(e) => {
-            settingStore.setKey('general', {
-              ...props.settings.general,
-              sync: e,
-            });
-          }}
-          checked={props.settings.layout.showClock}
-        />
+        <Show when={import.meta.env.VITE_IS_EXTENSION}>
+          <Toggle
+            label={messages['browser sync'][locale()]}
+            onChange={(e) => {
+              settingStore.setKey('general', {
+                ...props.settings.general,
+                sync: e,
+              });
+            }}
+            checked={props.settings.layout.showClock}
+          />
+        </Show>
       </Categorie>
       <Categorie
         name={messages.layout[locale()]}
