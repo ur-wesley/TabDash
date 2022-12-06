@@ -299,4 +299,8 @@ export const messages = {
         de: "Suchmaschine",
         en: "search engine",
     },
+    "on unsplash": {
+        de: "auf",
+        en: "on",
+    },
 };

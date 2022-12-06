@@ -4,7 +4,7 @@ import { AvailableLanguages, messages } from '../../lang.js';
 
 const Author: Component<Prop> = (props) => {
   return (
-    <span class='absolute bottom-0 left-0 p-2 widget rounded-none rounded-tr-lg z-20'>
+    <span class='absolute bottom-0 left-0 p-2 widget text-sm rounded-none rounded-tr-lg z-20'>
       <a
         class='decoration-none color-fade'
         href={
@@ -21,7 +21,9 @@ const Author: Component<Prop> = (props) => {
       >
         {props.information?.author}
       </a>
-      <span class='color-fade'>&nbsp;on&nbsp;</span>
+      <span class='color-fade'>
+        &nbsp;{messages['on unsplash'][props.locale]}&nbsp;
+      </span>
       <a class='color-fade' href='https://unsplash.com'>
         Unsplash
       </a>
