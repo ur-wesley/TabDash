@@ -1,6 +1,5 @@
 # TabDash
-
-![Mozilla Add-on](https://img.shields.io/amo/v/tabdash?label=TabDash&style=for-the-badge&logo=Firefox-Browser)
+<a href="https://addons.mozilla.org/de/firefox/addon/tabdash/">![Mozilla Add-on](https://img.shields.io/amo/v/tabdash?label=TabDash&style=for-the-badge&logo=Firefox-Browser)</a>
 
 <a href="https://online.tabdash.wesley.fyi">![view online](https://img.shields.io/badge/TabDash-view%20online-blue?style=for-the-badge&logo=Firefox-Browser)</a>
 
