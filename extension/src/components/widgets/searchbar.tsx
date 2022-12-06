@@ -1,7 +1,7 @@
 import { Component, onMount } from 'solid-js';
+import { AvailableLanguages, messages } from '../../lang.js';
 import { SearchSetting } from '../../../types/settings.js';
 import Search from '../../api/search.js';
-import { AvailableLanguages, messages } from '../../lang.js';
 
 const Searchbar: Component<Props> = (props) => {
   let input: any;
@@ -24,9 +24,9 @@ const Searchbar: Component<Props> = (props) => {
         autocomplete='off'
         spellcheck={false}
       />
-      <span class='bg-dark-100/50 dark:bg-light-100/50 hover:bg-light-800 dark:hover:bg-dark-800 h-full p-1 cursor-pointer grid place-content-center'>
+      <span class='bg-gray-600/50 dark:bg-gray-300/50 hover:bg-light-800 dark:hover:bg-dark-800 h-full p-1 cursor-pointer grid place-content-center'>
         <span
-          class='i-mdi-search text-gray-300 p-3  text-md hover:text-gray-400'
+          class='i-mdi-search text-gray-600 dark:text-gray-300 p-3 text-md'
           onClick={() => {
             Search.query(input.value, props.settings);
             input.value = '';
