@@ -1,12 +1,12 @@
 import {
   Component,
   createEffect,
-  createResource,
-  createSignal,
   For,
   lazy,
+  Match,
   Show,
   Suspense,
+  Switch,
 } from 'solid-js';
 import { Theme } from '../types/settings.js';
 import NotificationList from './components/notificationList.jsx';
@@ -21,13 +21,13 @@ const WeatherWidget = lazy(() => import('./components/widgets/weather.jsx'));
 const Author = lazy(() => import('./components/widgets/author.jsx'));
 const Shortcut = lazy(() => import('./components/widgets/shortcut.jsx'));
 
-// import createSettings from './createSettings.jsx';
 import {
   addShortcut,
   editShortcut,
   getSettings,
   refreshImage,
   removeShortcut,
+  setTheme,
   settingStore,
   weatherStore,
 } from './api/settingStore';
@@ -36,11 +36,20 @@ import { useStore } from '@nanostores/solid';
 const App: Component = () => {
   const $store = useStore(settingStore);
   const $weather = useStore(weatherStore);
-  const [theme, setTheme] = createSignal<Theme>();
   createEffect(async () => {
     if ($store().general) {
-      setTheme($store()?.general.theme ?? 'light');
       setFavicon();
+      if ($store()!.background.active || $store()!.background.static) {
+        const bgImg = document.querySelector(
+          '#background'
+        )! as HTMLImageElement;
+        bgImg.src = $store()!.background.active
+          ? $store()!.background.image.src
+          : $store()!.background.static ?? '';
+      } else {
+        const bgDiv = document.querySelector('#background') as HTMLDivElement;
+        bgDiv.style.background = $store().background.color ?? '';
+      }
     }
   });
   const setFavicon = async () => {
@@ -56,128 +65,127 @@ const App: Component = () => {
   return (
     <Show when={!!$store().general}>
       <NotificationList />
-      <div
-        style={{
-          background:
-            !$store()!.background.active && !$store()!.background.static
-              ? $store()!.background.color
-              : undefined,
-          'background-image': $store()!.background.active
-            ? `url('${$store()!.background.image.src}')`
-            : $store()!.background.static
-            ? `url('${$store()!.background.static}')`
-            : undefined,
-          'background-size': 'cover',
-          'background-position': 'center',
-        }}
-        class='m-0 h-screen w-screen overflow-hidden transition'
+      <Switch
+        fallback={
+          <div
+            id='background'
+            class='h-screen w-screen overflow-hidden absolute top-0 left-0 transition'
+          />
+        }
       >
-        <div
-          class='h-full w-full flex flex-col items-center p-4 justify-evenly overflow-hidden'
-          id='content'
+        <Match when={$store().background.active || $store().background.static}>
+          <img
+            alt='background image'
+            id='background'
+            class='h-screen w-screen overflow-hidden absolute top-0 left-0 transition'
+          />
+          <img src={$store().background.image.next} class='hidden' />
+        </Match>
+      </Switch>
+      <div
+        class='h-screen w-full flex flex-col items-center p-4 justify-evenly overflow-hidden'
+        id='content'
+      >
+        <Show
+          when={
+            ($store()!.layout.showClock || $store()!.layout.showDate) ?? false
+          }
         >
-          <Show
-            when={
-              ($store()!.layout.showClock || $store()!.layout.showDate) ?? false
-            }
-          >
-            <Clock
-              locale={$store()!.general.locale ?? 'en'}
-              settings={$store()!.clock}
-              showDate={$store()?.layout.showDate}
-              showTime={$store()?.layout.showClock}
-            />
-          </Show>
-          <Show when={$store()!.background.backdropActive ?? false}>
-            <Backdrop
-              blur={$store()!.background.backdrop.blur ?? '0px'}
-              brightness={$store()!.background.backdrop.brightness ?? '100%'}
-              saturate={$store()!.background.backdrop.saturate ?? '100%'}
-            />
-          </Show>
-          <Show when={$store()!.layout.showGreeting ?? false}>
-            <Greeting
-              name={$store()!.general.username}
-              locale={$store()!.general.locale as AvailableLanguages}
-            />
-          </Show>
-          <Show when={$store()!.layout.showWeather ?? false}>
-            <Suspense>
-              <WeatherWidget setting={$store()!.weather} data={$weather()} />
-            </Suspense>
-          </Show>
-          <Show when={$store()!.layout.showSearchbar ?? false}>
-            <Searchbar
-              lang={$store()!.general.locale}
-              settings={$store().search}
-            />
-          </Show>
-          <Show when={$store()!.layout.showShortcuts ?? false}>
-            <div
-              style={{
-                display: 'flex',
-                'justify-content': 'center',
-                gap: '.75rem',
-                'flex-wrap': 'wrap',
-              }}
-            >
-              <For each={$store()!.shortcuts} fallback=''>
-                {(shortcut, index) => (
-                  <Shortcut
-                    settings={shortcut}
-                    col={100 / $store()!.shortcutAppereance.elementsPerLine - 5}
-                    locale={$store()!.general.locale as AvailableLanguages}
-                    style={$store()!.shortcutAppereance}
-                    onEdit={async (s) => {
-                      editShortcut(index(), s);
-                    }}
-                    onRemove={async (s) => {
-                      if (
-                        confirm(
-                          messages['confirm delete'][
-                            $store()!.general.locale as AvailableLanguages
-                          ]
-                        )
-                      ) {
-                        removeShortcut(s);
-                      }
-                    }}
-                  />
-                )}
-              </For>
-            </div>
-          </Show>
-        </div>
-        <Show when={$store()!.background.active}>
-          <Author
-            information={$store()!.background.image}
+          <Clock
+            locale={$store()!.general.locale ?? 'en'}
+            settings={$store()!.clock}
+            showDate={$store()?.layout.showDate}
+            showTime={$store()?.layout.showClock}
+          />
+        </Show>
+        <Show when={$store()!.background.backdropActive ?? false}>
+          <Backdrop
+            blur={$store()!.background.backdrop.blur ?? '0px'}
+            brightness={$store()!.background.backdrop.brightness ?? '100%'}
+            saturate={$store()!.background.backdrop.saturate ?? '100%'}
+          />
+        </Show>
+        <Show when={$store()!.layout.showGreeting ?? false}>
+          <Greeting
+            name={$store()!.general.username}
             locale={$store()!.general.locale as AvailableLanguages}
           />
         </Show>
-        <ThemeToggle
-          update={(t: Theme) => {
-            setTheme(t);
-            setTheme(t);
-          }}
-          theme={theme()!}
-        />
-        <SettingToggle
-          settings={$store()!}
-          addShortcut={async (shortcut) => {
-            addShortcut(shortcut);
-          }}
-          onRefreshImage={async () => {
-            console.log('refreshing image');
-            await refreshImage();
-          }}
-          onWeatherUpdate={async () => {
-            await getSettings({
-              refresh: 'refresh',
-              sync: $store()?.general.sync ?? false,
-            });
-          }}
-        />
+        <Show when={$store()!.layout.showWeather ?? false}>
+          <Suspense>
+            <WeatherWidget setting={$store()!.weather} data={$weather()} />
+          </Suspense>
+        </Show>
+        <Show when={$store()!.layout.showSearchbar ?? false}>
+          <Searchbar
+            lang={$store()!.general.locale}
+            settings={$store().search}
+          />
+        </Show>
+        <Show when={$store()!.layout.showShortcuts ?? false}>
+          <div
+            style={{
+              display: 'flex',
+              'justify-content': 'center',
+              gap: '.75rem',
+              'flex-wrap': 'wrap',
+            }}
+          >
+            <For each={$store()!.shortcuts} fallback=''>
+              {(shortcut, index) => (
+                <Shortcut
+                  settings={shortcut}
+                  col={100 / $store()!.shortcutAppereance.elementsPerLine - 5}
+                  locale={$store()!.general.locale as AvailableLanguages}
+                  style={$store()!.shortcutAppereance}
+                  onEdit={async (s) => {
+                    editShortcut(index(), s);
+                  }}
+                  onRemove={async (s) => {
+                    if (
+                      confirm(
+                        messages['confirm delete'][
+                          $store()!.general.locale as AvailableLanguages
+                        ]
+                      )
+                    ) {
+                      removeShortcut(s);
+                    }
+                  }}
+                />
+              )}
+            </For>
+          </div>
+        </Show>
       </div>
+      <Show when={$store()!.background.active}>
+        <Author
+          information={$store()!.background.image}
+          locale={$store()!.general.locale as AvailableLanguages}
+        />
+      </Show>
+      <ThemeToggle
+        update={(t: Theme) => {
+          setTheme(t);
+        }}
+        theme={$store().general.theme}
+      />
+      <SettingToggle
+        settings={$store()!}
+        addShortcut={async (shortcut) => {
+          addShortcut(shortcut);
+        }}
+        onRefreshImage={async () => {
+          console.log('refreshing image');
+          await refreshImage();
+        }}
+        onWeatherUpdate={async () => {
+          await getSettings({
+            refresh: 'refresh',
+            sync: $store()?.general.sync ?? false,
+          });
+        }}
+      />
     </Show>
   );
 };

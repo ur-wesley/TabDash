@@ -1,6 +1,7 @@
 import {
   BackgroundData,
   BackgroundSetting,
+  CacheSetting,
   ClockSetting,
   DateSetting,
   GeneralSetting,
@@ -73,28 +74,41 @@ const refreshImage = async (): Promise<BackgroundData> => {
   const _apiKey: string = import.meta.env.VITE_UNSPLASH_API_KEY;
   const { width, height } = screen;
   const size = width > height ? width : height;
-  const response = await fetch(
-    `${_api}/photos/random?collections=${settingStore.get().background.collections.join(',') ?? ''
-    }`,
-    {
-      headers: {
-        Authorization: `Client-ID ${_apiKey}`
+  const cache = settingStore.get().cache.images;
+  if (cache.length < 2) {
+    await fetch(
+      `${_api}/photos/random?collections=${settingStore.get().background.collections.join(',') ?? ''
+      }&count=4`,
+      {
+        headers: {
+          Authorization: `Client-ID ${_apiKey}`
+        }
       }
-    }
-  )
-    .then((r) => r.json())
-    .catch(() => (settingStore.get().background.active = false));
-  await fetch(response.links.download_location,
+    )
+      .then((r) => r.json())
+      .then(images => {
+        settingStore.setKey('cache', {
+          ...settingStore.get().cache,
+          images: [...cache, ...images]
+        })
+      })
+      .catch(() => (settingStore.setKey('background', { ...settingStore.get().background, active: false })));
+  }
+  await fetch(cache[0].links.download_location,
     {
       headers: {
         Authorization: `Client-ID ${_apiKey}`
       }
     })
-  const src = `${response.urls.raw}&w=${size}&dpr=${window.devicePixelRatio}` ?? '';
-  const author = response.user.name ?? '';
-  const profile = response.user.links.html ?? '';
-  const origin = response.links.html ?? '';
-  const bg = { src, author, profile, origin };
+  const src = `${cache[0].urls.raw}&w=${size}&dpr=${window.devicePixelRatio}` ?? '';
+  const next = `${cache[1].urls.raw}&w=${size}&dpr=${window.devicePixelRatio}` ?? '';
+  const author = cache[0].user.name ?? '';
+  const profile = cache[0].user.links.html ?? '';
+  const origin = cache[0].links.html ?? '';
+  const bg = { src, author, profile, origin, next };
+  settingStore.setKey('cache', {
+    images: [...cache.slice(1, cache.length)]
+  })
   settingStore.setKey('background', {
     ...settingStore.get().background,
     image: bg
@@ -178,6 +192,7 @@ class SettingObject implements Setting {
   date: DateSetting;
   weather: WeatherSetting;
   search: SearchSetting;
+  cache: CacheSetting;
 
   constructor(
     id: string,
@@ -189,7 +204,8 @@ class SettingObject implements Setting {
     clock: ClockSetting,
     date: DateSetting,
     weather: WeatherSetting,
-    search: SearchSetting
+    search: SearchSetting,
+    cache: CacheSetting
   ) {
     this.id = id;
     this.general = general;
@@ -201,6 +217,7 @@ class SettingObject implements Setting {
     this.date = date;
     this.weather = weather;
     this.search = search;
+    this.cache = cache;
   }
 
   public static async fromJson(json: any): Promise<SettingObject> {
@@ -215,7 +232,8 @@ class SettingObject implements Setting {
       json.clock || settings.clock,
       json.date || settings.date,
       json.weather || settings.weather,
-      json.search || settings.search
+      json.search || settings.search,
+      json.cache || settings.cache
     );
   }
 }

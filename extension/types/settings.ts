@@ -11,6 +11,7 @@ export interface Setting {
   date: DateSetting;
   weather: WeatherSetting;
   search: SearchSetting;
+  cache: CacheSetting;
 }
 
 export interface GeneralSetting {
@@ -34,6 +35,7 @@ export interface BackgroundSetting {
 
 export interface BackgroundData {
   src: string;
+  next: string;
   author: string;
   origin: string;
   profile: string;
@@ -87,6 +89,18 @@ export interface SearchSetting {
   focus: boolean;
   newTab: boolean;
   engine: string;
+}
+
+// export interface WidgetSetting {
+//   textSize: number;
+//   shadow: number;
+//   font: string;
+//   weight: number;
+//   opcaity: number;
+// }
+
+export interface CacheSetting {
+  images: any[];
 }
 
 export type Theme = "light" | "dark";
