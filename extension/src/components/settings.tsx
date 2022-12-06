@@ -60,6 +60,7 @@ const SettingContent: Component<Prop> = (props) => {
               ...props.settings.general,
               locale: e as AvailableLanguages,
             });
+            props.onWeatherUpdate();
           }}
           options={availableLanguages.map((l) => ({ value: l, name: l }))}
         />
@@ -466,6 +467,18 @@ const SettingContent: Component<Prop> = (props) => {
               showText: e,
             });
           }}
+        />
+        <Toggle
+          label={messages['imperial'][locale()]}
+          onChange={(e) => {
+            console.log(e);
+            settingStore.setKey('weather', {
+              ...props.settings.weather,
+              unit: e ? 'imperial' : 'metric',
+            });
+            props.onWeatherUpdate();
+          }}
+          checked={props.settings.weather.unit == 'imperial'}
         />
       </Categorie>
       <Categorie

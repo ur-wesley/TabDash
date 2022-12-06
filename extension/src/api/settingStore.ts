@@ -65,6 +65,14 @@ const getImage = async (): Promise<BackgroundData> => {
   }
 };
 
+const refreshWeather = async (): Promise<WeatherData> => {
+  const settings = settingStore.get();
+  const w = new Weather(settings.weather.unit, settings.general.locale);
+  const weather = await w.refreshWeather();
+  weatherStore.set(weather);
+  return weather;
+}
+
 const refreshImage = async (): Promise<BackgroundData> => {
   let _s: Storage | LocalStorage;
   if (import.meta.env.VITE_IS_EXTENSION == 'true')
@@ -172,6 +180,7 @@ export {
   getSettings,
   getImage,
   refreshImage,
+  refreshWeather,
   setTheme,
   getTheme,
   addShortcut,

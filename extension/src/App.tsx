@@ -24,8 +24,8 @@ const Shortcut = lazy(() => import('./components/widgets/shortcut.jsx'));
 import {
   addShortcut,
   editShortcut,
-  getSettings,
   refreshImage,
+  refreshWeather,
   removeShortcut,
   setTheme,
   settingStore,
@@ -176,14 +176,10 @@ const App: Component = () => {
           addShortcut(shortcut);
         }}
         onRefreshImage={async () => {
-          console.log('refreshing image');
           await refreshImage();
         }}
         onWeatherUpdate={async () => {
-          await getSettings({
-            refresh: 'refresh',
-            sync: $store()?.general.sync ?? false,
-          });
+          await refreshWeather();
         }}
       />
     </Show>
