@@ -20,6 +20,7 @@
         ],
         "image": {
             "src": "",
+            "next": "",
             "author": "",
             "profile": "",
             "orgin": ""
@@ -64,5 +65,8 @@
         "focus": false,
         "newTab": false,
         "engine": "Startpage"
+    },
+    "cache": {
+        "images": []
     }
 }
