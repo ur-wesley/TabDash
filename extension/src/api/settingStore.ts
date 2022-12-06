@@ -114,11 +114,13 @@ const save = () => {
 };
 
 const setTheme = async (theme: Theme): Promise<void> => {
-  settingStore.get().general.theme = theme;
+  settingStore.setKey('general', {
+    ...settingStore.get().general,
+    theme: theme
+  })
 };
 
 const getTheme = (): Theme => settingStore.get().general.theme;
-
 
 const addShortcut = (shortcut: ShortcutSetting): void => {
   settingStore.setKey('shortcuts', [...settingStore.get().shortcuts, shortcut]);
@@ -139,7 +141,6 @@ const removeShortcut = (shortcut: ShortcutSetting): void => {
 };
 
 const getDefault = async (): Promise<Setting> => {
-  // const file = import.meta.env.VITE_IS_EXTENSION == 'true' ? chrome.runtime.getURL("./defaultSettings.json") : "/defaultSettings.json";
   return await fetch('/defaultSettings.json').then((f) => f.json());
 };
 
