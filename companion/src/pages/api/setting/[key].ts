@@ -17,6 +17,12 @@ export const get: APIRoute = async ({ params, request }) => {
       body: "Not Found",
     };
   const settings = crypto.decrypt(encryptedSettings[key!], p);
+  if (!settings) {
+    return {
+      status: 400,
+      body: 'might not be the correct password',
+    };
+  }
   return {
     status: 200,
     body: settings,
