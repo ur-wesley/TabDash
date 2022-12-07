@@ -196,12 +196,24 @@ export const messages = {
         en: "management",
     },
     "setting in cloud": {
-        de: "Online speichern",
-        en: "save online",
+        de: "Online speichern?",
+        en: "save online?",
     },
-    import: {
+    "import": {
         de: "importieren",
         en: "import",
+    },
+    "export": {
+        de: "exportieren",
+        en: "export",
+    },
+    "import cloud": {
+        de: "online wiederherstellen",
+        en: "Restore from cloud",
+    },
+    "import local": {
+        de: "aus Zwischenablage lesen",
+        en: "read settings from clipboard",
     },
     "import success clipboard": {
         de: "Einstellungen wurden erfolgreich aus der Zwischenablage importiert",
@@ -215,9 +227,13 @@ export const messages = {
         de: "Einstellungen konnten nicht wiederhergestellt werden",
         en: "settings could not be restored",
     },
-    export: {
-        de: "exportieren",
-        en: "export",
+    "export cloud": {
+        de: "online speichern",
+        en: "save online",
+    },
+    "export local": {
+        de: "in Zwischenablage schreiben",
+        en: "copy to clipboard",
     },
     "export success clipboard": {
         de: "Einstellungen wurden erfolgreich in die Zwischenablage exportiert",
@@ -231,13 +247,17 @@ export const messages = {
         de: "Einstellungen konnten nicht exportiert werden",
         en: "settings could not be exported",
     },
+    "save to file": {
+        de: "in Datei speichern",
+        en: "save to file",
+    },
     ['setting input']: {
-        de: "Einstellungen",
+        de: "Einstellungen einfügen",
         en: "setting input",
     },
     reset: {
-        de: "Zurücksetzen",
-        en: "reset",
+        de: "Einstellungen zurücksetzen",
+        en: "reset settings",
     },
     clipboard: {
         de: "Zwischenablage",
@@ -258,6 +278,10 @@ export const messages = {
     "confirm delete": {
         de: "Löschen bestätigen",
         en: "confirm delete",
+    },
+    "confirm reset": {
+        de: "Alle Einstellungen auf Standard stellen?",
+        en: "Reset all settings to default?",
     },
     "photo by": {
         de: "Foto von",
@@ -310,5 +334,25 @@ export const messages = {
     "import password": {
         de: "Passwort für die Entschlüsselung eingeben",
         en: "Enter password for data decryption"
-    }
+    },
+    "manually setting input": {
+        de: "manuelle Eingabe",
+        en: "manual input"
+    },
+    "drop file": {
+        de: "Datei ablegen",
+        en: "drop file"
+    },
+    "no json format": {
+        de: "falsches Dateiformat",
+        en: "wrong file format"
+    },
+    "online": {
+        de: "Online",
+        en: "online"
+    },
+    "local": {
+        de: "Lokal",
+        en: "local"
+    },
 };
