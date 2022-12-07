@@ -12,13 +12,30 @@ const { frontmatter } = Astro.props;
   <article>
     <slot />
   </article>
-  <style>
+  <style lang='scss' is:global>
     article {
-      grid-area: article;
       display: flex;
       flex-direction: column;
+      height: 100vh;
       overflow: auto;
       padding: 8px;
+      h1 {
+        font-size: 2rem;
+        font-weight: bold;
+        text-decoration: underline;
+      }
+      h3 {
+        font-size: 1.4rem;
+      }
+      p {
+        padding: 0.6em 1rem;
+      }
+      blockquote {
+        margin: 2rem;
+        padding: 0.4rem;
+        border: 2px solid gainsboro;
+        border-radius: 8px;
+      }
     }
   </style>
 </Layout>

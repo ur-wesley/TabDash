@@ -21,9 +21,12 @@ import HelpMenu from '../components/HelpMenu.astro';
   </head>
   <body>
     <GeneralMenu />
-    <div class='page'>
-      <HelpMenu />
+    <div class='flex justify-around w-full h-full overflow-hidden'>
+      <div class='sticky top-8'>
+        <HelpMenu />
+      </div>
       <slot />
+      <div></div>
     </div>
   </body>
   <style is:global>
@@ -31,6 +34,7 @@ import HelpMenu from '../components/HelpMenu.astro';
       font-family: 'Inconsolata', monospace;
       background-color: #f6f6f6;
       margin: 0;
+      overflow: hidden;
     }
     body {
       margin: 0;
@@ -42,17 +46,6 @@ import HelpMenu from '../components/HelpMenu.astro';
       padding: 4px;
       font-size: small;
       border-radius: 4px;
-    }
-  </style>
-  <style>
-    .page {
-      display: grid;
-      grid-template-columns: 1fr clamp(200px, 50%) 1fr;
-      width: 100%;
-      height: calc(100vh - 4rem);
-      margin-top: 4rem;
-      grid-template-areas: 'menu article .';
-      overflow: hidden;
     }
   </style>
 </html>
