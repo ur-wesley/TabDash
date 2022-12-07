@@ -45,5 +45,8 @@ export const post: APIRoute = async ({ params, request }) => {
   return {
     status: 201,
     body: "settings saved",
+    headers: {
+      "Access-Control-Allow-Origin": "*"
+    }
   };
 };
