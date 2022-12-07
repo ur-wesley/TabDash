@@ -190,7 +190,7 @@ export {
   resestToDefault,
 };
 
-class SettingObject implements Setting {
+export class SettingObject implements Setting {
   id: string;
   general: GeneralSetting;
   background: BackgroundSetting;
