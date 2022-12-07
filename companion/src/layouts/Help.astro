@@ -16,9 +16,13 @@ const { frontmatter } = Astro.props;
     article {
       display: flex;
       flex-direction: column;
-      height: 100vh;
-      overflow: auto;
-      padding: 8px;
+      height: calc(100vh - 6rem);
+      overflow-x: scroll;
+      padding: 1rem;
+      margin: 1rem;
+      max-width: 120ch;
+      background: white;
+      border-radius: 12px;
       h1 {
         font-size: 2rem;
         font-weight: bold;
@@ -35,6 +39,9 @@ const { frontmatter } = Astro.props;
         padding: 0.4rem;
         border: 2px solid gainsboro;
         border-radius: 8px;
+      }
+      a {
+        text-decoration: underline;
       }
     }
   </style>

@@ -19,10 +19,10 @@ import HelpMenu from '../components/HelpMenu.astro';
       @import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;300;400;500;600;700;800;900&display=swap');
     </style>
   </head>
-  <body>
+  <body class='flex flex-col'>
     <GeneralMenu />
     <div class='flex justify-around w-full h-full overflow-hidden'>
-      <div class='sticky top-8'>
+      <div>
         <HelpMenu />
       </div>
       <slot />
