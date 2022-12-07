@@ -1,6 +1,7 @@
 import {
   Component,
   createEffect,
+  createSignal,
   For,
   lazy,
   Match,
@@ -33,11 +34,14 @@ import {
 } from './api/settingStore';
 import { useStore } from '@nanostores/solid';
 
+export const [locale, setLocale] = createSignal<AvailableLanguages>('en');
+
 const App: Component = () => {
   const $store = useStore(settingStore);
   const $weather = useStore(weatherStore);
   createEffect(async () => {
     if ($store().general) {
+      setLocale($store().general.locale as AvailableLanguages);
       setFavicon();
       if ($store()!.background.active || $store()!.background.static) {
         const bgImg = document.querySelector(
@@ -77,7 +81,7 @@ const App: Component = () => {
           <img
             alt='background image'
             id='background'
-            class='h-screen w-screen overflow-hidden absolute top-0 left-0 transition'
+            class='h-screen w-screen overflow-hidden absolute top-0 left-0 transition object-cover'
           />
           <img src={$store().background.image.next} class='hidden' />
         </Match>
