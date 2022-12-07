@@ -5,7 +5,9 @@ const url = Astro.url;
 const onlineVersion = `${url.protocol}//online.${url.host}`;
 ---
 
-<div class='menu'>
+<div
+  class='fixed top-0 w-full flex justify-between items-center bg-gray-200 h-14 px-2'
+>
   <h3>
     <Link client:load href='/'>TabDash</Link>
   </h3>
@@ -25,17 +27,6 @@ const onlineVersion = `${url.protocol}//online.${url.host}`;
   </ul>
 </div>
 <style lang='scss'>
-  .menu {
-    position: fixed;
-    top: 0;
-    width: calc(100% - 4rem);
-    display: flex;
-    padding: 0 2rem;
-    height: 4rem;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(197, 197, 197, 0.25);
-  }
   ul {
     list-style: none;
     display: flex;
