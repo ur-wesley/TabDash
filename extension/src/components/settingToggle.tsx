@@ -1,6 +1,6 @@
 import { Component, createEffect, createSignal, Show } from 'solid-js';
 import { Setting, ShortcutSetting } from '../../types/settings.js';
-import SettingContent from './settings.jsx';
+import SettingContent from './settingContent.jsx';
 
 const SettingToggle: Component<Prop> = (props) => {
   let settingPanel: HTMLElement;
@@ -42,7 +42,7 @@ const SettingToggle: Component<Prop> = (props) => {
       </Show>
       <aside
         ref={settingPanel!}
-        class={`absolute right-0 top-0 h-full max-w-1/3 surface-base transition duration-300 z-30 overflow-y-auto ${
+        class={`absolute right-0 top-0 h-full w-100 max-w-1/2 surface-base transition duration-300 z-30 overflow-y-auto ${
           !showSetting() ? 'translate-x-full' : ''
         }`}
       >
