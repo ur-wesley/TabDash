@@ -27,6 +27,9 @@ export const get: APIRoute = async ({ params, request }) => {
   return new Response(settings,
     {
       status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*"
+      }
     });
 };
 
