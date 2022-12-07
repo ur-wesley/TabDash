@@ -1,40 +1,44 @@
-import { Component, createSignal, Show } from "solid-js";
+import { Component, createSignal, Show } from 'solid-js';
 
 const Input: Component<Prop> = (props) => {
   const [error, setError] = createSignal(false);
   return (
-    <div class="flex items-center justify-between gap-4 w-full z-20 my-4">
-      <label for="input" class="block mb-2 label">
-        {props.label}
-      </label>
-      <div class="flex flex-col">
+    <div class='flex items-center justify-between gap-4 z-20 my-4 box-border'>
+      <Show when={props.label}>
+        <label for='input' class='block mb-2 label'>
+          {props.label}
+        </label>
+      </Show>
+      <div class='flex flex-col mx-5'>
         <input
-          class={`surface-base outline-0 ring-2 ring-transparent rounded-lg focus:border-blue-500 transition hover:bg-slate-100 dark:hover:bg-slate-800 border-0 block max-w-80 p-2.5 dark:placeholder-gray-400 dark:text-white border ${
+          class={`w-full p-2.5 surface-base outline-0 ring-2 transition ring-transparent rounded-lg focus:border-blue-500 
+          hover:bg-slate-100 dark:hover:bg-slate-800 border-0 block
+          dark:placeholder-gray-400 dark:text-white border ${
             error()
-              ? "focus:ring-red-500 dark:focus:ring-red-500"
-              : "focus:ring-blue-500 dark:focus:ring-blue-500"
+              ? 'focus:ring-red-500 dark:focus:ring-red-500'
+              : 'focus:ring-blue-500 dark:focus:ring-blue-500'
           }`}
           onInput={(e) => {
             if (!!props.validator) {
               if (!props.validator(e.currentTarget.value)) {
                 setError(true);
-                console.info("invalid");
+                console.info('invalid');
                 return;
               }
             }
             setError(false);
             props.onInput(e.currentTarget.value);
           }}
-          type="text"
-          id="input"
+          type='text'
+          id='input'
           required={props.required}
-          value={props.value ?? ""}
+          value={props.value ?? ''}
           placeholder={props.placeholder}
-          autocomplete="off"
+          autocomplete='off'
           spellcheck={false}
         />
         <Show when={error()}>
-          <span class="text-sm text-red">{props.error ?? "invalid value"}</span>
+          <span class='text-sm text-red'>{props.error ?? 'invalid value'}</span>
         </Show>
       </div>
     </div>
@@ -45,7 +49,7 @@ export default Input;
 
 interface Prop {
   onInput: (e: string) => void;
-  label: string;
+  label?: string;
   placeholder?: string;
   required?: boolean;
   value?: string;
