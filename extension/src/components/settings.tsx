@@ -531,13 +531,7 @@ const SettingContent: Component<Prop> = (props) => {
                 const res = await fetch(
                   `${
                     import.meta.env.VITE_COMPANION_BASE
-                  }/api/setting/${key}?p=${pw}`,
-                  {
-                    method: 'GET',
-                    headers: {
-                      'Access-Control-Allow-Origin': '*',
-                    },
-                  }
+                  }/api/setting/${key}?p=${pw}`
                 ).then((r) => r.json());
                 if (res) settingStore.set(res);
                 sendToast(
@@ -580,9 +574,6 @@ const SettingContent: Component<Prop> = (props) => {
                   {
                     method: 'POST',
                     body: JSON.stringify(props.settings),
-                    headers: {
-                      'Access-Control-Allow-Origin': '*',
-                    },
                   }
                 );
                 sendToast(
