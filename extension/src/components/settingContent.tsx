@@ -7,6 +7,7 @@ import {
 } from '../../types/settings.js';
 // import createSettings from '../createSettings.jsx';
 import { getDefault, settingStore } from '../api/settingStore.js';
+import { locale, setLocale } from '../App.jsx';
 import {
   messages,
   helpLinks,
@@ -20,6 +21,7 @@ import Input from './controls/input.jsx';
 import Select from './controls/select.jsx';
 import Slider from './controls/slider.jsx';
 import Toggle from './controls/toggle.jsx';
+import Management from './settings/management.jsx';
 
 const SettingContent: Component<Prop> = (props) => {
   const [newShortcut, setNewShortcut] = createSignal<ShortcutSetting>({
@@ -28,10 +30,6 @@ const SettingContent: Component<Prop> = (props) => {
     icon: '',
     newTab: false,
   });
-  const [locale, setLocale] = createSignal(
-    props.settings.general.locale as AvailableLanguages
-  );
-  const [inCloud, setInCloud] = createSignal(false);
   return (
     <div class='p-2 flex flex-col gap-4 mb-12'>
       <Categorie
@@ -481,131 +479,10 @@ const SettingContent: Component<Prop> = (props) => {
           checked={props.settings.weather.unit == 'imperial'}
         />
       </Categorie>
-      <Categorie
-        name={messages.management[locale()]}
-        helpLink={helpLinks.base + locale() + helpLinks.management}
-      >
-        <Toggle
-          label={messages['setting in cloud'][locale()]}
-          checked={inCloud()}
-          onChange={(e) => {
-            setInCloud(e);
-          }}
-        />
-        <Show when={inCloud()}>
-          <Input
-            label={messages['setting id'][locale()]}
-            value={props.settings.id}
-            onInput={(e: string) => {
-              settingStore.setKey('id', e);
-            }}
-            validator={(e: string) => {
-              const validId =
-                /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;
-              return new RegExp(validId).test(e);
-            }}
-            error={messages['incorrect id'][locale()]}
-          />
-        </Show>
-        <Show when={!navigator.userAgent.includes('Chrome')}>
-          <Input
-            label={messages['setting input'][locale()]}
-            onInput={(settings) => {
-              if (JSON.parse(settings)) {
-                settingStore.set(JSON.parse(settings));
-              }
-              sendToast(
-                messages['import success clipboard'][locale()],
-                'success',
-                5000
-              );
-            }}
-          />
-        </Show>
-        <TextButton
-          onClick={async () => {
-            try {
-              if (inCloud()) {
-                const pw = prompt(messages['select export password'][locale()]);
-                const key = props.settings.id;
-                const res = await fetch(
-                  `${
-                    import.meta.env.VITE_COMPANION_BASE
-                  }/api/setting/${key}?p=${pw}`
-                ).then((r) => r.json());
-                if (res) settingStore.set(res);
-                sendToast(
-                  messages['import success cloud'][locale()],
-                  'success',
-                  5000
-                );
-                return;
-              }
-              const settings = await navigator.clipboard.readText();
-              if (JSON.parse(settings)) {
-                settingStore.set(JSON.parse(settings));
-              }
-              sendToast(
-                messages['import success clipboard'][locale()],
-                'success',
-                5000
-              );
-            } catch (error) {
-              sendToast(messages['import fail'][locale()], 'error', 5000);
-            }
-          }}
-        >
-          {messages.import[locale()]}
-        </TextButton>
-        <TextButton
-          onClick={async () => {
-            try {
-              if (inCloud()) {
-                const pw = prompt(messages['import password'][locale()]);
-                const key =
-                  props.settings.id == '0'
-                    ? crypto.randomUUID()
-                    : props.settings.id;
-                settingStore.setKey('id', key);
-                await fetch(
-                  `${
-                    import.meta.env.VITE_COMPANION_BASE
-                  }/api/setting/${key}?p=${pw}`,
-                  {
-                    method: 'POST',
-                    body: JSON.stringify(props.settings),
-                  }
-                );
-                sendToast(
-                  messages['export success cloud'][locale()],
-                  'success',
-                  5000
-                );
-                return;
-              }
-              await navigator.clipboard.writeText(
-                JSON.stringify(props.settings)
-              );
-              sendToast(
-                messages['export success clipboard'][locale()],
-                'success',
-                5000
-              );
-            } catch (error) {
-              sendToast(messages['export fail'][locale()], 'error', 5000);
-            }
-          }}
-        >
-          {messages.export[locale()]}
-        </TextButton>
-        <TextButton
-          onClick={async () => {
-            settingStore.set(await getDefault());
-          }}
-        >
-          {messages.reset[locale()]}
-        </TextButton>
-      </Categorie>
+      <Management
+        settings={props.settings}
+        reset={async () => settingStore.set(await getDefault())}
+      />
     </div>
   );
 };
