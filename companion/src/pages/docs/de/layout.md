@@ -17,7 +17,7 @@ Wenn der Schalter aktiviert ist, wird das Datum angezeigt. [Weitere Einstellunge
 
 ### Gruß anzeigen
 
-Wenn der Schalter aktiviert ist, wird ein Gruß mit dem [Namen](/docs/de/general#name) angezeigt. 
+Wenn der Schalter aktiviert ist, wird ein Gruß mit dem [Namen](/docs/de/general) angezeigt. 
 
 ### Suchbar anzeigen
 
