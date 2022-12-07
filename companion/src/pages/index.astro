@@ -1,10 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
+import Home from '../components/Home.jsx';
 ---
 
 <Base>
   <main>
-    <h1>Welcome to <span class='text-gradient'>TabDash</span></h1>
+    <Home client:only='solid-js' />
   </main>
 </Base>
 
