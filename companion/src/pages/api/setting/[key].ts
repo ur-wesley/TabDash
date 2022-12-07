@@ -12,22 +12,31 @@ export const get: APIRoute = async ({ params, request }) => {
     (s) => Object.keys(s)[0] == key
   );
   if (!encryptedSettings)
-    return {
-      status: 404,
-      body: "Not Found",
-    };
+    return new Response('Not Found',
+      {
+        status: 404,
+      });
   const settings = crypto.decrypt(encryptedSettings[key!], p);
   if (!settings) {
-    return {
-      status: 400,
-      body: 'might not be the correct password',
-    };
+    return new Response(
+      'might not be the correct password',
+      {
+        status: 400,
+      });
   }
-  return {
-    status: 200,
-    body: settings,
-  };
+  return new Response(settings,
+    {
+      status: 200,
+    });
 };
+
+export const option: APIRoute = async () => new Response('ok',
+  {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    }
+  })
 
 export const post: APIRoute = async ({ params, request }) => {
   const { key } = params;
@@ -48,11 +57,11 @@ export const post: APIRoute = async ({ params, request }) => {
     db.data!.settings.push({ [key!.toString()]: encryptedSettings });
   }
   await db.write();
-  return {
-    status: 201,
-    body: "settings saved",
-    headers: {
-      "Access-Control-Allow-Origin": "*"
-    }
-  };
+  return new Response("settings saved",
+    {
+      status: 201,
+      headers: {
+        "Access-Control-Allow-Origin": "*"
+      }
+    });
 };
