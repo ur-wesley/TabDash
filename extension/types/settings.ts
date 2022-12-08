@@ -103,7 +103,9 @@ export interface CacheSetting {
   images: any[];
 }
 
-export type Theme = "light" | "dark";
+export const theme = ["light", "dark", "system", "automatic"] as const;
+export type Theme = typeof theme[number];
+
 export type WeatherUnit = "metric" | "imperial";
 export type DateFormat = "long" | "2-digit" | "short";
 export type ShortcutStyle = "large" | "medium" | "small" | "text";
