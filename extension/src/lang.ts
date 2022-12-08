@@ -355,4 +355,24 @@ export const messages = {
         de: "Lokal",
         en: "local"
     },
+    "theme": {
+        de: "Thema",
+        en: "theme"
+    },
+    "light": {
+        de: "Hell",
+        en: "light"
+    },
+    "dark": {
+        de: "Dunkel",
+        en: "dark"
+    },
+    "system": {
+        de: "System",
+        en: "system"
+    },
+    "automatic": {
+        de: "automatisch",
+        en: "automatic"
+    },
 };
