@@ -22,10 +22,12 @@ const SettingToggle: Component<Prop> = (props) => {
   });
   return (
     <>
-      <div class='z-40 widget absolute right-2 bottom-2 grid place-content-center overflow-hidden p-1'>
+      <div
+        class={`z-40 widget absolute right-2 bottom-2 grid place-content-center overflow-hidden p-1`}
+      >
         <span
-          class={`i-mdi-cog transition cursor-pointer p-4 transition ease-in-out duration-300 bg-gray-800 dark:bg-gray-200 outline-transparent border-red ${
-            showSetting() ? 'rotate-90' : 'hover:rotate-12'
+          class={`i-mdi-cog transition cursor-pointer p-3 transition ease-in-out duration-300 bg-gray-800 dark:bg-gray-200 outline-transparent border-red ${
+            showSetting() ? 'rotate-45' : 'hover:rotate-12'
           }`}
           onClick={() => {
             setShowSetting(!showSetting());
@@ -42,7 +44,7 @@ const SettingToggle: Component<Prop> = (props) => {
       </Show>
       <aside
         ref={settingPanel!}
-        class={`absolute right-0 top-0 h-full w-100 max-w-1/2 surface-base transition duration-300 z-30 overflow-y-auto ${
+        class={`absolute right-0 top-0 h-full w-full md:w-100 max-w-full md:max-w-1/2 surface-base transition duration-300 z-30 overflow-y-auto ${
           !showSetting() ? 'translate-x-full' : ''
         }`}
       >
