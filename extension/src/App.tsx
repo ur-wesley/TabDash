@@ -17,7 +17,6 @@ const Clock = lazy(() => import('./components/widgets/clock.jsx'));
 const Greeting = lazy(() => import('./components/widgets/greeting.jsx'));
 const Searchbar = lazy(() => import('./components/widgets/searchbar.jsx'));
 const SettingToggle = lazy(() => import('./components/settingToggle.jsx'));
-const ThemeToggle = lazy(() => import('./components/themeToggle.jsx'));
 const WeatherWidget = lazy(() => import('./components/widgets/weather.jsx'));
 const Author = lazy(() => import('./components/widgets/author.jsx'));
 const Shortcut = lazy(() => import('./components/widgets/shortcut.jsx'));
@@ -28,7 +27,6 @@ import {
   refreshImage,
   refreshWeather,
   removeShortcut,
-  setTheme,
   settingStore,
   weatherStore,
 } from './api/settingStore';
@@ -39,8 +37,43 @@ export const [locale, setLocale] = createSignal<AvailableLanguages>('en');
 const App: Component = () => {
   const $store = useStore(settingStore);
   const $weather = useStore(weatherStore);
+
+  const setTheme = () => {
+    let mode: Theme = 'dark';
+    let activeTheme: Theme = 'light';
+    const theme = $store().general.theme;
+    if (theme == 'automatic') {
+      if ($weather().additional) {
+        const now = Date.now();
+        const t =
+          now > $weather().additional.sunrise * 1000 &&
+          now > $weather().additional.sunset * 1000
+            ? 'dark'
+            : 'light';
+        mode = t == 'light' ? 'dark' : 'light';
+        activeTheme = t;
+      }
+    }
+    if (theme == 'system') {
+      if (
+        window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+      ) {
+        mode = 'light';
+        activeTheme = 'dark';
+      }
+    }
+    if (theme == 'light' || theme == 'dark') {
+      mode = theme == 'light' ? 'dark' : 'light';
+      activeTheme = theme;
+    }
+    document.getElementsByTagName('html')[0].classList.remove(mode!);
+    document.getElementsByTagName('html')[0].classList.add(activeTheme!);
+  };
+
   createEffect(async () => {
     if ($store().general) {
+      setTheme();
       setLocale($store().general.locale as AvailableLanguages);
       setFavicon();
       if ($store()!.background.active || $store()!.background.static) {
@@ -87,7 +120,7 @@ const App: Component = () => {
         </Match>
       </Switch>
       <div
-        class='h-screen w-full flex flex-col items-center p-4 justify-evenly overflow-hidden'
+        class='h-screen w-full flex flex-col items-center justify-evenly overflow-hidden'
         id='content'
       >
         <Show
@@ -168,12 +201,6 @@ const App: Component = () => {
           locale={$store()!.general.locale as AvailableLanguages}
         />
       </Show>
-      <ThemeToggle
-        update={(t: Theme) => {
-          setTheme(t);
-        }}
-        theme={$store().general.theme}
-      />
       <SettingToggle
         settings={$store()!}
         addShortcut={async (shortcut) => {
