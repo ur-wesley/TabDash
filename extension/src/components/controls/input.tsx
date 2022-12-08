@@ -3,15 +3,15 @@ import { Component, createSignal, Show } from 'solid-js';
 const Input: Component<Prop> = (props) => {
   const [error, setError] = createSignal(false);
   return (
-    <div class='flex items-center justify-between gap-4 z-20 my-4 box-border'>
+    <div class='flex items-center justify-between gap-4 z-20 my-3 box-border'>
       <Show when={props.label}>
-        <label for='input' class='block mb-2 label'>
+        <label for='input' class='block label'>
           {props.label}
         </label>
       </Show>
-      <div class='flex flex-col mx-5'>
+      <div class={`flex ${error() ? 'flex-col' : ''}`}>
         <input
-          class={`w-full p-2.5 surface-base outline-0 ring-2 transition ring-transparent rounded-lg focus:border-blue-500 
+          class={`p-2 surface-base outline-0 ring-2 transition ring-transparent rounded-lg focus:border-blue-500 
           hover:bg-slate-100 dark:hover:bg-slate-800 border-0 block
           dark:placeholder-gray-400 dark:text-white border ${
             error()

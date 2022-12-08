@@ -3,7 +3,7 @@ import { Component, createSignal, Show } from 'solid-js';
 const Textarea: Component<Prop> = (props) => {
   const [error, setError] = createSignal(false);
   return (
-    <div class='flex items-center justify-between gap-4 w-full z-20 my-4'>
+    <div class='flex items-center justify-between gap-4 w-full z-20 my-3'>
       <Show when={props.label}>
         <label for='input' class='block mb-2 label'>
           {props.label}
@@ -11,7 +11,7 @@ const Textarea: Component<Prop> = (props) => {
       </Show>
       <div class='flex flex-col grow'>
         <textarea
-          class={`surface-base outline-0 h-24 ring-2 ring-transparent rounded-lg focus:border-blue-500 transition hover:bg-slate-100 dark:hover:bg-slate-800 border-0 block p-2.5 dark:placeholder-gray-400 dark:text-white border ${
+          class={`surface-base outline-0 h-24 ring-2 ring-transparent rounded-lg focus:border-blue-500 transition hover:bg-slate-100 dark:hover:bg-slate-800 border-0 block p-2 dark:placeholder-gray-400 dark:text-white border ${
             error()
               ? 'focus:ring-red-500 dark:focus:ring-red-500'
               : 'focus:ring-blue-500 dark:focus:ring-blue-500'

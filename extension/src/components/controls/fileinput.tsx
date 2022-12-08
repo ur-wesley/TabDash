@@ -14,7 +14,7 @@ const FileInput: Component<Props> = (props) => {
   };
   return (
     <div
-      class={`grid place-content-center hover:border-blue-500 cursor-pointer surface-base my-4 h-24 p-2.5 rounded-xl transition border-2 border-dashed ${
+      class={`grid place-content-center hover:border-blue-500 cursor-pointer surface-base my-4 h-24 p-2 rounded-xl transition border-2 border-dashed ${
         dragOver() ? 'border-blue-500' : 'border-transparent'
       }`}
       onDragLeave={() => setDragOver(false)}
