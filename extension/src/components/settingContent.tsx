@@ -4,9 +4,11 @@ import {
   Setting,
   ShortcutSetting,
   ShortcutStyle,
+  theme,
+  Theme,
 } from '../../types/settings.js';
 // import createSettings from '../createSettings.jsx';
-import { getDefault, settingStore } from '../api/settingStore.js';
+import { getDefault, setTheme, settingStore } from '../api/settingStore.js';
 import { locale, setLocale } from '../App.jsx';
 import {
   messages,
@@ -52,7 +54,6 @@ const SettingContent: Component<Prop> = (props) => {
           placeholder={props.settings.general.locale}
           value={props.settings.general.locale}
           onInput={(e: string) => {
-            props.settings.general.locale = e as AvailableLanguages;
             setLocale(e as AvailableLanguages);
             settingStore.setKey('general', {
               ...props.settings.general,
@@ -61,6 +62,20 @@ const SettingContent: Component<Prop> = (props) => {
             props.onWeatherUpdate();
           }}
           options={availableLanguages.map((l) => ({ value: l, name: l }))}
+        />
+        <Select
+          label={messages.theme[locale()]}
+          value={props.settings.general.theme}
+          onInput={(e: string) => {
+            settingStore.setKey('general', {
+              ...props.settings.general,
+              theme: e as Theme,
+            });
+          }}
+          options={theme.map((t: Theme) => ({
+            value: t,
+            name: messages[t][locale()],
+          }))}
         />
         <Input
           label={messages.title[locale()]}
