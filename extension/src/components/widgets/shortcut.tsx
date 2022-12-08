@@ -12,13 +12,25 @@ const Shortcut: Component<Prop> = (props) => {
   const size = (): number => {
     switch (props.style.style) {
       case 'large':
-        return 125;
-      case 'medium':
         return 100;
-      case 'small':
+      case 'medium':
         return 75;
+      case 'small':
+        return 50;
       default:
         return 0;
+    }
+  };
+  const textSize = (): string => {
+    switch (props.style.style) {
+      case 'large':
+        return 'text-lg';
+      case 'medium':
+        return 'text-md';
+      case 'small':
+        return 'text-sm';
+      default:
+        return 'text-md';
     }
   };
   const [showMenu, setShowMenu] = createSignal(false);
@@ -71,7 +83,9 @@ const Shortcut: Component<Prop> = (props) => {
             />
           </Show>
           <Show when={!props.style.iconOnly}>
-            <span class='p-2 color-base text-lg'>{props.settings.name}</span>
+            <span class={`px-2 color-base ${textSize()}`}>
+              {props.settings.name}
+            </span>
           </Show>
         </a>
       </div>
