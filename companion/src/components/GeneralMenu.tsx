@@ -1,8 +1,11 @@
 import { Component, createSignal, onCleanup, onMount } from 'solid-js';
 import LangSelect from './LangSelect.jsx';
 import Link from './Link.jsx';
+import { language } from '../helper/store.js';
+import { useStore } from '@nanostores/solid';
 
 const GeneralMenu: Component<Props> = (props) => {
+  const $language = useStore(language);
   const [open, setOpen] = createSignal(false);
   onMount(() => window.addEventListener('resize', onresize));
   onCleanup(() => window.removeEventListener('resize', onresize));
@@ -24,10 +27,10 @@ const GeneralMenu: Component<Props> = (props) => {
           <LangSelect />
         </li>
         <li>
-          <Link href='/docs/'>Docs</Link>
+          <Link href={`/docs/${$language()}`}>Docs</Link>
         </li>
         <li>
-          <Link href={props.url}>Online Version</Link>
+          <Link href={props.url + '/' + $language()}>Online Version</Link>
         </li>
         <li>
           <Link href='https://github.com/ur-wesley/tabdash'>GitHub</Link>
