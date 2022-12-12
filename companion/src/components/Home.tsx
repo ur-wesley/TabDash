@@ -9,7 +9,7 @@ const Home: Component = () => {
     (location.href.split('/').at(-1) as AvailableLanguages) || 'en';
   onMount(() => {
     const img = document.querySelector('#tabdash_example') as HTMLImageElement;
-    window.addEventListener('mousemove', (e) => animateImage(e, img));
+    img.addEventListener('mousemove', (e) => animateImage(e, img));
   });
   onCleanup(() => {
     const img = document.querySelector('#tabdash_example') as HTMLImageElement;
@@ -20,15 +20,15 @@ const Home: Component = () => {
     const height = window.screen.height / 2;
     const centerX = e.clientX - width;
     const centerY = e.clientY - height;
-    const degX = centerX * 0.01;
+    const degX = centerX * 0.005;
     const degY = centerY * 0.01;
     element.style.transform = `perspective(1000px) scale(0.8) rotateX(${degX}deg) rotateY(${degY}deg)`;
   };
   return (
     <main class='flex flex-col h-full items-center gap-4 p-2 md:p-6 lg:p-12'>
-      <span class='text-6xl p-8 font-bold text-white/40'>
+      <span class='text-4xl md:text-6xl p-8 font-bold text-white/40'>
         {messages.welcome[language]}{' '}
-        <h1 class='text-7xl text-animation'>TabDash</h1>
+        <h1 class='text-5xl md:text-7xl text-animation'>TabDash</h1>
       </span>
       <div class='h-full flex flex-col justify-around md:grid md:grid-rows-2 md:grid-cols-2 md:grid-rows-1 md:items-center relative'>
         <section class='w-full p-2 grid place-content-center'>
