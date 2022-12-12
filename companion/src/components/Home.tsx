@@ -16,12 +16,11 @@ const Home: Component = () => {
     window.removeEventListener('mousemove', (e) => animateImage(e, img));
   });
   const animateImage = (e: MouseEvent, element: HTMLElement) => {
-    console.log('move');
     const width = window.screen.width / 2;
     const height = window.screen.height / 2;
     const centerX = e.clientX - width;
     const centerY = e.clientY - height;
-    const degX = centerX * 0.02;
+    const degX = centerX * 0.01;
     const degY = centerY * 0.01;
     element.style.transform = `perspective(1000px) rotateX(${degX}deg) rotateY(${degY}deg)`;
   };
