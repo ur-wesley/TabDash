@@ -23,6 +23,9 @@ const onlineVersion = `${url.protocol}//online.${url.host}`;
       <GeneralMenu client:only='solid-js' url={onlineVersion} />
       <slot />
     </div>
+    <script>
+      import 'uno.css';
+    </script>
     <style is:global>
       html {
         font-family: 'Inter', monospace;
