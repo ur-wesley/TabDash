@@ -22,7 +22,7 @@ const Home: Component = () => {
     const centerY = e.clientY - height;
     const degX = centerX * 0.01;
     const degY = centerY * 0.01;
-    element.style.transform = `perspective(1000px) rotateX(${degX}deg) rotateY(${degY}deg)`;
+    element.style.transform = `perspective(1000px) scale(0.8) rotateX(${degX}deg) rotateY(${degY}deg)`;
   };
   return (
     <main class='flex flex-col h-full items-center gap-4 p-2 md:p-6 lg:p-12'>
@@ -58,9 +58,8 @@ const Home: Component = () => {
             id='tabdash_example'
             src='/homescreen.png'
             alt='example screen'
-            style='transform: translateZ(80px) scale(1);'
             loading='lazy'
-            class='rounded-xl'
+            class='rounded-xl scale-80'
           />
         </section>
       </div>
