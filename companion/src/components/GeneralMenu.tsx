@@ -14,14 +14,14 @@ const GeneralMenu: Component<Props> = (props) => {
     <div class='sticky top-0 w-full flex justify-between items-center bg-light-100/70 h-14 px-2 backdrop-blur-md'>
       <a href='/' class='flex h-full items-center'>
         <img src='/favicon.svg' alt='tabdash icon' class='w-full h-full p-2' />
-        <h3 class='text-4xl text-gray-600'>TabDash</h3>
+        <h3 class='text-4xl text-gray-600 px-2'>TabDash</h3>
       </a>
       <ul
         class={`${
           open()
-            ? 'flex wrap justify-around gap-4 w-full h-32 bg-blue-100 top-0 left-0 pt-12 translate-y-0 opacity-100'
+            ? 'flex flex-col justify-around w-full h-70 bg-blue-100 top-0 left-0 pt-10 translate-y-0 opacity-100'
             : '-translate-y-full opacity-0 md:opacity-100 md:translate-y-0'
-        } transition absolute md:flex md:gap-2 list-none md:relative md:justify-center items-center p-0 border-none`}
+        } transition absolute md:flex gap-4 list-none md:relative md:justify-center items-center p-0 border-none`}
       >
         <li>
           <LangSelect />
