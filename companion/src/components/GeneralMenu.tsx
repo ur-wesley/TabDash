@@ -33,28 +33,28 @@ const GeneralMenu: Component<Props> = (props) => {
           <Link href='https://github.com/ur-wesley/tabdash'>GitHub</Link>
         </li>
       </ul>
-      <div
+      <button
         class='block md:hidden cursor-pointer p-2'
         onclick={() => setOpen(!open())}
       >
-        <div class='flex flex-col gap-2'>
-          <span
-            class={`w-8 h-0.5 bg-gray-600 transition ${
-              open() ? 'transform -rotate-45 translate-y-2' : ''
+        <div class='flex flex-col h-12 w-12 justify-center group'>
+          <div
+            class={`w-8 h-0.5 bg-gray-600 transition my-1 ${
+              open() ? 'transform rotate-45 translate-y-2.5' : ''
             }`}
-          ></span>
-          <span
-            class={`w-8 h-0.5 bg-gray-600 transition ${
+          ></div>
+          <div
+            class={`w-8 h-0.5 bg-gray-600 transition my-1 ${
               open() ? 'opacity-0' : ''
             }`}
-          ></span>
-          <span
-            class={`h-0.5 bg-gray-600 transition ${
-              open() ? 'transform rotate-45 -translate-y-2 w-8' : 'w-5'
+          ></div>
+          <div
+            class={`h-0.5 bg-gray-600 transition  my-1 ${
+              open() ? 'transform -rotate-45 -translate-y-2.5 w-8' : 'w-5'
             }`}
-          ></span>
+          ></div>
         </div>
-      </div>
+      </button>
     </div>
   );
 };
