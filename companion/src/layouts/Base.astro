@@ -1,5 +1,7 @@
 ---
-import GeneralMenu from '../components/GeneralMenu.astro';
+import GeneralMenu from '../components/GeneralMenu';
+const url = Astro.url;
+const onlineVersion = `${url.protocol}//online.${url.host}`;
 ---
 
 <!DOCTYPE html>
@@ -10,17 +12,20 @@ import GeneralMenu from '../components/GeneralMenu.astro';
     <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
     <title>TabDash</title>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;300;400;500;600;700;800;900&display=swap');
+      @font-face {
+        font-family: Inter;
+        src: url('/Inter.ttf');
+      }
     </style>
   </head>
-  <body>
-    <div class='flex flex-col h-screen'>
-      <GeneralMenu />
+  <body class='bgcolor h-screen w-screen overflow-hidden'>
+    <div class='flex flex-col h-full'>
+      <GeneralMenu client:only='solid-js' url={onlineVersion} />
       <slot />
     </div>
     <style is:global>
       html {
-        font-family: 'Inconsolata', monospace;
+        font-family: 'Inter', monospace;
         background-color: #f6f6f6;
         margin: 0;
       }
@@ -31,6 +36,28 @@ import GeneralMenu from '../components/GeneralMenu.astro';
         padding: 4px;
         font-size: small;
         border-radius: 4px;
+      }
+    </style>
+    <style>
+      .bgcolor {
+        animation: colorchange 45s;
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: infinite;
+        animation-play-state: running;
+        background: linear-gradient(45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+        background-size: 400% 400%;
+      }
+
+      @keyframes colorchange {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
       }
     </style>
   </body>

@@ -16,7 +16,10 @@ import HelpMenu from '../components/HelpMenu.astro';
     <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
     <title>{title}</title>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;300;400;500;600;700;800;900&display=swap');
+      @font-face {
+        font-family: Inter;
+        src: url('/Inter.ttf');
+      }
     </style>
   </head>
   <body class='flex flex-col'>
@@ -31,7 +34,7 @@ import HelpMenu from '../components/HelpMenu.astro';
   </body>
   <style is:global>
     html {
-      font-family: 'Inconsolata', monospace;
+      font-family: 'Inter', 'Roboto', monospace;
       background-color: #f6f6f6;
       margin: 0;
       overflow: hidden;
@@ -40,7 +43,7 @@ import HelpMenu from '../components/HelpMenu.astro';
       margin: 0;
     }
     code {
-      font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
+      font-family: 'Inter', Monaco, Lucida Console, Liberation Mono,
         DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
       background-color: gainsboro;
       padding: 4px;
