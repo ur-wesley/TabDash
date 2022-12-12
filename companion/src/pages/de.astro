@@ -4,17 +4,5 @@ import Home from '../components/Home.jsx';
 ---
 
 <Base>
-  <main>
-    <Home client:only='solid-js' />
-  </main>
+  <Home client:only='solid-js' />
 </Base>
-
-<style>
-  main {
-    margin: auto;
-    max-width: 60ch;
-    display: grid;
-    place-content: center;
-    height: 100%;
-  }
-</style>
