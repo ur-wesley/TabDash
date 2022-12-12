@@ -4,8 +4,8 @@ export type AvailableLanguages = typeof availableLanguages[number];
 
 export const messages = {
   welcome: {
-    de: "Willkommen bei TabDash",
-    en: "Welcome to TabDash",
+    de: "Willkommen bei",
+    en: "Welcome to",
   },
   features: {
     de: ``,
