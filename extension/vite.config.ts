@@ -2,13 +2,15 @@ import { defineConfig, loadEnv } from "vite";
 import solidPlugin from "vite-plugin-solid";
 import Unocss from "unocss/vite";
 import presetUno from "@unocss/preset-uno";
-import presetAttributify from "@unocss/preset-attributify";
+// @ts-ignore
 import presetIcons from "@unocss/preset-icons";
 import { writeFile } from 'node:fs/promises';
 
 export default defineConfig(({ command, mode }) => {
+  console.log(command)
   if (command == 'build') {
     buildBackgroundJS(mode);
+    buildManifest();
   }
   return {
     plugins: [
@@ -26,7 +28,7 @@ export default defineConfig(({ command, mode }) => {
             "z-20 text-black bg-light-100/20 dark:bg-dark-100/20 dark:text-light-800 rounded-2xl backdrop-blur-md",
           label: "text-sm font-medium text-dark-300 dark:text-light-700",
         },
-        presets: [presetUno(), presetAttributify(), presetIcons()],
+        presets: [presetUno(), presetIcons()],
       }),
     ],
     server: {
@@ -42,32 +44,92 @@ export default defineConfig(({ command, mode }) => {
 });
 
 import pkg from './package.json';
-import manifest from './public/manifest.json';
 const buildBackgroundJS = async (mode: string) => {
-  const newManifest = { ...manifest, version: pkg.version };
   const env = loadEnv(mode, process.cwd(), '');
-  await writeFile('./public/manifest.json', JSON.stringify(newManifest, null, 2));
   await writeFile('./public/background.js',
     `const isOnChrome = navigator.userAgent.includes('Chrome');
-const newTab = () => chrome.tabs.create({ url: 'chrome://newtab' });
-const url = \`${env.VITE_COMPANION_BASE}/\`;
-chrome.runtime.onInstalled.addListener(function (d) {
-  if (d?.reason === 'install') {
-    const key = crypto.randomUUID().split('-')[0] + '_' + Date.now();
-    chrome.storage.local.set({ key });
-    chrome.runtime.setUninstallURL(
-      url +
-        (isOnChrome ? 'api/chrome/goodbye' : 'api/firefox/goodbye') +
-        '?key=' +
-        key
-    );
-    fetch(
-      url +
-        (isOnChrome ? 'api/chrome/install' : 'api/firefox/install') +
-        '?key=' +
-        key
-    );
-    newTab();
+    const newTab = () => chrome.tabs.create({ url: 'chrome://newtab' });
+    const url = \`${env.VITE_COMPANION_BASE}\`;
+    chrome.runtime.onInstalled.addListener(function (d) {
+      if (d?.reason === 'install') {
+        const key = crypto.randomUUID().split('-')[0] + '_' + Date.now();
+        chrome.storage.local.set({ key });
+        chrome.runtime.setUninstallURL(
+          \`$\{url\}/api/\$\{\isOnChrome ? 'chrome' : 'firefox'}/goodbye?key=\$\{key\}\`
+      );
+      fetch(\`$\{url\}/api/\$\{\isOnChrome ? 'chrome' : 'firefox'}/install?key=\$\{key\}\`);
+      newTab();
+    }
+  });`)
+}
+
+import manifest from './public/manifest.json';
+const buildManifest = async () => {
+  const browsers = ['firefox', 'chrome', 'edge'];
+  for (const browser of browsers) {
+    const newManifest = {
+      ...manifest,
+      manifest_version: browser == 'firefox' ? 2 : 3,
+      version: pkg.version,
+      background: setBackground(browser),
+      ...setAction(browser)
+    };
+    await writeFile(`./public/manifest.${browser}.json`, JSON.stringify(newManifest, null, 2));
   }
-});`)
+}
+
+const setBackground = (browser: string) => {
+  switch (browser) {
+    case 'firefox':
+      return { script: ['background.js'] }
+    case 'chrome':
+      return {
+        service_worker: 'background.js', type: "module",
+        "offline_enabled": true
+      }
+    case 'edge':
+      return {
+        service_worker: 'background.js', type: "module",
+        "offline_enabled": true
+      }
+    default:
+      return { script: ['background.js'] }
+  }
+}
+
+const setAction = (browser: string) => {
+  switch (browser) {
+    case 'firefox':
+      return {
+        browser_action: {
+          browser_style: true,
+          default_icon: "tabdash_128.png",
+          default_title: "__MSG_extensionName__"
+        }
+      }
+    case 'chrome':
+      return {
+        action: {
+          browser_style: true,
+          default_icon: "tabdash_128.png",
+          default_title: "__MSG_extensionName__"
+        }
+      }
+    case 'edge':
+      return {
+        action: {
+          browser_style: true,
+          default_icon: "tabdash_128.png",
+          default_title: "__MSG_extensionName__"
+        }
+      }
+    default:
+      return {
+        browser_action: {
+          browser_style: true,
+          default_icon: "tabdash_128.png",
+          default_title: "__MSG_extensionName__"
+        }
+      }
+  }
 }

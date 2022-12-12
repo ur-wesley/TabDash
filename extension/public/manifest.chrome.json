@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "__MSG_extensionName__",
   "short_name": "TabDash",
   "version": "0.2.9",
@@ -16,9 +16,9 @@
     "newtab": "index.html"
   },
   "background": {
-    "scripts": [
-      "background.js"
-    ]
+    "service_worker": "background.js",
+    "type": "module",
+    "offline_enabled": true
   },
   "permissions": [
     "storage",
@@ -26,5 +26,10 @@
     "geolocation",
     "search",
     "clipboardRead"
-  ]
+  ],
+  "action": {
+    "browser_style": true,
+    "default_icon": "tabdash_128.png",
+    "default_title": "__MSG_extensionName__"
+  }
 }

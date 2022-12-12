@@ -16,7 +16,7 @@
     "newtab": "index.html"
   },
   "background": {
-    "scripts": [
+    "script": [
       "background.js"
     ]
   },
@@ -26,5 +26,10 @@
     "geolocation",
     "search",
     "clipboardRead"
-  ]
+  ],
+  "browser_action": {
+    "browser_style": true,
+    "default_icon": "tabdash_128.png",
+    "default_title": "__MSG_extensionName__"
+  }
 }
