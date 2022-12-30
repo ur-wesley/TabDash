@@ -30,7 +30,7 @@ const SettingToggle: Component<Prop> = (props) => {
       const t = event.target as Node;
       if (!settingPanel || t.nodeName == 'SPAN') return;
       if (settingPanel && !settingPanel.contains(event.target as Node)) {
-        animateWidgets();
+        animateWidgets(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -56,8 +56,8 @@ const SettingToggle: Component<Prop> = (props) => {
     settingPanel.style.height = `${height}px`;
   };
 
-  const animateWidgets = () => {
-    setShowSetting(!showSetting());
+  const animateWidgets = (state: boolean = true) => {
+    setShowSetting(state);
     const el = document.getElementById('content');
     if (showSetting()) {
       el!.classList.add(
@@ -83,7 +83,7 @@ const SettingToggle: Component<Prop> = (props) => {
           class={`i-mdi-cog transition cursor-pointer p-3 transition ease-in-out duration-300 bg-gray-800 dark:bg-gray-200 outline-transparent border-red ${
             showSetting() ? 'rotate-45' : 'hover:rotate-12'
           }`}
-          onClick={animateWidgets}
+          onClick={() => animateWidgets(true)}
         />
       </div>
       <Show when={showSetting()}>
@@ -102,7 +102,7 @@ const SettingToggle: Component<Prop> = (props) => {
       >
         <Show when={showSetting()}>
           <div
-            class='sticky top-0 md:hidden h-12 w-full z-40 bg-blue/60 dark:bg-blue/40 cursor-row-resize grid place-content-center'
+            class='sticky top-0 md:hidden h-12 backdrop-blur-md w-full z-40 bg-blue/60 dark:bg-blue/40 cursor-row-resize grid place-content-center'
             onpointerdown={clickstart}
           >
             <div class='i-mdi-arrow-split-horizontal bg-white dark:bg-black'></div>
