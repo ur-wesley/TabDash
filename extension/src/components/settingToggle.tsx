@@ -83,7 +83,7 @@ const SettingToggle: Component<Prop> = (props) => {
           class={`i-mdi-cog transition cursor-pointer p-3 transition ease-in-out duration-300 bg-gray-800 dark:bg-gray-200 outline-transparent border-red ${
             showSetting() ? 'rotate-45' : 'hover:rotate-12'
           }`}
-          onClick={() => animateWidgets(true)}
+          onClick={() => animateWidgets(!showSetting())}
         />
       </div>
       <Show when={showSetting()}>
