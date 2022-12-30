@@ -3,6 +3,7 @@ import solidPlugin from "vite-plugin-solid";
 import Unocss from "unocss/vite";
 import presetUno from "@unocss/preset-uno";
 import presetAttributify from "@unocss/preset-attributify";
+// @ts-ignore
 import presetIcons from "@unocss/preset-icons";
 import { writeFile } from 'node:fs/promises';
 
@@ -37,6 +38,7 @@ export default defineConfig(({ command, mode }) => {
     },
     build: {
       target: "esnext",
+      minify: false
     },
   }
 });
