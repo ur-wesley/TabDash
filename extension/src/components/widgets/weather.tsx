@@ -4,7 +4,7 @@ import { WeatherData } from '../../api/weather.js';
 
 const WeatherWidget: Component<Prop> = (props) => {
   return (
-    <Show when={props.data}>
+    <Show when={props.data.weather}>
       <div class='flex flex-col items-center widget'>
         <div class='flex items-center'>
           <Show when={props.setting.showIcon}>
