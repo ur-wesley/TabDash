@@ -1,24 +1,22 @@
 ---
 layout: ../../../layouts/Help.astro
-title: Management
+title: Administration
 ---
 
-# Setting Management
+# Administration
 
-There are two ways to manage your settings. You can save it encrypted to the cloud, or you can locally save it to a file.
-If the `save online` toggle is active, the settings get saved in the cloud.
+There are two ways to manage the settings. The settings can be encrypted online, or saved locally to a file. If 'Save online' is enabled, the settings will be saved online.
 
-### export
+### Export
 
-Hitting the export button without the `save online` option, TabDash copies the settings to the clipboard. If the toggle is active,
-you can save the settings encrypted\* with your password to the cloud.
+If the `Save online` option is not active, TabDash copies the settings to the clipboard, and from there they can be saved locally. If the option is active, the settings can be saved encrypted* with a password. 
 
-### import
+### Import
 
-Hitting the import button without the `save online` option, TabDash tries to parse the settings from your local clipboard. If the toggle is active, you have to enter a valid setting id and a password, to recover your settings from the cloud.
+If the 'Save online' option is not active, TabDash will try to restore the settings from the clipboard. If the option is active, an existing ID and password must be entered to restore the settings.
 
-### reset
+### Reset
 
-The reset button deletes all settings and set the default settings.
+All data will be deleted and reset to default settings.
 
-> _\***encryption** means that the content is encrypted with a passwort. The passwort wont be saved. The en- and decryption happens on the server site._
+> _\***Encryption** means that the content will be encrypted with a password. The password is not stored anywhere and cannot be recovered. The encryption and decryption is done on the server side._

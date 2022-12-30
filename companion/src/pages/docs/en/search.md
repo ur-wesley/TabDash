@@ -3,6 +3,8 @@ layout: ../../../layouts/Help.astro
 title: Search
 ---
 
-# Search
+# search
 
-tbd
+### Search engine
+
+### Focus on search bar

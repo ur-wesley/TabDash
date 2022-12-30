@@ -5,4 +5,6 @@ title: Time
 
 # Time
 
-tbd
+### Show seconds
+
+activate the switch to display the seconds in the digital clock.
