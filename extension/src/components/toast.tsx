@@ -52,9 +52,9 @@ const Toast: Component<Prop> = (props) => {
     <div
       class={`${notificationStyle(
         props.notification.type
-      )} px-4 py-2 block backdrop-blur-md top-0 rounded-lg relative w-64 flex-wrap flex flex-col overflow-hidden self-end`}
+      )} backdrop-blur-md top-0 rounded-0 md:rounded-lg relative w-full md:w-64 flex-wrap flex flex-col overflow-hidden self-end`}
     >
-      <span>{props.notification.msg}</span>
+      <span class="p-2">{props.notification.msg}</span>
       <button
         class='border-none bg-transparent absolute top-0 right-0 cursor-pointer p-1'
         onclick={() => props.remove(props.notification.id)}
