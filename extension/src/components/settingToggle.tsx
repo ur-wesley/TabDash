@@ -93,8 +93,8 @@ const SettingToggle: Component<Prop> = (props) => {
         ref={settingPanel!}
         class={`absolute right-0 bottom-0 md:top-0 h-full w-full md:w-100 max-w-full md:max-w-1/2 surface-base transition duration-300 z-30 overflow-y-auto ${
           !showSetting()
-            ? 'translate-y-full md:translate-y-0 md:translate-x-full'
-            : ''
+            ? 'opacity-0 translate-y-full md:translate-y-0 md:translate-x-full'
+            : 'opacity-100'
         }`}
         onpointermove={clickmove}
         onpointerleave={clickend}
@@ -102,7 +102,7 @@ const SettingToggle: Component<Prop> = (props) => {
       >
         <Show when={showSetting()}>
           <div
-            class='sticky top-0 md:hidden h-12 backdrop-blur-md w-full z-40 bg-blue/60 dark:bg-blue/40 cursor-row-resize grid place-content-center'
+            class='sticky top-0 md:hidden h-12 backdrop-blur-sm w-full z-40 bg-blue/60 dark:bg-blue/40 cursor-row-resize grid place-content-center'
             onpointerdown={clickstart}
           >
             <div class='i-mdi-arrow-split-horizontal bg-white dark:bg-black'></div>
