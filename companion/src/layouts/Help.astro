@@ -4,6 +4,7 @@ export interface Props {
   title: string;
 }
 
+import '../pages/index.scss';
 import Layout from './Layout.astro';
 const { frontmatter } = Astro.props;
 ---
@@ -12,38 +13,4 @@ const { frontmatter } = Astro.props;
   <article>
     <slot />
   </article>
-  <style lang='scss' is:global>
-    article {
-      display: flex;
-      flex-direction: column;
-      height: calc(100vh - 6rem);
-      overflow-x: scroll;
-      padding: 1rem;
-      margin: 1rem;
-      max-width: 120ch;
-      width: 80vmin;
-      background: white;
-      border-radius: 12px;
-      h1 {
-        font-size: 2rem;
-        font-weight: bold;
-        text-decoration: underline;
-      }
-      h3 {
-        font-size: 1.4rem;
-      }
-      p {
-        padding: 0.6em 1rem;
-      }
-      blockquote {
-        margin: 2rem;
-        padding: 0.4rem;
-        border: 2px solid gainsboro;
-        border-radius: 8px;
-      }
-      a {
-        text-decoration: underline;
-      }
-    }
-  </style>
 </Layout>

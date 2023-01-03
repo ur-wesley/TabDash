@@ -39,6 +39,7 @@ export default defineConfig(({ command, mode }) => {
     },
     build: {
       target: "esnext",
+      minify: false
     },
   }
 });

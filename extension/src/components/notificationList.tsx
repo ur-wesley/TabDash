@@ -33,7 +33,7 @@ const NotificationList: Component<Prop> = (props) => {
   return (
     <Show when={toasts().length > 0}>
       <Portal>
-        <div class='absolute top-4 right-4 z-50 flex flex-col justify-end gap-2'>
+        <div class='absolute top-0 left-0 md:left-auto w-full md:top-4 md:right-4 z-50 flex flex-col justify-end gap-0 md:gap-2'>
           <For each={toasts()}>
             {(notification) => {
               return <Toast notification={notification} remove={removeToast} />;

@@ -3,6 +3,6 @@ layout: ../../../layouts/Help.astro
 title: Date
 ---
 
-# Date
+# date
 
-tbd
+Set the language at [General](/docs/en/general) to change the date format.
