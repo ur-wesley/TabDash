@@ -20,27 +20,12 @@ const onlineVersion = `${url.protocol}//online.${url.host}`;
   </head>
   <body class='bgcolor h-screen w-screen overflow-hidden'>
     <div class='flex flex-col h-full'>
-      <GeneralMenu client:only='solid-js' url={onlineVersion} />
+      <GeneralMenu client:load url={onlineVersion} />
       <slot />
     </div>
     <script>
       import 'uno.css';
     </script>
-    <style is:global>
-      html {
-        font-family: 'Inter', monospace;
-        background-color: #f6f6f6;
-        margin: 0;
-      }
-      code {
-        font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-          DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-        background-color: gainsboro;
-        padding: 4px;
-        font-size: small;
-        border-radius: 4px;
-      }
-    </style>
     <style>
       .bgcolor {
         animation: colorchange 45s;
