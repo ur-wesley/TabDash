@@ -91,13 +91,21 @@ export interface SearchSetting {
   engine: string;
 }
 
-// export interface WidgetSetting {
-//   textSize: number;
-//   shadow: number;
-//   font: string;
-//   weight: number;
-//   opcaity: number;
-// }
+export interface WidgetSetting {
+  light: WidgetAppereance;
+  dark: WidgetAppereance;
+}
+
+export interface WidgetAppereance {
+  textColor: string,
+  textSize: string,
+  background: string,
+  borderRadius: string,
+  shadow: string,
+  font: string,
+  weight: string,
+  backdrop: BackdropSetting
+}
 
 export interface CacheSetting {
   images: any[];
