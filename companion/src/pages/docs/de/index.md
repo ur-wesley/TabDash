@@ -1,5 +1,6 @@
 ---
-layout: ../../../layouts/Help.astro
+layout: ../../../layouts/Layout.astro
+title: Dokumentation
 ---
 
 # TabDash Dokumentation

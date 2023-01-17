@@ -1,6 +1,5 @@
 ---
-layout: ../../../layouts/Help.astro
-title: Layout
+layout: ../../../layouts/Layout.astro
 ---
 
 # layout
