@@ -11,6 +11,9 @@ const onlineVersion = `${url.protocol}//online.${url.host}`;
     <meta name='viewport' content='width=device-width' />
     <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
     <title>TabDash</title>
+    <script>
+      import 'uno.css';
+    </script>
     <style>
       @font-face {
         font-family: Inter;
@@ -18,14 +21,9 @@ const onlineVersion = `${url.protocol}//online.${url.host}`;
       }
     </style>
   </head>
-  <body class='bgcolor h-screen w-screen overflow-hidden'>
-    <div class='flex flex-col h-full'>
-      <GeneralMenu client:load url={onlineVersion} />
-      <slot />
-    </div>
-    <script>
-      import 'uno.css';
-    </script>
+  <body class='bgcolor h-screen w-screen flex flex-col overflow-auto'>
+    <GeneralMenu client:load url={onlineVersion} />
+    <slot />
     <style>
       .bgcolor {
         animation: colorchange 45s;
