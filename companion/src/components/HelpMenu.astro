@@ -1,12 +1,11 @@
 ---
+import type { MarkdownInstance } from 'astro';
+export interface Props {
+  settings: MarkdownInstance<Record<string, any>>[];
+}
+const { settings } = Astro.props;
 const _len = Astro.url.toString().split('/');
 const title = _len[_len.length - 1];
-const allSettings = await Astro.glob('../pages/docs/**/*.md');
-const settings = allSettings.filter((s) => {
-  const l = s.file?.split('/');
-  const lang = l[l.length - 2];
-  return lang == _len[4];
-});
 ---
 
 <aside>
@@ -46,7 +45,7 @@ const settings = allSettings.filter((s) => {
   ul {
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
+    gap: 0.6rem;
     margin: 1rem 0;
     padding: 0;
     max-width: max-content;
@@ -54,7 +53,7 @@ const settings = allSettings.filter((s) => {
   li {
     list-style: none;
     background-color: slategray;
-    padding: 0.8rem 1.2rem;
+    padding: 0.4rem 1.2rem;
     border-radius: 8px;
     color: white;
     cursor: pointer;
