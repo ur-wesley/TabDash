@@ -69,9 +69,8 @@ export const features = [
       // fr: "Cette fonction permet à l'utilisateur de consulter la météo actuelle et les prévisions pour sa localisation sans avoir à ouvrir une page supplémentaire.",
       // es: "Esta función permite al usuario ver el tiempo actual y el pronóstico para su ubicación sin tener que abrir una página adicional."
     },
-    img: "/images/feature1.png",
-  },
-  {
+    img: "/images/feature1.png"
+  }, {
     title: {
       de: "Layout bearbeiten",
       en: "Edit layout",
@@ -84,9 +83,8 @@ export const features = [
       // fr: "L'utilisateur a la possibilité de personnaliser l'apparence et la fonctionnalité de l'onglet en modifiant la taille et la disposition des widgets et en ajoutant ou en supprimant des widgets supplémentaires.",
       // es: "El usuario tiene la capacidad de personalizar la apariencia y la funcionalidad de la pestaña a su gusto cambiando el tamaño y la disposición de los widgets y agregando o eliminando widgets adicionales."
     },
-    img: "/images/feature2.png",
-  },
-  {
+    img: "/images/feature2.png"
+  }, {
     title: {
       de: "Hintergründe bearbeiten",
       en: "Edit backgrounds",
@@ -99,9 +97,8 @@ export const features = [
       // fr: "L'utilisateur peut personnaliser l'apparence de l'onglet en sélectionnant ou en téléchargeant sa propre image d'arrière-plan.",
       // es: "El usuario puede personalizar la apariencia de la pestaña seleccionando o cargando su propia imagen de fondo."
     },
-    img: "/images/feature3.png",
-  },
-  {
+    img: "/images/feature3.png"
+  }, {
     title: {
       de: "Schnelllinks erstellen",
       en: "Create quick links",
@@ -114,9 +111,8 @@ export const features = [
       // fr: "Cette fonction permet à l'utilisateur d'avoir un accès rapide à ses sites Web préférés en les enregistrant dans la barre de raccourcis.",
       // es: "Esta función permite al usuario tener acceso rápido a sus sitios web favoritos al guardarlos en la barra de accesos rápidos."
     },
-    img: "/images/feature4.png",
-  },
-  {
+    img: "/images/feature4.png"
+  }, {
     title: {
       de: "Mehrsprachigkeit",
       en: "Multilingual",
