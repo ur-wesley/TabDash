@@ -1,80 +1,80 @@
 ---
-import HelpMenu from '../components/HelpMenu.astro';
-import GeneralMenu from '../components/GeneralMenu';
-import '../pages/index.scss';
+import HelpMenu from "../components/HelpMenu.astro";
+import GeneralMenu from "../components/GeneralMenu";
+import "../pages/index.scss";
 
 const { frontmatter } = Astro.props;
 const url = Astro.url;
 const onlineVersion = `${url.protocol}//online.${url.host}`;
 
-const _len = Astro.url.toString().split('/');
-const allSettings = await Astro.glob('../pages/docs/**/*.md');
+const _len = Astro.url.toString().split("/");
+const allSettings = await Astro.glob("../pages/docs/**/*.md");
 const settings = allSettings.filter((s) => {
-  const l = s.file?.split('/');
-  const lang = l[l.length - 2];
-  return lang == _len[4] && s.frontmatter.title;
+	const l = s.file?.split("/");
+	const lang = l[l.length - 2];
+	return lang == _len[4] && s.frontmatter.title;
 });
 const currentIndex = settings.findIndex(
-  (m) => m.frontmatter.title == frontmatter.title
+	(m) => m.frontmatter.title == frontmatter.title
 );
 const prev = currentIndex - 1 > -1 ? settings[currentIndex - 1] : null;
 const next =
-  currentIndex + 1 < settings.length ? settings[currentIndex + 1] : null;
+	currentIndex + 1 < settings.length ? settings[currentIndex + 1] : null;
 ---
 
 <!DOCTYPE html>
 <html lang='en'>
-  <head>
-    <meta charset='UTF-8' />
-    <meta name='viewport' content='width=device-width' />
-    <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
-    <title>{frontmatter.title}</title>
-    <style>
-      @font-face {
-        font-family: Inter;
-        src: url('/Inter.ttf');
-      }
-    </style>
-    <script>
-      import 'uno.css';
-      document.querySelector<HTMLElement>('#mobileMenu')!.onclick = () => {
-        const el = document.querySelector('#navigation')!;
-        el.classList.toggle('translate-x-0');
-        el.classList.toggle('-translate-x-full');
-      };
-    </script>
-  </head>
-  <body class='flex flex-col gap-3 transition'>
-    <GeneralMenu client:load url={onlineVersion} />
-    <div class='lg:hidden flex justify-center items-center w-full'>
-      <a href={prev?.url}>
-        <span class='py-2 px-4'>
-          {prev ? `< ${prev.frontmatter.title}` : ''}
-        </span>
-      </a>
-      <span id='mobileMenu' class='py-2 px-4 cursor-pointer'>Menu</span>
-      <a href={next?.url}>
-        <span class='py-2 px-4'>
-          {next ? `${next.frontmatter.title} >` : ''}
-        </span>
-      </a>
-    </div>
-    <div class='flex justify-around w-screen h-full overflow-hidden relative'>
-      <div class='hidden lg:block'>
-        <HelpMenu settings={settings} />
-      </div>
-      <div
-        id='navigation'
-        class='block lg:hidden absolute w-full z-20 bg-gray-100/10 backdrop-blur-md transform -translate-x-full lg:translate-x-0 transition'
-      >
-        <HelpMenu settings={settings} />
-      </div>
-      <article
-        class='overflow-y-auto flex flex-col w-full p-2 lg:w-200 mx-4 lg:m-0 bg-white dark:bg-dark-600 dark:color-light rounded-lg'
-      >
-        <slot />
-      </article>
-      <div class='hidden lg:block'></div>
-    </div>
-  </body>
+	<head>
+		<meta charset='UTF-8' />
+		<meta name='viewport' content='width=device-width' />
+		<link rel='icon' type='image/svg+xml' href='/favicon.svg' />
+		<title>{frontmatter.title}</title>
+		<style>
+			@font-face {
+				font-family: Inter;
+				src: url("/Inter.ttf");
+			}
+		</style>
+		<script>
+			import "uno.css";
+			document.querySelector<HTMLElement>("#mobileMenu")!.onclick = () => {
+				const el = document.querySelector("#navigation")!;
+				el.classList.toggle("translate-x-0");
+				el.classList.toggle("-translate-x-full");
+			};
+		</script>
+	</head>
+	<body class='flex flex-col gap-3 transition'>
+		<GeneralMenu client:load url={onlineVersion} />
+		<div class='lg:hidden flex justify-center items-center w-full'>
+			<a href={prev?.url}>
+				<span class='py-2 px-4'>
+					{prev ? `< ${prev.frontmatter.title}` : ""}
+				</span>
+			</a>
+			<span id='mobileMenu' class='py-2 px-4 cursor-pointer'>Menu</span>
+			<a href={next?.url}>
+				<span class='py-2 px-4'>
+					{next ? `${next.frontmatter.title} >` : ""}
+				</span>
+			</a>
+		</div>
+		<div class='flex justify-around w-screen h-full overflow-hidden relative'>
+			<div class='hidden lg:block'>
+				<HelpMenu settings={settings} />
+			</div>
+			<div
+				id='navigation'
+				class='block lg:hidden absolute w-full z-20 bg-gray-100/10 backdrop-blur-md transform -translate-x-full lg:translate-x-0 transition'
+			>
+				<HelpMenu settings={settings} />
+			</div>
+			<article
+				class='overflow-y-auto flex flex-col w-full p-2 lg:w-200 mx-4 lg:m-0 bg-white dark:bg-dark-600 dark:color-light rounded-lg'
+			>
+				<slot />
+			</article>
+			<div class='hidden lg:block'></div>
+		</div>
+	</body>
 </html>
