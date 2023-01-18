@@ -27,26 +27,32 @@ export const messages = {
     de: `Im Moment nicht als Erweiterung für Microsoft Edge verfügbar. Wenn interesse besteht, öffne ein Ticket bei GitHub.`,
     en: `Not available as extension for Microsoft Edge right now. If you are interested, please open an issue on GitHub.`,
   },
-  "privacy": {
-    de: ``,
-    en: ``,
+  source: {
+    de: 'Quelle',
+    en: 'source',
   },
-  "github extension": {
+  "extension source": {
     link: 'https://github.com/ur-wesley/TabDash/tree/main/extension',
-    de: ``,
-    en: ``,
+    de: `Erweiterung`,
+    en: `extension`,
   },
-  "github companion": {
+  "documentation source": {
     link: 'https://github.com/ur-wesley/TabDash/tree/main/companion',
-    de: ``,
-    en: ``,
+    de: `Dokumentation`,
+    en: `documentation`,
   },
   "made in": {
     de: "Entwickelt in Deutschland",
-    en: "Made in Germany",
+    en: "developed in Germany",
     fr: "Fabriqué en Allemagne",
     es: "Hecho en Alemania"
   },
+  privacy: {
+    de: "Datenschutz",
+    en: "privacy",
+    fr: "confidentialité",
+    es: "privacidad"
+  }
 };
 
 export const features = [
