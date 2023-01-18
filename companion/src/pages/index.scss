@@ -19,16 +19,7 @@ code {
 }
 
 article {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 6rem);
-  overflow-x: scroll;
-  padding: 1rem;
-  margin: 1rem;
-  max-width: 120ch;
-  width: 80vmin;
-  background: white;
-  border-radius: 12px;
+  height: calc(100vh - 160px);
   h1 {
     font-size: 2rem;
     font-weight: bold;
@@ -48,5 +39,22 @@ article {
   }
   a {
     text-decoration: underline;
+  }
+}
+
+@keyframes animateIn {
+  from {
+    transform: translateY(-50px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes animateOut {
+  from {
+    transform: translateY(50px) scale(80%);
+  }
+  to {
+    transform: translateY(0) scale(80%);
   }
 }
