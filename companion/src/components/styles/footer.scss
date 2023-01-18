@@ -1,0 +1,16 @@
+footer {
+  a {
+    cursor: pointer;
+    text-decoration: underline;
+    transition: all 300ms;
+    &:hover {
+      color: rgb(20, 142, 255);
+    }
+  }
+  ul {
+    li {
+      display: flex;
+      gap: 4px;
+    }
+  }
+}
