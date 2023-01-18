@@ -35,11 +35,10 @@ const GeneralMenu: Component<Props> = (props) => {
         w-full md:w-auto h-70 md:h-auto py-10 md:p-0 
         bg-blue-100/60 md:bg-transparent backdrop-blur-md md:backdrop-blur-0 
         transition top-0 left-0 absolute md:relative
-        list-none items-center border-none ${
-          open()
+        list-none items-center border-none ${open()
             ? "-translate-y-0 opacity-100"
             : "-translate-y-full opacity-0 md:opacity-100 md:-translate-y-0"
-        }`}
+          }`}
       >
         <li>
           <LangSelect />
@@ -78,29 +77,25 @@ const GeneralMenu: Component<Props> = (props) => {
         </li>
       </ul>
       <div
-        class={`flex md:hidden absolute top-1 right-1 flex-col h-12 w-12 justify-center group cursor-pointer rounded-lg p-2 z-20 transition ${
-          open() ? "bg-red" : "bg-transparent"
-        }`}
+        class={`flex md:hidden absolute top-1 right-1 flex-col h-12 w-12 justify-center group cursor-pointer rounded-lg p-2 z-20 transition ${open() ? "bg-red" : "bg-transparent"
+          }`}
         onclick={() => setOpen(!open())}
       >
         <div
-          class={`w-8 h-0.5 transition my-1 ${
-            open()
-              ? "transform rotate-45 translate-y-2.5 bg-white"
-              : "bg-gray-600"
-          }`}
+          class={`w-8 h-0.5 transition my-1 ${open()
+            ? "transform rotate-45 translate-y-2.5 bg-white"
+            : "bg-gray-600"
+            }`}
         ></div>
         <div
-          class={`w-8 h-0.5 bg-gray-600 transition my-1 ${
-            open() ? "opacity-0" : ""
-          }`}
+          class={`w-8 h-0.5 bg-gray-600 transition my-1 ${open() ? "opacity-0" : ""
+            }`}
         ></div>
         <div
-          class={`h-0.5 transition  my-1 ${
-            open()
-              ? "transform -rotate-45 -translate-y-2.5 w-8 bg-white"
-              : "w-5 bg-gray-600"
-          }`}
+          class={`h-0.5 transition  my-1 ${open()
+            ? "transform -rotate-45 -translate-y-2.5 w-8 bg-white"
+            : "w-5 bg-gray-600"
+            }`}
         ></div>
       </div>
     </header>
