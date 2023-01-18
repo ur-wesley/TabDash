@@ -52,7 +52,7 @@ export const messages = {
     en: "privacy",
     fr: "confidentialité",
     es: "privacidad",
-  },
+  }
 };
 
 export const features = [
