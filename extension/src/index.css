@@ -34,22 +34,8 @@ code {
   font-weight: var(--weight);
   backdrop-filter: blur(var(--backdrop_blur)) saturate(var(--backdrop_saturate)) brightness(var(--backdrop_brightness));
   z-index: 20;
-  /* @apply z-20 text-black bg-light-100/20 dark:bg-dark-100/20 dark:text-light-800 rounded-2xl backdrop-blur-md; */
 }
 
 *::placeholder {
   color: var(--textColor);
 }
-
-/* "textColor": "",
-"textSize": "",
-"background": "",
-"borderRadius": "",
-"shadow": "",
-"font": "",
-"weight": "",
-"backdrop": {
-    "blur": "0px",
-    "saturate": "100%",
-    "brightness": "100%"
-} */
