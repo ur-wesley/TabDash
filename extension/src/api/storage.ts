@@ -30,17 +30,16 @@ class Storage {
 class LocalStorage {
   private _storage;
   constructor() {
-    this._storage = window.localStorage
+    this._storage = window.localStorage;
   }
 
   public async get(key: string): Promise<any> {
     try {
       return new Promise((resolve, reject) => {
         const result = this._storage.getItem(key);
-        if (result)
-          resolve(JSON.parse(result));
-        else resolve('');
-      })
+        if (result) resolve(JSON.parse(result));
+        else resolve("");
+      });
     } catch (error) {
       return null;
     }

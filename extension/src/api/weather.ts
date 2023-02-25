@@ -35,7 +35,7 @@ class Weather {
 
   public async getWeather(): Promise<WeatherData> {
     let _s: Storage | LocalStorage;
-    if (import.meta.env.VITE_IS_EXTENSION == 'true') _s = new Storage(false);
+    if (import.meta.env.VITE_IS_EXTENSION == "true") _s = new Storage(false);
     else _s = new LocalStorage();
     const t = (await _s.get("timestamp")) ?? Date.now();
     if (Date.now() < Number(t.timestamp) + 1000 * 60 * 10) {
@@ -49,7 +49,7 @@ class Weather {
 
   public async refreshWeather(): Promise<WeatherData> {
     let _s: Storage | LocalStorage;
-    if (import.meta.env.VITE_IS_EXTENSION == 'true') _s = new Storage(false);
+    if (import.meta.env.VITE_IS_EXTENSION == "true") _s = new Storage(false);
     else _s = new LocalStorage();
     const weather = await this.fetchWeather();
     _s.set({ weather, timestamp: Date.now() });
