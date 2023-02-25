@@ -69,33 +69,33 @@
     "cache": {
         "images": []
     },
-    "widgetAppereance": {
-        "dark": {
-            "textColor": "",
-            "textSize": "",
-            "background": "",
-            "borderRadius": "",
-            "shadow": "",
-            "font": "",
-            "weight": "",
+    "widgetSetting": {
+        "light": {
+            "textColor": "#000000",
+            "textSize": "12px",
+            "background": "#eeeeee",
+            "borderRadius": "12px",
+            "shadow": "rgba(0,0,0,0) 1px 2px 6px",
+            "font": "Calibri",
+            "weight": "400",
             "backdrop": {
-                "blur": "0px",
+                "blur": "6px",
                 "saturate": "100%",
                 "brightness": "100%"
-            },
-            "light": {
-                "textColor": "",
-                "textSize": "",
-                "background": "",
-                "borderRadius": "",
-                "shadow": "",
-                "font": "",
-                "weight": "",
-                "backdrop": {
-                    "blur": "0px",
-                    "saturate": "100%",
-                    "brightness": "100%"
-                }
+            }
+        },
+        "dark": {
+            "textColor": "#ffffff",
+            "textSize": "12px",
+            "background": "#010101",
+            "borderRadius": "12px",
+            "shadow": "rgba(0,0,0,0) 1px 2px 6px",
+            "font": "Bahnschrift",
+            "weight": "400",
+            "backdrop": {
+                "blur": "6px",
+                "saturate": "100%",
+                "brightness": "100%"
             }
         }
     }
