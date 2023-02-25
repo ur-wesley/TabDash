@@ -10,3 +10,46 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
+
+:root {
+  --textColor: white;
+  --textSize: 16px;
+  --background: rgba(64, 64, 64, 0.4);
+  --borderRadius: 12px;
+  --shadow: rgba(0, 0, 0, 0) 1px 2px 6px;
+  --font: "Calibri";
+  --weight: 400;
+  --backdrop_blur: 6px;
+  --backdrop_saturate: 120%;
+  --backdrop_brightness: 160%;
+}
+
+.widget {
+  color: var(--textColor);
+  font-size: var(--textSize);
+  background-color: var(--background);
+  border-radius: var(--borderRadius);
+  text-shadow: var(--shadow);
+  font-family: var(--font);
+  font-weight: var(--weight);
+  backdrop-filter: blur(var(--backdrop_blur)) saturate(var(--backdrop_saturate)) brightness(var(--backdrop_brightness));
+  z-index: 20;
+  /* @apply z-20 text-black bg-light-100/20 dark:bg-dark-100/20 dark:text-light-800 rounded-2xl backdrop-blur-md; */
+}
+
+*::placeholder {
+  color: var(--textColor);
+}
+
+/* "textColor": "",
+"textSize": "",
+"background": "",
+"borderRadius": "",
+"shadow": "",
+"font": "",
+"weight": "",
+"backdrop": {
+    "blur": "0px",
+    "saturate": "100%",
+    "brightness": "100%"
+} */
