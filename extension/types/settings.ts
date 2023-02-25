@@ -12,6 +12,7 @@ export interface Setting {
   weather: WeatherSetting;
   search: SearchSetting;
   cache: CacheSetting;
+  widgetSetting: WidgetSetting;
 }
 
 export interface GeneralSetting {
@@ -97,14 +98,14 @@ export interface WidgetSetting {
 }
 
 export interface WidgetAppereance {
-  textColor: string,
-  textSize: string,
-  background: string,
-  borderRadius: string,
-  shadow: string,
-  font: string,
-  weight: string,
-  backdrop: BackdropSetting
+  textColor: string;
+  textSize: string;
+  background: string;
+  borderRadius: string;
+  shadow: string;
+  font: string;
+  weight: string;
+  backdrop: BackdropSetting;
 }
 
 export interface CacheSetting {
@@ -112,7 +113,7 @@ export interface CacheSetting {
 }
 
 export const theme = ["light", "dark", "system", "automatic"] as const;
-export type Theme = typeof theme[number];
+export type Theme = (typeof theme)[number];
 
 export type WeatherUnit = "metric" | "imperial";
 export type DateFormat = "long" | "2-digit" | "short";
