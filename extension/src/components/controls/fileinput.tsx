@@ -1,4 +1,4 @@
-import { Component, createSignal } from 'solid-js';
+import { Component, createSignal } from "solid-js";
 
 const FileInput: Component<Props> = (props) => {
   const [dragOver, setDragOver] = createSignal(false);
@@ -15,14 +15,14 @@ const FileInput: Component<Props> = (props) => {
   return (
     <div
       class={`grid place-content-center hover:border-blue-500 cursor-pointer surface-base my-4 h-24 p-2 rounded-xl transition border-2 border-dashed ${
-        dragOver() ? 'border-blue-500' : 'border-transparent'
+        dragOver() ? "border-blue-500" : "border-transparent"
       }`}
       onDragLeave={() => setDragOver(false)}
       onDragEnter={() => setDragOver(true)}
       onDragOver={(e) => {
         e.stopPropagation();
         e.preventDefault();
-        e.dataTransfer!.dropEffect = 'copy';
+        e.dataTransfer!.dropEffect = "copy";
       }}
       onDrop={(e) => {
         e.stopPropagation();
@@ -32,9 +32,9 @@ const FileInput: Component<Props> = (props) => {
         readFile(file);
       }}
       onClick={() => {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.json';
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".json";
         input.click();
         input.onchange = (e: Event) => {
           const target = e.target as HTMLInputElement;
