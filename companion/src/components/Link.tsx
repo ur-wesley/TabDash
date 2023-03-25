@@ -1,9 +1,9 @@
-import type { Component } from 'solid-js';
+import type { Component } from "solid-js";
 
 const Link: Component<Props> = (props) => {
   return (
     <a
-      class='tracking-wide text-2xl text-blue-400 hover:underline'
+      class="tracking-wide text-2xl text-blue-400 hover:underline"
       href={props.href}
     >
       {props.children}

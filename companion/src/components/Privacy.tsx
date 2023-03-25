@@ -1,15 +1,15 @@
-import { useStore } from '@nanostores/solid';
-import { Component, Show } from 'solid-js';
-import { language } from '../helper/store.js';
+import { useStore } from "@nanostores/solid";
+import { Component, Show } from "solid-js";
+import { language } from "../helper/store.js";
 
-import './styles/privacy.scss';
+import "./styles/privacy.scss";
 
 const Privacy: Component<{}> = (props) => {
   const $lang = useStore(language);
   return (
-    <section class='privacy'>
+    <section class="privacy">
       <div>
-        <Show when={$lang() == 'en'}>
+        <Show when={$lang() == "en"}>
           <h1>TabDash Privacy Policy</h1>
           <p>
             TabDash is a browser extension that replaces the default new tab
@@ -26,12 +26,12 @@ const Privacy: Component<{}> = (props) => {
           <ul>
             <li>wes.urb[at]gmail.com</li>
             <li>
-              GitHub: <a href='https://github.com/ur-wesley'>ur-wesley</a>
+              GitHub: <a href="https://github.com/ur-wesley">ur-wesley</a>
             </li>
           </ul>
           <p>Last updated: January 18, 2023.</p>
         </Show>
-        <Show when={$lang() == 'de'}>
+        <Show when={$lang() == "de"}>
           <h1>TabDash Datenschutzbestimmungen</h1>
           <p>
             TabDash ist eine Browsererweiterung, die die standardmäßige Seite
@@ -51,7 +51,7 @@ const Privacy: Component<{}> = (props) => {
           <ul>
             <li>E-Mail: wes.urb[at]gmail.com</li>
             <li>
-              GitHub: <a href='https://github.com/ur-wesley'>ur-wesley</a>
+              GitHub: <a href="https://github.com/ur-wesley">ur-wesley</a>
             </li>
           </ul>
           <p>Letzte Aktualisierung: Januar 18, 2023.</p>
