@@ -4,7 +4,7 @@
   "version": "0.3.0",
   "private": true,
   "scripts": {
-    "dev": "astro dev --host",
+    "dev": "astro dev --host --secure",
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview --host",
@@ -12,21 +12,17 @@
   },
   "dependencies": {
     "@astrojs/node": "^2.0.2",
-    "@astrojs/solid-js": "^1.2.2",
+    "@astrojs/solid-js": "^1.2.3",
     "@nanostores/persistent": "^0.7.0",
-    "@nanostores/solid": "^0.3.0",
-    "astro": "^1.6.0",
-    "crypto-js": "^4.1.1",
-    "lowdb": "^5.0.5",
-    "nanostores": "^0.7.1",
-    "solid-js": "^1.4.3"
+    "@nanostores/solid": "^0.3.2",
+    "astro": "^2.0.10",
+    "nanostores": "^0.7.3",
+    "solid-js": "^1.6.10"
   },
   "devDependencies": {
-    "@types/crypto-js": "^4.1.1",
-    "@types/lowdb": "^1.0.11",
-    "@types/node": "^18.11.9",
-    "@unocss/reset": "^0.48.0",
-    "sass": "^1.56.1",
-    "unocss": "^0.47.5"
+    "@types/node": "^18.13.0",
+    "@unocss/reset": "^0.48.5",
+    "sass": "^1.58.0",
+    "unocss": "^0.47.6"
   }
 }
