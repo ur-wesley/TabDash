@@ -15,7 +15,7 @@ Gibt an, wie groß die Elemente sein sollen.
 
 ### Schnelllinks pro Reihe
 
-Gibt an, wie viele Elemente in einer Reihe gezeigt werden sollen. 
+Gibt an, wie viele Elemente in einer Reihe gezeigt werden sollen.
 
 # neuen Schnelllink erstellen
 

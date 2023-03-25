@@ -9,7 +9,7 @@ There are two ways to manage the settings. The settings can be encrypted online,
 
 ### Export
 
-If the `Save online` option is not active, TabDash copies the settings to the clipboard, and from there they can be saved locally. If the option is active, the settings can be saved encrypted* with a password. 
+If the `Save online` option is not active, TabDash copies the settings to the clipboard, and from there they can be saved locally. If the option is active, the settings can be saved encrypted\* with a password.
 
 ### Import
 

@@ -15,4 +15,4 @@ Aktiviere den Schalter um Wetter Symbole zu laden.
 
 ### Wetter Beschreibung
 
-Aktiviere den Schalter um die Wetter Beschreibung anzuzeigen. 
+Aktiviere den Schalter um die Wetter Beschreibung anzuzeigen.

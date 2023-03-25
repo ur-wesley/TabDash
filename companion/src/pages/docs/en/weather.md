@@ -15,4 +15,4 @@ Activate the switch to load weather symbols.
 
 ### Weather Description
 
-Activate the switch to display the weather description. 
+Activate the switch to display the weather description.

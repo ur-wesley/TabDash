@@ -9,7 +9,7 @@ Es gibt zwei Wege die Einstellungen zu verwalten. Die Einstellungen können onli
 
 ### exportieren
 
-Wenn die `Online speichern` Option nicht aktiv ist, kopiert TabDash die Einstellungen in die Zwischenablage, und kann von dort aus lokal gespeichert werden. Wenn die Option aktiv ist, können die Einstellungen mit einem Passwort verschlüsselt* gespeichert werden. 
+Wenn die `Online speichern` Option nicht aktiv ist, kopiert TabDash die Einstellungen in die Zwischenablage, und kann von dort aus lokal gespeichert werden. Wenn die Option aktiv ist, können die Einstellungen mit einem Passwort verschlüsselt\* gespeichert werden.
 
 ### importieren
 

@@ -9,15 +9,15 @@ individualisiere dein Layout.
 
 ### Uhrzeit anzeigen
 
-Wenn der Schalter aktiviert ist, wird die Uhr angezeigt. [Weitere Einstellungen](/docs/de/time). 
+Wenn der Schalter aktiviert ist, wird die Uhr angezeigt. [Weitere Einstellungen](/docs/de/time).
 
 ### Datum anzeigen
 
-Wenn der Schalter aktiviert ist, wird das Datum angezeigt. [Weitere Einstellungen](/docs/de/date). 
+Wenn der Schalter aktiviert ist, wird das Datum angezeigt. [Weitere Einstellungen](/docs/de/date).
 
 ### Gruß anzeigen
 
-Wenn der Schalter aktiviert ist, wird ein Gruß mit dem [Namen](/docs/de/general) angezeigt. 
+Wenn der Schalter aktiviert ist, wird ein Gruß mit dem [Namen](/docs/de/general) angezeigt.
 
 ### Suchbar anzeigen
 

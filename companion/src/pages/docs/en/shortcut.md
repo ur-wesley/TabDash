@@ -15,7 +15,7 @@ Specifies how large the elements should be.
 
 ### Quick links per row
 
-Specifies how many elements should be shown in a row. 
+Specifies how many elements should be shown in a row.
 
 # Create new quick link
 

@@ -16,7 +16,7 @@ Wenn der Schalter aktiv ist, dann wird alle 15 Minuten ein neues Bild aus der Un
 Unsplash Sammlungen. Hier Werden nur die IDs benötigt. Diese befindet sich im Link einer Sammlung.
 Man kann mehrere Sammlungen angeben. Diese müssen in dem Feld kommagetrennt angegeben werden.
 
->zum Beispiel bei `https://unsplash.com/collections/1319040/nature` wäre die ID `1319040`
+> zum Beispiel bei `https://unsplash.com/collections/1319040/nature` wäre die ID `1319040`
 
 ### statisches Bild
 
@@ -42,7 +42,7 @@ Standard: ganz links - nicht verwischt.
 ### Helligkeit
 
 stellt die Hintergrund Helligkeit ein. Von `alles schwarz` bis `alles weiß`.
-Standard: in der Mitte - normale Helligkeit. 
+Standard: in der Mitte - normale Helligkeit.
 
 ### Sättigung
 

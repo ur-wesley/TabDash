@@ -16,7 +16,7 @@ If the switch is active, a new image from the Unsplash collection will be loaded
 Unsplash collections. Here only the IDs are needed. This is located in the link of a collection.
 You can specify multiple collections. These must be specified in the field comma separated.
 
->for example at `https://unsplash.com/collections/1319040/nature` the ID would be `1319040`.
+> for example at `https://unsplash.com/collections/1319040/nature` the ID would be `1319040`.
 
 ### static image
 
@@ -42,7 +42,7 @@ Default: leftmost - not blurred.
 ### Brightness
 
 sets the background brightness. From `all black` to `all white`.
-Default: in the middle - normal brightness. 
+Default: in the middle - normal brightness.
 
 ### Saturation
 
