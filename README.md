@@ -28,9 +28,9 @@ clone the repository and execute `pnpm install`
 ## Roadmap
 
 - [x] 0.1: initial release
-- [x] 0.2: bug fixes and new state management 
+- [x] 0.2: bug fixes and new state management
 - [ ] 0.3: widget config (bg on/off, text color, text shadow)
 - [ ] 0.4: weather improvements (custom location, better temperature rounding)
-- [ ] 0.5: 
+- [ ] 0.5:
 - [ ] 0.6: mobile optimization
 - [ ] 1.0: first stable release
