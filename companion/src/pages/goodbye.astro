@@ -1,0 +1,9 @@
+---
+import Base from '../layouts/Base.astro';
+import './index.scss';
+import Goodbye from '../components/Goodbye.jsx';
+---
+
+<Base>
+  <Goodbye client:only='solid-js' />
+</Base>
