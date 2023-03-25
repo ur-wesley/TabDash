@@ -1,0 +1,19 @@
+###
+GET http://localhost:3005/api/storage?key=test3&p=pw
+
+###
+POST http://localhost:3005/api/storage?key=test3&p=pw
+Content-Type: application/json
+
+{
+    "test": "test" 
+}
+
+###
+GET http://localhost:3005/api/install?id=2&browser=Chrome
+
+###
+GET http://localhost:3005/api/deinstall?id=3&browser=Chrome
+
+###
+GET http://localhost:3005/api/statistic
