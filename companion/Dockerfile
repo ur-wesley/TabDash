@@ -4,7 +4,9 @@ WORKDIR /usr/src/tabdash/companion
 
 COPY package.json ./
 
-ENV SECRET_DB_LOCATION ./
+ARG PUBLIC_BACKEND_BASE
+
+ENV PUBLIC_BACKEND_BASE PUBLIC_BACKEND_BASE
 
 RUN npm install
 
