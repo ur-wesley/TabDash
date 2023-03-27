@@ -22,12 +22,12 @@ const GeneralMenu: Component<Props> = (props) => {
     setStars(stars);
   });
   onMount(() => {
-    if (!!window)
-      window.addEventListener("resize", onresize)
+    if (typeof window !== "undefined")
+      window.addEventListener("resize", onresize);
   });
   onCleanup(() => {
-    if (!!window)
-      window.removeEventListener("resize", onresize)
+    if (typeof window !== "undefined")
+      window.removeEventListener("resize", onresize);
   });
   const onresize = () => setOpen(false);
   return (
