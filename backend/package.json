@@ -1,11 +1,12 @@
 {
   "name": "tabdash_backend",
-  "version": "0.0.1",
+  "version": "0.3.0",
   "description": "",
   "scripts": {
     "dev": "nitropack dev",
     "build": "nitropack build",
     "test": "vitest",
+    "start": "node .output/server/index.mjs",
     "coverage": "vitest run --coverage"
   },
   "keywords": [],
