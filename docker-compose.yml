@@ -11,6 +11,7 @@ services:
         VITE_IS_EXTENSION: false
         VITE_OPENWEATHER_API_KEY: ${WEATHER_API_KEY}
         VITE_UNSPLASH_API_KEY: ${UNSPLASH_API_KEY}
+        VITE_BACKEND_BASE: https://tabdashbe.wesley.fyi
     ports:
       - '3003:3003'
     labels:
@@ -27,12 +28,30 @@ services:
       context: ./companion
       dockerfile: ./Dockerfile
     environment:
-      - SECRET_DB_LOCATION=./
+      - PUBLIC_BACKEND_BASE=https://tabdashbe.wesley.fyi
     ports:
       - '3000:3000'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.tabdashcompanion.rule=Host(`tabdash.wesley.fyi`)"
+      - "traefik.http.routers.tabdashcompanion.entrypoints=websecure"
+      - "traefik.http.routers.tabdashcompanion.tls.certresolver=le"
+    networks:
+      - traefik_default
+
+  tabdash-backend:
+    restart: always
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    environment:
+      - PORT=3005
+      - DB_PATH=/opt/TabDash-data
+    ports:
+      - '3005:3005'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tabdashcompanion.rule=Host(`tabdashbe.wesley.fyi`)"
       - "traefik.http.routers.tabdashcompanion.entrypoints=websecure"
       - "traefik.http.routers.tabdashcompanion.tls.certresolver=le"
     networks:
