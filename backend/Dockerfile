@@ -2,6 +2,8 @@ FROM node:alpine
 
 WORKDIR /usr/src/tabdash/backend
 
+COPY package.json ./
+
 ARG DB_PATH
 ARG PORT
 
