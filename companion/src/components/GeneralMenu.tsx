@@ -21,8 +21,14 @@ const GeneralMenu: Component<Props> = (props) => {
       .then((r) => r.stargazers_count || 0);
     setStars(stars);
   });
-  onMount(() => window.addEventListener("resize", onresize));
-  onCleanup(() => window.removeEventListener("resize", onresize));
+  onMount(() => {
+    if (!!window)
+      window.addEventListener("resize", onresize)
+  });
+  onCleanup(() => {
+    if (!!window)
+      window.removeEventListener("resize", onresize)
+  });
   const onresize = () => setOpen(false);
   return (
     <header class="sticky top-0 w-full flex justify-between items-center bg-light-100/60 h-14 px-2 backdrop-filter backdrop-blur-sm z-20">
