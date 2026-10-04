@@ -2,23 +2,22 @@
   "name": "tabdash_backend",
   "version": "0.3.0",
   "description": "",
+  "keywords": [],
+  "license": "GPL-3.0 license",
+  "author": "Wesley Urban",
   "scripts": {
     "dev": "nitropack dev",
     "build": "nitropack build",
-    "test": "vitest",
-    "start": "node .output/server/index.mjs",
-    "coverage": "vitest run --coverage"
-  },
-  "keywords": [],
-  "author": "Wesley Urban",
-  "license": "GPL-3.0 license",
-  "devDependencies": {
-    "@types/crypto-js": "^4.1.1",
-    "nitropack": "^1.0.0",
-    "vitest": "^0.27.3"
+    "test": "bun test",
+    "start": "node .output/server/index.mjs"
   },
   "dependencies": {
     "crypto-js": "^4.1.1",
     "unstorage": "^1.1.4"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^4.1.1",
+    "nitropack": "^1.0.0",
+    "vitest": "^0.27.3"
   }
 }

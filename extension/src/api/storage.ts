@@ -1,19 +1,17 @@
 class Storage {
-  private _storage:
-    | chrome.storage.LocalStorageArea
-    | chrome.storage.SyncStorageArea;
+  private _storage: chrome.storage.LocalStorageArea | chrome.storage.SyncStorageArea;
   constructor(sync: boolean = false) {
     this._storage = sync ? chrome.storage.sync : chrome.storage.local;
   }
 
-  public async get(key: string): Promise<any> {
+  public async get<T = Record<string, unknown>>(key: string): Promise<T | null> {
     try {
-      return new Promise((resolve, reject) => {
+      return new Promise<T | null>((resolve) => {
         this._storage.get(key, (results) => {
-          resolve(results);
+          resolve((results as T) ?? null);
         });
       });
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -28,19 +26,19 @@ class Storage {
 }
 
 class LocalStorage {
-  private _storage;
+  private _storage: globalThis.Storage;
   constructor() {
     this._storage = window.localStorage;
   }
 
-  public async get(key: string): Promise<any> {
+  public async get<T = Record<string, unknown>>(key: string): Promise<T | null> {
     try {
-      return new Promise((resolve, reject) => {
-        const result = this._storage.getItem(key);
-        if (result) resolve(JSON.parse(result));
-        else resolve("");
-      });
-    } catch (error) {
+      const result = this._storage.getItem(key);
+      if (result) {
+        return JSON.parse(result) as T;
+      }
+      return null;
+    } catch {
       return null;
     }
   }

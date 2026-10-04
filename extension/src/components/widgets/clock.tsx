@@ -1,11 +1,10 @@
-import { Component, createMemo, createSignal, onCleanup, Show } from "solid-js";
-import { ClockSetting } from "../../../types/settings.js";
-import Time from "../../api/time.js";
+import type { Component } from 'solid-js';
+import { createMemo, createSignal, onCleanup, Show } from 'solid-js';
+import type { ClockSetting } from '../../../types/settings.js';
+import Time from '../../api/time.js';
 
 const Clock: Component<Prop> = (props) => {
-  const c = createMemo(
-    () => new Time(props.locale, props.settings.showSeconds ?? false)
-  );
+  const c = createMemo(() => new Time(props.locale, props.settings.showSeconds ?? false));
   const [clock, setClock] = createSignal<string>(c().getTime());
   const clockIntervall = setInterval(() => setClock(c().getTime()), 1000);
   onCleanup(() => clearInterval(clockIntervall));

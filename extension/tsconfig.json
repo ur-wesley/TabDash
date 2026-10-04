@@ -1,17 +1,15 @@
 {
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "strict": true,
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true,
+    "rootDir": "src",
+    "outDir": "dist",
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "types": ["vite/client", "chrome"],
-    "typeRoots": ["./types"],
-    "noEmit": true,
-    "isolatedModules": true,
-    "resolveJsonModule": true
-  }
+    "types": ["vite/client", "chrome"]
+  },
+  "include": ["src"]
 }

@@ -1,0 +1,20 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "useTabs": false,
+  "tabWidth": 2,
+  "printWidth": 100,
+  "singleQuote": true,
+  "semi": true,
+  "trailingComma": "all",
+  "ignorePatterns": [
+    "dist/**",
+    "build/**",
+    "coverage/**",
+    "node_modules/**",
+    "bun.lock",
+    ".beads/**",
+    ".astro/**",
+    "bundle/**",
+    "extension/public/**"
+  ]
+}

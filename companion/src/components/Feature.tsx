@@ -1,46 +1,53 @@
-import { useStore } from "@nanostores/solid";
-import { Component, createEffect, onCleanup } from "solid-js";
-import { language } from "../helper/store.js";
-import type { AvailableLanguages } from "../lang.js";
+import { useStore } from '@nanostores/solid';
+import { type Component, onCleanup, onMount } from 'solid-js';
+import { language } from '../helper/store.js';
+import type { AvailableLanguages } from '../lang.js';
 
 const Feature: Component<Props> = (props) => {
   const $lang = useStore(language);
-  let headline: HTMLHeadingElement;
-  let desc: HTMLElement;
-  let image: HTMLImageElement;
-  createEffect(() => {
-    observer.observe(headline);
-    observer.observe(desc);
-    observer.observe(image);
-    headline.style.transform = `translateX(${props.imgSide == "right" ? "-" : ""
-      }100px)`;
-    desc.style.transform = `translateX(${props.imgSide == "right" ? "-" : ""
-      }100px)`;
-    image.style.transform = `translateX(${props.imgSide == "right" ? "-" : ""
-      }100px)`;
-  });
-  onCleanup(() => {
-    observer.unobserve(headline);
-    observer.unobserve(desc);
-    observer.unobserve(image);
-  });
+  let headline: HTMLHeadingElement | undefined;
+  let desc: HTMLElement | undefined;
+  let image: HTMLImageElement | undefined;
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
+      const el = entry.target as HTMLElement;
       if (entry.intersectionRatio > 0) {
-        (entry.target as HTMLElement).style.transform = "translateX(0)";
-        (entry.target as HTMLElement).style.transition = "transform 1s";
+        el.style.transform = 'translateX(0)';
+        el.style.transition = 'transform 1s';
       } else {
-        (entry.target as HTMLElement).style.transform = `translateX(${props.imgSide == "right" ? "-" : ""
-          }100px)`;
-        // (entry.target as HTMLElement).style.transform = `translateX(100px)`;
+        el.style.transform = `translateX(${props.imgSide == 'right' ? '-' : ''}100px)`;
       }
     });
+  });
+
+  onMount(() => {
+    const offset = `${props.imgSide == 'right' ? '-' : ''}100px`;
+    if (headline) {
+      headline.style.transform = `translateX(${offset})`;
+      observer.observe(headline);
+    }
+    if (desc) {
+      desc.style.transform = `translateX(${offset})`;
+      observer.observe(desc);
+    }
+    if (image) {
+      image.style.transform = `translateX(${offset})`;
+      observer.observe(image);
+    }
+  });
+
+  onCleanup(() => {
+    if (headline) observer.unobserve(headline);
+    if (desc) observer.unobserve(desc);
+    if (image) observer.unobserve(image);
   });
   return (
     <div class="flex flex-col lg:grid grid-cols-2 grid-rows-1 gap-4 max-w-full lg:max-w-screen-xl">
       <div
-        class={`w-full h-full m-0 p-4 row-start-1 flex flex-col justify-center ${props.imgSide == "right" ? "col-start-1" : "col-start-2"
-          }`}
+        class={`w-full h-full m-0 p-4 row-start-1 flex flex-col justify-center ${
+          props.imgSide == 'right' ? 'col-start-1' : 'col-start-2'
+        }`}
       >
         <h2 ref={headline!} class="font-bold text-xl lg:text-3xl py-4">
           {props.feature.title[$lang()]}
@@ -48,8 +55,9 @@ const Feature: Component<Props> = (props) => {
         <span ref={desc!}>{props.feature.description[$lang()]}</span>
       </div>
       <div
-        class={`w-full row-start-1 p-4 flex flex-col justify-center lg:text-xl ${props.imgSide == "left" ? "col-start-1" : "col-start-2"
-          }`}
+        class={`w-full row-start-1 p-4 flex flex-col justify-center lg:text-xl ${
+          props.imgSide == 'left' ? 'col-start-1' : 'col-start-2'
+        }`}
       >
         <img
           ref={image!}
@@ -65,7 +73,7 @@ const Feature: Component<Props> = (props) => {
 export default Feature;
 
 interface Props {
-  imgSide: "left" | "right";
+  imgSide: 'left' | 'right';
   feature: FeatureText;
 }
 

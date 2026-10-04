@@ -1,10 +1,10 @@
 {
-    "extensionName": {
-        "message": "TabDash",
-        "description": "Erweiterungsname"
-    },
-    "extensionDesc": {
-        "message": "Minimalistischer neuer Tab",
-        "description": "Beschreibung der Erweiterung"
-    }
+  "extensionName": {
+    "message": "TabDash",
+    "description": "Erweiterungsname"
+  },
+  "extensionDesc": {
+    "message": "Minimalistischer neuer Tab",
+    "description": "Beschreibung der Erweiterung"
+  }
 }

@@ -1,0 +1,80 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc", "import", "jsdoc", "vitest"],
+  "options": {
+    "typeAware": false,
+    "typeCheck": false
+  },
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "pedantic": "off",
+    "style": "off",
+    "restriction": "off"
+  },
+  "rules": {
+    "no-unused-vars": "error",
+    "no-unassigned-vars": "off",
+    "no-console": "warn",
+    "no-nested-ternary": "warn",
+    "unicorn/no-nested-ternary": "warn",
+    "max-depth": "warn",
+    "max-params": "warn",
+    "max-lines": ["warn", { "max": 500, "skipBlankLines": true, "skipComments": true }],
+    "typescript/no-explicit-any": "error",
+    "typescript/no-non-null-assertion": "warn",
+    "typescript/consistent-type-imports": "warn",
+    "typescript/no-floating-promises": "warn",
+    "typescript/no-misused-promises": "warn",
+    "typescript/await-thenable": "error",
+    "typescript/no-unnecessary-type-assertion": "warn",
+    "typescript/restrict-template-expressions": "warn",
+    "typescript/no-unsafe-assignment": "warn",
+    "typescript/no-unsafe-argument": "warn",
+    "typescript/no-unsafe-call": "warn",
+    "typescript/no-unsafe-member-access": "warn",
+    "typescript/no-unsafe-return": "warn",
+    "typescript/no-unsafe-type-assertion": "warn",
+    "import/first": "error"
+  },
+  "env": {
+    "builtin": true
+  },
+  "ignorePatterns": [
+    "dist/**",
+    "build/**",
+    "coverage/**",
+    "node_modules/**",
+    "bun.lock",
+    ".beads/**",
+    ".astro/**",
+    "bundle/**",
+    "extension/public/**",
+    "extension/src/assets/**",
+    "**/*.d.ts"
+  ],
+  "overrides": [
+    {
+      "files": ["**/*.tsx"],
+      "rules": {
+        "max-lines": ["warn", { "max": 400, "skipBlankLines": true, "skipComments": true }]
+      }
+    },
+    {
+      "files": ["apps/web/src/locales/**", "extension/src/lang.ts", "companion/src/lang.ts"],
+      "rules": {
+        "max-lines": "off"
+      }
+    },
+    {
+      "files": ["**/*.test.{ts,tsx}", "**/*.spec.{ts,tsx}"],
+      "rules": {
+        "typescript/no-unsafe-type-assertion": "off",
+        "typescript/no-unnecessary-type-assertion": "off",
+        "typescript/restrict-template-expressions": "off",
+        "typescript/no-base-to-string": "off",
+        "max-lines": "off"
+      }
+    }
+  ]
+}

@@ -1,6 +1,12 @@
 {
-  "extends": "./.nitro/types/tsconfig.json",
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true
-  }
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true,
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src"]
 }

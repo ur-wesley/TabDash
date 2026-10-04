@@ -1,33 +1,24 @@
-import {
-  Component,
-  createEffect,
-  createSignal,
-  onCleanup,
-  onMount,
-  Show,
-} from "solid-js";
-import LangSelect from "./LangSelect.jsx";
-import Link from "./Link.jsx";
-import { language } from "../helper/store.js";
-import { useStore } from "@nanostores/solid";
+import { type Component, createEffect, createSignal, onCleanup, onMount, Show } from 'solid-js';
+import LangSelect from './LangSelect.jsx';
+import Link from './Link.jsx';
+import { language } from '../helper/store.js';
+import { useStore } from '@nanostores/solid';
 
 const GeneralMenu: Component<Props> = (props) => {
   const $language = useStore(language);
   const [open, setOpen] = createSignal(false);
   const [stars, setStars] = createSignal(null);
   createEffect(async () => {
-    const stars = await fetch("https://api.github.com/repos/ur-wesley/TabDash")
+    const stars = await fetch('https://api.github.com/repos/ur-wesley/TabDash')
       .then((r) => r.json())
       .then((r) => r.stargazers_count || 0);
     setStars(stars);
   });
   onMount(() => {
-    if (typeof window !== "undefined")
-      window.addEventListener("resize", onresize);
+    if (typeof window !== 'undefined') window.addEventListener('resize', onresize);
   });
   onCleanup(() => {
-    if (typeof window !== "undefined")
-      window.removeEventListener("resize", onresize);
+    if (typeof window !== 'undefined') window.removeEventListener('resize', onresize);
   });
   const onresize = () => setOpen(false);
   return (
@@ -41,10 +32,11 @@ const GeneralMenu: Component<Props> = (props) => {
         w-full md:w-auto h-70 md:h-auto py-10 md:p-0 
         bg-blue-100/60 md:bg-transparent backdrop-blur-md md:backdrop-blur-0 
         transition top-0 left-0 absolute md:relative
-        list-none items-center border-none ${open()
-            ? "-translate-y-0 opacity-100"
-            : "-translate-y-full opacity-0 md:opacity-100 md:-translate-y-0"
-          }`}
+        list-none items-center border-none ${
+          open()
+            ? '-translate-y-0 opacity-100'
+            : '-translate-y-full opacity-0 md:opacity-100 md:-translate-y-0'
+        }`}
       >
         <li>
           <LangSelect />
@@ -53,7 +45,7 @@ const GeneralMenu: Component<Props> = (props) => {
           <Link href={`/docs/${$language()}`}>Docs</Link>
         </li>
         <li>
-          <Link href={props.url + "/" + $language()}>Online Version</Link>
+          <Link href={props.url + '/' + $language()}>Online Version</Link>
         </li>
         <li class="flex items-center gap-2">
           <Link href="https://github.com/ur-wesley/tabdash">GitHub</Link>
@@ -83,25 +75,21 @@ const GeneralMenu: Component<Props> = (props) => {
         </li>
       </ul>
       <div
-        class={`flex md:hidden absolute top-1 right-1 flex-col h-12 w-12 justify-center group cursor-pointer rounded-lg p-2 z-20 transition ${open() ? "bg-red" : "bg-transparent"
-          }`}
+        class={`flex md:hidden absolute top-1 right-1 flex-col h-12 w-12 justify-center group cursor-pointer rounded-lg p-2 z-20 transition ${
+          open() ? 'bg-red' : 'bg-transparent'
+        }`}
         onclick={() => setOpen(!open())}
       >
         <div
-          class={`w-8 h-0.5 transition my-1 ${open()
-            ? "transform rotate-45 translate-y-2.5 bg-white"
-            : "bg-gray-600"
-            }`}
+          class={`w-8 h-0.5 transition my-1 ${
+            open() ? 'transform rotate-45 translate-y-2.5 bg-white' : 'bg-gray-600'
+          }`}
         ></div>
+        <div class={`w-8 h-0.5 bg-gray-600 transition my-1 ${open() ? 'opacity-0' : ''}`}></div>
         <div
-          class={`w-8 h-0.5 bg-gray-600 transition my-1 ${open() ? "opacity-0" : ""
-            }`}
-        ></div>
-        <div
-          class={`h-0.5 transition  my-1 ${open()
-            ? "transform -rotate-45 -translate-y-2.5 w-8 bg-white"
-            : "w-5 bg-gray-600"
-            }`}
+          class={`h-0.5 transition  my-1 ${
+            open() ? 'transform -rotate-45 -translate-y-2.5 w-8 bg-white' : 'w-5 bg-gray-600'
+          }`}
         ></div>
       </div>
     </header>

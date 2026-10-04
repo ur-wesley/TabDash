@@ -7,18 +7,26 @@
     "companion",
     "backend"
   ],
+  "type": "module",
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev --parallel",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "check": "oxlint && oxfmt --check",
+    "prepare": "lefthook install --force",
+    "build": "bun run --filter \"*\" build",
+    "dev:extension": "bun --filter @ur-wesley/tabdash-extension dev",
+    "dev:companion": "bun --filter @ur-wesley/tabdash-companion dev",
+    "dev:backend": "bun --filter tabdash_backend dev"
   },
   "devDependencies": {
-    "prettier": "latest",
-    "turbo": "latest"
+    "@corvu/utils": "^0.4.2",
+    "lefthook": "latest",
+    "oxfmt": "latest",
+    "oxlint": "latest",
+    "oxlint-tsgolint": "latest",
+    "typescript": "^7.0.0"
   },
-  "engines": {
-    "node": ">=14.0.0"
-  },
-  "dependencies": {},
-  "packageManager": "pnpm@7.14.2"
+  "packageManager": "bun@1.4.2"
 }

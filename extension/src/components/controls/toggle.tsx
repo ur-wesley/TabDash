@@ -1,37 +1,39 @@
-import { Component, createSignal } from "solid-js";
-import "./toggle.css";
-const Toggle: Component<Prop> = (props) => {
-  const [toggle, setToggle] = createSignal(props.checked ?? false);
+import { Switch } from '@kobalte/core/switch';
+import type { Component } from 'solid-js';
+import { cn } from '../../lib/utils.js';
+
+export interface ToggleProps {
+  readonly onChange: (checked: boolean) => void;
+  readonly label: string;
+  readonly checked?: boolean;
+  readonly disabled?: boolean;
+}
+
+const Toggle: Component<ToggleProps> = (props) => {
   return (
-    <div class="flex items-center justify-between w-full my-3">
-      <div class="color-base label">{props.label}</div>
-      <label class="flex items-center cursor-pointer">
-        <div class="relative">
-          <input
-            type="checkbox"
-            class="sr-only"
-            onChange={(e: any) => {
-              props.onChange(e.target.checked);
-              setToggle(e.target.checked);
-            }}
-            checked={toggle()}
-          />
-          <div
-            class={`block w-14 h-8 rounded-full transition ${
-              toggle() ? "bg-blue-500" : "surface-base"
-            }`}
-          ></div>
-          <div class="dot absolute left-1 top-1 bg-base w-6 h-6 rounded-full transition"></div>
-        </div>
-      </label>
-    </div>
+    <Switch
+      class="flex items-center justify-between w-full my-3"
+      checked={props.checked ?? false}
+      onChange={props.onChange}
+      disabled={props.disabled}
+    >
+      <Switch.Label class="color-base label cursor-pointer">{props.label}</Switch.Label>
+      <Switch.Input class="sr-only" />
+      <Switch.Control
+        class={cn(
+          'inline-flex items-center w-14 h-8 p-1 rounded-full transition-colors cursor-pointer',
+          props.checked ? 'bg-blue-500' : 'surface-base',
+        )}
+      >
+        <Switch.Thumb
+          class={cn(
+            'w-6 h-6 rounded-full bg-base shadow-sm transition-transform duration-200',
+            props.checked ? 'translate-x-6' : 'translate-x-0',
+          )}
+        />
+      </Switch.Control>
+    </Switch>
   );
 };
 
 export default Toggle;
-
-interface Prop {
-  onChange: (e: boolean) => void;
-  label: string;
-  checked?: boolean;
-}

@@ -1,4 +1,4 @@
-import { AvailableLanguages } from "../src/lang.js";
+import type { AvailableLanguages } from '../src/lang.js';
 
 export interface Setting {
   id: string;
@@ -108,13 +108,30 @@ export interface WidgetAppereance {
   backdrop: BackdropSetting;
 }
 
-export interface CacheSetting {
-  images: any[];
+export interface UnsplashImage {
+  id?: string;
+  links: {
+    download_location: string;
+    html: string;
+  };
+  urls: {
+    raw: string;
+  };
+  user: {
+    name: string;
+    links: {
+      html: string;
+    };
+  };
 }
 
-export const theme = ["light", "dark", "system", "automatic"] as const;
+export interface CacheSetting {
+  images: UnsplashImage[];
+}
+
+export const theme = ['light', 'dark', 'system', 'automatic'] as const;
 export type Theme = (typeof theme)[number];
 
-export type WeatherUnit = "metric" | "imperial";
-export type DateFormat = "long" | "2-digit" | "short";
-export type ShortcutStyle = "large" | "medium" | "small" | "text";
+export type WeatherUnit = 'metric' | 'imperial';
+export type DateFormat = 'long' | '2-digit' | 'short';
+export type ShortcutStyle = 'large' | 'medium' | 'small' | 'text';

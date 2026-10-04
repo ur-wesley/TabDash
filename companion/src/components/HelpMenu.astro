@@ -1,7 +1,7 @@
 ---
 import type { MarkdownInstance } from 'astro';
 export interface Props {
-  settings: MarkdownInstance<Record<string, any>>[];
+  settings: MarkdownInstance<Record<string, unknown>>[];
 }
 const { settings } = Astro.props;
 const _len = Astro.url.toString().split('/');

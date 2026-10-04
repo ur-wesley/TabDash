@@ -5,6 +5,13 @@ node_modules
 .pnp
 .pnp.js
 
+# build & output
+dist
+build
+bundle
+.astro
+*.tsbuildinfo
+
 # testing
 coverage
 
@@ -24,11 +31,7 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
-# turbo
-.turbo
-
 todo.txt
-.vscode
 
 # Beads / Dolt files (added by bd init)
 .dolt/
@@ -36,3 +39,4 @@ todo.txt
 .beads-credential-key
 .beads/proxieddb/
 *.gate.lock*
+*.old

@@ -2,6 +2,7 @@
   "name": "@ur-wesley/tabdash-extension",
   "version": "0.3.0",
   "description": "browser extension for a minimal new tab page.",
+  "license": "MIT",
   "scripts": {
     "start": "vite --host",
     "dev": "vite build && web-ext run -s ./dist/",
@@ -9,23 +10,28 @@
     "serve": "vite preview --host",
     "bundle": "vite build && web-ext build -s ./dist/ -a ./bundle"
   },
-  "license": "MIT",
+  "dependencies": {
+    "@corvu/utils": "^0.4.2",
+    "@kobalte/core": "^0.13.14",
+    "@nanostores/solid": "^0.3.0",
+    "@ur-wesley/ts-prelude": "^0.1.3",
+    "clsx": "^2.1.1",
+    "nanostores": "^0.7.1",
+    "solid-js": "^1.5.1",
+    "tailwind-merge": "^3.7.0",
+    "vanilla-picker": "^2.12.1"
+  },
   "devDependencies": {
     "@iconify-json/mdi": "^1.1.34",
     "@types/chrome": "^0.0.199",
-    "@types/node": "^18.11.12",
+    "@types/node": "^20.17.0",
     "@types/promise-fs": "^2.1.2",
+    "@unocss/preset-icons": "^0.45.29",
     "@unocss/preset-uno": "^0.45.29",
-    "typescript": "^4.8.2",
+    "typescript": "^5.0.0",
     "unocss": "^0.45.29",
     "vite": "^3.0.9",
     "vite-plugin-solid": "^2.3.0",
     "web-ext": "^7.3.1"
-  },
-  "dependencies": {
-    "@nanostores/solid": "^0.3.0",
-    "nanostores": "^0.7.1",
-    "solid-js": "^1.5.1",
-    "vanilla-picker": "^2.12.1"
   }
 }

@@ -1,4 +1,5 @@
-import { Component, children, Show } from "solid-js";
+import type { Component, JSX } from 'solid-js';
+import { children, Show } from 'solid-js';
 
 const Categorie: Component<Prop> = (props) => {
   const c = children(() => props.children);
@@ -6,11 +7,11 @@ const Categorie: Component<Prop> = (props) => {
     <div class="color-base p-1 flex flex-col gap-1">
       <div
         class={`pl-4 tracking-widest text-md font-normal color-gray-600 dark:color-slate-400 flex justify-between ${
-          !!!props.helpLink ? "pb-2" : ""
+          !props.helpLink ? 'pb-2' : ''
         }`}
       >
         <span>{props.name}</span>
-        <Show when={!!props.helpLink}>
+        <Show when={Boolean(props.helpLink)}>
           <a href={props.helpLink} class="rounded-full p-2 bg-light-900">
             <div class="i-mdi-question-mark bg-black"></div>
           </a>
@@ -26,5 +27,5 @@ export default Categorie;
 interface Prop {
   name: string;
   helpLink?: string;
-  children?: any;
+  children?: JSX.Element;
 }

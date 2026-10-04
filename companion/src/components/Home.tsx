@@ -1,33 +1,17 @@
-import { useStore } from "@nanostores/solid";
-import { Component, For, onCleanup, onMount } from "solid-js";
-import { language } from "../helper/store.js";
-import useQuery from "../helper/useQuery.js";
-import {
-  availableLanguages,
-  AvailableLanguages,
-  features,
-  messages,
-} from "../lang.js";
-import Feature from "./Feature.jsx";
-import Footer from "./Footer.jsx";
+import { useStore } from '@nanostores/solid';
+import { type Component, For, onCleanup, onMount } from 'solid-js';
+import { language } from '../helper/store.js';
+import useQuery from '../helper/useQuery.js';
+import { availableLanguages, type AvailableLanguages, features, messages } from '../lang.js';
+import Feature from './Feature.jsx';
+import Footer from './Footer.jsx';
 
-import "./styles/animations.scss";
+import './styles/animations.scss';
 
 const Home: Component = () => {
-  const isChrome = navigator.userAgent.includes("Chrome");
+  const isChrome = navigator.userAgent.includes('Chrome');
   const $lang = useStore(language);
-  onMount(async () => {
-    const queryLang = useQuery(window.location.href).lang as AvailableLanguages;
-    if (availableLanguages.includes(queryLang)) language.set(queryLang);
-    const img = document.querySelector("#tabdash_example") as HTMLImageElement;
-    img.addEventListener("mousemove", (e) => animateImage(e, img));
 
-  });
-
-  onCleanup(() => {
-    const img = document.querySelector("#tabdash_example") as HTMLImageElement;
-    window.removeEventListener("mousemove", (e) => animateImage(e, img));
-  });
   const animateImage = (e: MouseEvent, element: HTMLElement) => {
     const width = window.screen.width / 2;
     const height = window.screen.height / 2;
@@ -37,13 +21,24 @@ const Home: Component = () => {
     const degY = centerY * 0.01;
     element.style.transform = `perspective(1000px) rotateX(${degX}deg) rotateY(${degY}deg)`;
   };
+
+  onMount(() => {
+    const queryLang = useQuery(window.location.href).lang as AvailableLanguages;
+    if (availableLanguages.includes(queryLang)) language.set(queryLang);
+    const img = document.querySelector('#tabdash_example') as HTMLImageElement | null;
+    if (!img) return;
+    const handleMouseMove = (e: MouseEvent) => animateImage(e, img);
+    img.addEventListener('mousemove', handleMouseMove);
+
+    onCleanup(() => {
+      img.removeEventListener('mousemove', handleMouseMove);
+    });
+  });
   return (
     <main class="h-screen overflow-y-auto overflow-x-hidden">
       <section class="flex flex-col justify-around items-center h-full">
         <div class="text-4xl md:text-6xl m-8 font-bold text-white/40 grid place-content-center">
-          <span class="animate-[animateIn_500ms]">
-            {messages.welcome[$lang()]}
-          </span>
+          <span class="animate-[animateIn_500ms]">{messages.welcome[$lang()]}</span>
           <span class="animate-[animateIn_500ms_200ms]">
             <h1 class="text-5xl md:text-7xl text-animation">TabDash</h1>
           </span>
@@ -51,9 +46,7 @@ const Home: Component = () => {
         <div class="w-full p-2 grid place-content-center animate-[animateIn_500ms_300ms]">
           {!isChrome && (
             <div class="flex flex-col justify-center items-center gap-2">
-              <span class="text-xl text-center">
-                {messages["for firefox"][$lang()]}
-              </span>
+              <span class="text-xl text-center">{messages['for firefox'][$lang()]}</span>
               <a href="https://addons.mozilla.org/de/firefox/addon/tabdash/">
                 <img
                   src="https://img.shields.io/amo/v/tabdash?label=TabDash&style=for-the-badge&logo=Firefox-Browser"
@@ -64,9 +57,7 @@ const Home: Component = () => {
           )}
           {isChrome && (
             <div>
-              <span class="text-xl text-center">
-                {messages["for chrome"][$lang()]}
-              </span>
+              <span class="text-xl text-center">{messages['for chrome'][$lang()]}</span>
             </div>
           )}
         </div>
@@ -88,10 +79,7 @@ const Home: Component = () => {
         <div class="w-full flex flex-col items-center">
           <For each={features}>
             {(feature, index) => (
-              <Feature
-                imgSide={index() % 2 == 0 ? "right" : "left"}
-                feature={feature}
-              />
+              <Feature imgSide={index() % 2 == 0 ? 'right' : 'left'} feature={feature} />
             )}
           </For>
         </div>

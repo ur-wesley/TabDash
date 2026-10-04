@@ -1,5 +1,6 @@
-import { Component } from "solid-js";
-import { AvailableLanguages, messages } from "../../lang.js";
+import type { Component } from 'solid-js';
+import type { AvailableLanguages } from '../../lang.js';
+import { messages } from '../../lang.js';
 const Greeting: Component<Prop> = (props) => {
   return (
     <div class="flex flex-col items-center widget">

@@ -16,10 +16,10 @@ services:
     ports:
       - '3003:3003'
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.tabdashextension.rule=Host(`online.tabdash.wesley.fyi`)"
-      - "traefik.http.routers.tabdashextension.entrypoints=websecure"
-      - "traefik.http.routers.tabdashextension.tls.certresolver=le"
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.tabdashextension.rule=Host(`online.tabdash.wesley.fyi`)'
+      - 'traefik.http.routers.tabdashextension.entrypoints=websecure'
+      - 'traefik.http.routers.tabdashextension.tls.certresolver=le'
     networks:
       - traefik_default
 
@@ -33,10 +33,10 @@ services:
     ports:
       - '3000:3000'
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.tabdashcompanion.rule=Host(`tabdash.wesley.fyi`)"
-      - "traefik.http.routers.tabdashcompanion.entrypoints=websecure"
-      - "traefik.http.routers.tabdashcompanion.tls.certresolver=le"
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.tabdashcompanion.rule=Host(`tabdash.wesley.fyi`)'
+      - 'traefik.http.routers.tabdashcompanion.entrypoints=websecure'
+      - 'traefik.http.routers.tabdashcompanion.tls.certresolver=le'
     networks:
       - traefik_default
 
@@ -51,10 +51,10 @@ services:
     ports:
       - '3005:3005'
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.tabdashcompanion.rule=Host(`tabdashbe.wesley.fyi`)"
-      - "traefik.http.routers.tabdashcompanion.entrypoints=websecure"
-      - "traefik.http.routers.tabdashcompanion.tls.certresolver=le"
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.tabdashcompanion.rule=Host(`tabdashbe.wesley.fyi`)'
+      - 'traefik.http.routers.tabdashcompanion.entrypoints=websecure'
+      - 'traefik.http.routers.tabdashcompanion.tls.certresolver=le'
     networks:
       - traefik_default
 

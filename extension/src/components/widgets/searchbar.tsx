@@ -1,12 +1,14 @@
-import { Component, onMount } from "solid-js";
-import { AvailableLanguages, messages } from "../../lang.js";
-import { SearchSetting } from "../../../types/settings.js";
-import Search from "../../api/search.js";
+import type { Component } from 'solid-js';
+import { onMount } from 'solid-js';
+import type { AvailableLanguages } from '../../lang.js';
+import { messages } from '../../lang.js';
+import type { SearchSetting } from '../../../types/settings.js';
+import Search from '../../api/search.js';
 
 const Searchbar: Component<Props> = (props) => {
-  let input: any;
+  let input: HTMLInputElement | undefined;
   onMount(() => {
-    if (props.settings.focus) input.focus();
+    if (props.settings.focus) input?.focus();
   });
   return (
     <div class="text-lg flex items-center overflow-hidden widget">
@@ -15,9 +17,9 @@ const Searchbar: Component<Props> = (props) => {
         ref={input}
         placeholder={messages.search[props.lang]}
         onKeyPress={(e) => {
-          if (e.key === "Enter") {
+          if (e.key === 'Enter') {
             Search.query(input.value, props.settings);
-            input.value = "";
+            input.value = '';
           }
         }}
         class="focus:outline-0 border-none fco p-3 h-full w-full text-lg bg-transparent"
@@ -29,7 +31,7 @@ const Searchbar: Component<Props> = (props) => {
           class="i-mdi-search p-3 text-md"
           onClick={() => {
             Search.query(input.value, props.settings);
-            input.value = "";
+            input.value = '';
           }}
         />
       </span>

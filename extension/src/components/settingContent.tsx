@@ -1,35 +1,26 @@
-import { Component, createSignal, Show } from "solid-js";
-import {
-  Setting,
-  ShortcutSetting,
-  ShortcutStyle,
-  theme,
-  Theme,
-} from "../../types/settings.js";
-import { getDefault, settingStore } from "../api/settingStore.js";
-import { locale, setLocale } from "../App.jsx";
-import {
-  messages,
-  helpLinks,
-  AvailableLanguages,
-  availableLanguages,
-  searchEngine,
-} from "../lang.js";
-import TextButton from "./controls/button.jsx";
-import Categorie from "./controls/categorie.jsx";
-import Input from "./controls/input.jsx";
-import Select from "./controls/select.jsx";
-import Slider from "./controls/slider.jsx";
-import Toggle from "./controls/toggle.jsx";
-import Footer from "./settings/footer.jsx";
-import Management from "./settings/management.jsx";
-import Widget from "./settings/widgetSetting.jsx";
+import type { Component } from 'solid-js';
+import { createSignal, Show } from 'solid-js';
+import type { Setting, ShortcutSetting, ShortcutStyle, Theme } from '../../types/settings.js';
+import { theme } from '../../types/settings.js';
+import { getDefault, settingStore } from '../api/settingStore.js';
+import { locale, setLocale } from '../App.jsx';
+import type { AvailableLanguages } from '../lang.js';
+import { messages, helpLinks, availableLanguages, searchEngine } from '../lang.js';
+import TextButton from './controls/button.jsx';
+import Categorie from './controls/categorie.jsx';
+import Input from './controls/input.jsx';
+import Select from './controls/select.jsx';
+import Slider from './controls/slider.jsx';
+import Toggle from './controls/toggle.jsx';
+import Footer from './settings/footer.jsx';
+import Management from './settings/management.jsx';
+import Widget from './settings/widgetSetting.jsx';
 
 const SettingContent: Component<Prop> = (props) => {
   const [newShortcut, setNewShortcut] = createSignal<ShortcutSetting>({
-    name: "",
-    link: "",
-    icon: "",
+    name: '',
+    link: '',
+    icon: '',
     newTab: false,
   });
   return (
@@ -43,7 +34,7 @@ const SettingContent: Component<Prop> = (props) => {
           placeholder={props.settings.general.username}
           value={props.settings.general.username}
           onInput={(e: string) => {
-            settingStore.setKey("general", {
+            settingStore.setKey('general', {
               ...props.settings.general,
               username: e,
             });
@@ -55,7 +46,7 @@ const SettingContent: Component<Prop> = (props) => {
           value={props.settings.general.locale}
           onInput={(e: string) => {
             setLocale(e as AvailableLanguages);
-            settingStore.setKey("general", {
+            settingStore.setKey('general', {
               ...props.settings.general,
               locale: e as AvailableLanguages,
             });
@@ -67,7 +58,7 @@ const SettingContent: Component<Prop> = (props) => {
           label={messages.theme[locale()]}
           value={props.settings.general.theme}
           onInput={(e: string) => {
-            settingStore.setKey("general", {
+            settingStore.setKey('general', {
               ...props.settings.general,
               theme: e as Theme,
             });
@@ -82,7 +73,7 @@ const SettingContent: Component<Prop> = (props) => {
           placeholder={props.settings.general.title}
           value={props.settings.general.title}
           onInput={(e: string) => {
-            settingStore.setKey("general", {
+            settingStore.setKey('general', {
               ...props.settings.general,
               title: e,
             });
@@ -93,7 +84,7 @@ const SettingContent: Component<Prop> = (props) => {
           placeholder={props.settings.general.favicon}
           value={props.settings.general.favicon}
           onInput={(e: string) => {
-            settingStore.setKey("general", {
+            settingStore.setKey('general', {
               ...props.settings.general,
               favicon: e,
             });
@@ -101,9 +92,9 @@ const SettingContent: Component<Prop> = (props) => {
         />
         <Show when={import.meta.env.VITE_IS_EXTENSION}>
           <Toggle
-            label={messages["browser sync"][locale()]}
+            label={messages['browser sync'][locale()]}
             onChange={(e) => {
-              settingStore.setKey("general", {
+              settingStore.setKey('general', {
                 ...props.settings.general,
                 sync: e,
               });
@@ -117,9 +108,9 @@ const SettingContent: Component<Prop> = (props) => {
         helpLink={helpLinks.base + locale() + helpLinks.layout}
       >
         <Toggle
-          label={messages["show clock"][locale()]}
+          label={messages['show clock'][locale()]}
           onChange={(e) => {
-            settingStore.setKey("layout", {
+            settingStore.setKey('layout', {
               ...props.settings.layout,
               showClock: e,
             });
@@ -127,9 +118,9 @@ const SettingContent: Component<Prop> = (props) => {
           checked={props.settings.layout.showClock}
         />
         <Toggle
-          label={messages["show date"][locale()]}
+          label={messages['show date'][locale()]}
           onChange={(e) => {
-            settingStore.setKey("layout", {
+            settingStore.setKey('layout', {
               ...props.settings.layout,
               showDate: e,
             });
@@ -137,9 +128,9 @@ const SettingContent: Component<Prop> = (props) => {
           checked={props.settings.layout.showDate}
         />
         <Toggle
-          label={messages["show greeting"][locale()]}
+          label={messages['show greeting'][locale()]}
           onChange={(e) => {
-            settingStore.setKey("layout", {
+            settingStore.setKey('layout', {
               ...props.settings.layout,
               showGreeting: e,
             });
@@ -147,9 +138,9 @@ const SettingContent: Component<Prop> = (props) => {
           checked={props.settings.layout.showGreeting}
         />
         <Toggle
-          label={messages["show searchbar"][locale()]}
+          label={messages['show searchbar'][locale()]}
           onChange={(e) => {
-            settingStore.setKey("layout", {
+            settingStore.setKey('layout', {
               ...props.settings.layout,
               showSearchbar: e,
             });
@@ -157,9 +148,9 @@ const SettingContent: Component<Prop> = (props) => {
           checked={props.settings.layout.showSearchbar}
         />
         <Toggle
-          label={messages["show weather"][locale()]}
+          label={messages['show weather'][locale()]}
           onChange={(e) => {
-            settingStore.setKey("layout", {
+            settingStore.setKey('layout', {
               ...props.settings.layout,
               showWeather: e,
             });
@@ -167,9 +158,9 @@ const SettingContent: Component<Prop> = (props) => {
           checked={props.settings.layout.showWeather}
         />
         <Toggle
-          label={messages["show shortcuts"][locale()]}
+          label={messages['show shortcuts'][locale()]}
           onChange={(e) => {
-            settingStore.setKey("layout", {
+            settingStore.setKey('layout', {
               ...props.settings.layout,
               showShortcuts: e,
             });
@@ -182,9 +173,9 @@ const SettingContent: Component<Prop> = (props) => {
         helpLink={helpLinks.base + locale() + helpLinks.background}
       >
         <Toggle
-          label={messages["bg active"][locale()]}
+          label={messages['bg active'][locale()]}
           onChange={(e) => {
-            settingStore.setKey("background", {
+            settingStore.setKey('background', {
               ...props.settings.background,
               active: e,
             });
@@ -194,23 +185,23 @@ const SettingContent: Component<Prop> = (props) => {
         <Show when={props.settings.background.active}>
           <Input
             label={messages.collections[locale()]}
-            placeholder={props.settings.background.collections.join(", ")}
-            value={props.settings.background.collections.join(", ")}
+            placeholder={props.settings.background.collections.join(', ')}
+            value={props.settings.background.collections.join(', ')}
             onInput={(e: string) => {
-              settingStore.setKey("background", {
+              settingStore.setKey('background', {
                 ...props.settings.background,
-                collections: e.split(",").map((i) => i.trim()),
+                collections: e.split(',').map((i) => i.trim()),
               });
             }}
           />
         </Show>
         <Show when={!props.settings.background.active}>
           <Input
-            label={messages["static img"][locale()]}
+            label={messages['static img'][locale()]}
             placeholder={props.settings.background.static}
             value={props.settings.background.static}
             onInput={(e: string) => {
-              settingStore.setKey("background", {
+              settingStore.setKey('background', {
                 ...props.settings.background,
                 static: e,
               });
@@ -221,7 +212,7 @@ const SettingContent: Component<Prop> = (props) => {
             placeholder={props.settings.background.color}
             value={props.settings.background.color}
             onInput={(e: string) => {
-              settingStore.setKey("background", {
+              settingStore.setKey('background', {
                 ...props.settings.background,
                 color: e,
               });
@@ -231,7 +222,7 @@ const SettingContent: Component<Prop> = (props) => {
         <Toggle
           label={messages.backdrop[locale()]}
           onChange={(e) => {
-            settingStore.setKey("background", {
+            settingStore.setKey('background', {
               ...props.settings.background,
               backdropActive: e,
             });
@@ -243,15 +234,13 @@ const SettingContent: Component<Prop> = (props) => {
             label={messages.blur[locale()]}
             min={0}
             max={20}
-            value={Number(
-              props.settings.background.backdrop.blur.split("px")[0]
-            )}
+            value={Number(props.settings.background.backdrop.blur.split('px')[0])}
             onChange={(e: string) => {
-              settingStore.setKey("background", {
+              settingStore.setKey('background', {
                 ...props.settings.background,
                 backdrop: {
                   ...props.settings.background.backdrop,
-                  blur: e + "px",
+                  blur: e + 'px',
                 },
               });
             }}
@@ -260,15 +249,13 @@ const SettingContent: Component<Prop> = (props) => {
             label={messages.brightness[locale()]}
             min={0}
             max={200}
-            value={Number(
-              props.settings.background.backdrop.brightness.split("%")[0]
-            )}
+            value={Number(props.settings.background.backdrop.brightness.split('%')[0])}
             onChange={(e: string) => {
-              settingStore.setKey("background", {
+              settingStore.setKey('background', {
                 ...props.settings.background,
                 backdrop: {
                   ...props.settings.background.backdrop,
-                  brightness: e + "%",
+                  brightness: e + '%',
                 },
               });
             }}
@@ -277,15 +264,13 @@ const SettingContent: Component<Prop> = (props) => {
             label={messages.saturate[locale()]}
             min={0}
             max={200}
-            value={Number(
-              props.settings.background.backdrop.saturate.split("%")[0]
-            )}
+            value={Number(props.settings.background.backdrop.saturate.split('%')[0])}
             onChange={(e: string) => {
-              settingStore.setKey("background", {
+              settingStore.setKey('background', {
                 ...props.settings.background,
                 backdrop: {
                   ...props.settings.background.backdrop,
-                  saturate: e + "%",
+                  saturate: e + '%',
                 },
               });
             }}
@@ -297,48 +282,48 @@ const SettingContent: Component<Prop> = (props) => {
               props.onRefreshImage();
             }}
           >
-            {messages["reload img"][locale()]}
+            {messages['reload img'][locale()]}
           </TextButton>
         </Show>
       </Categorie>
       <Categorie
-        name={messages["shortcut settings"][locale()]}
+        name={messages['shortcut settings'][locale()]}
         helpLink={helpLinks.base + locale() + helpLinks.shortcut}
       >
         <Toggle
-          label={messages["shortcut icon only"][locale()]}
+          label={messages['shortcut icon only'][locale()]}
           checked={props.settings.shortcutAppereance.iconOnly}
           onChange={(e) => {
-            settingStore.setKey("shortcutAppereance", {
+            settingStore.setKey('shortcutAppereance', {
               ...props.settings.shortcutAppereance,
               iconOnly: e,
             });
           }}
         />
         <Select
-          label={messages["shortcut size"][locale()]}
+          label={messages['shortcut size'][locale()]}
           value={props.settings.shortcutAppereance.style}
           onInput={(e) => {
-            settingStore.setKey("shortcutAppereance", {
+            settingStore.setKey('shortcutAppereance', {
               ...props.settings.shortcutAppereance,
               style: e as ShortcutStyle,
             });
           }}
           options={[
-            { value: "large", name: messages.large[locale()] },
-            { value: "medium", name: messages.medium[locale()] },
-            { value: "small", name: messages.small[locale()] },
-            { value: "text", name: messages.text[locale()] },
+            { value: 'large', name: messages.large[locale()] },
+            { value: 'medium', name: messages.medium[locale()] },
+            { value: 'small', name: messages.small[locale()] },
+            { value: 'text', name: messages.text[locale()] },
           ]}
         />
         <Slider
-          label={messages["shortcuts per line"][locale()]}
+          label={messages['shortcuts per line'][locale()]}
           min={1}
           max={10}
           step={1}
           value={props.settings.shortcutAppereance.elementsPerLine}
           onChange={(e) => {
-            settingStore.setKey("shortcutAppereance", {
+            settingStore.setKey('shortcutAppereance', {
               ...props.settings.shortcutAppereance,
               elementsPerLine: Number(e),
             });
@@ -347,32 +332,32 @@ const SettingContent: Component<Prop> = (props) => {
         />
       </Categorie>
       <Categorie
-        name={messages["new shortcut"][locale()]}
+        name={messages['new shortcut'][locale()]}
         helpLink={helpLinks.base + locale() + helpLinks.shortcut}
       >
         <Input
-          label={messages["shortcut name"][locale()]}
+          label={messages['shortcut name'][locale()]}
           value={newShortcut().name}
           onInput={(e: string) => {
             newShortcut().name = e;
           }}
         />
         <Input
-          label={messages["shortcut link"][locale()]}
+          label={messages['shortcut link'][locale()]}
           value={newShortcut().link}
           onInput={(e: string) => {
             newShortcut().link = e;
           }}
         />
         <Input
-          label={messages["shortcut icon"][locale()]}
+          label={messages['shortcut icon'][locale()]}
           value={newShortcut().icon}
           onInput={(e: string) => {
             newShortcut().icon = e;
           }}
         />
         <Toggle
-          label={messages["new tab"][locale()]}
+          label={messages['new tab'][locale()]}
           onChange={(e) => {
             newShortcut().newTab = e;
           }}
@@ -382,21 +367,21 @@ const SettingContent: Component<Prop> = (props) => {
           onClick={() => {
             if (
               Object.entries(newShortcut()).some(
-                ([k, v]) =>
-                  k != "newTab" && k != "icon" && (v == "" || v == undefined)
+                ([k, v]) => k != 'newTab' && k != 'icon' && (v == '' || v == undefined),
               )
             )
               return;
-            if (!newShortcut().link.startsWith("http"))
+            if (!newShortcut().link.startsWith('http'))
               newShortcut().link = `https://${newShortcut().link}`;
-            if (newShortcut().icon == "")
-              newShortcut().icon = `https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${newShortcut().link
-                }&size=128`;
+            if (newShortcut().icon == '')
+              newShortcut().icon = `https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${
+                newShortcut().link
+              }&size=128`;
             props.addShortcut(newShortcut());
             setNewShortcut({
-              name: "",
-              link: "",
-              icon: "",
+              name: '',
+              link: '',
+              icon: '',
               newTab: false,
             });
           }}
@@ -405,13 +390,13 @@ const SettingContent: Component<Prop> = (props) => {
         </TextButton>
       </Categorie>
       <Categorie
-        name={messages["time and date"][locale()]}
+        name={messages['time and date'][locale()]}
         helpLink={helpLinks.base + locale() + helpLinks.time}
       >
         <Toggle
-          label={messages["show seconds"][locale()]}
+          label={messages['show seconds'][locale()]}
           onChange={(e) => {
-            settingStore.setKey("clock", {
+            settingStore.setKey('clock', {
               ...props.settings.clock,
               showSeconds: e,
             });
@@ -420,36 +405,36 @@ const SettingContent: Component<Prop> = (props) => {
         />
       </Categorie>
       <Categorie
-        name={messages["search settings"][locale()]}
+        name={messages['search settings'][locale()]}
         helpLink={helpLinks.base + locale() + helpLinks.search}
       >
         <Toggle
-          label={messages["focus search"][locale()]}
+          label={messages['focus search'][locale()]}
           checked={props.settings.search.focus}
           onChange={(e) => {
-            settingStore.setKey("search", {
+            settingStore.setKey('search', {
               ...props.settings.search,
               focus: e,
             });
           }}
         />
         <Toggle
-          label={messages["new tab"][locale()]}
+          label={messages['new tab'][locale()]}
           checked={props.settings.search.newTab}
           onChange={(e) => {
-            settingStore.setKey("search", {
+            settingStore.setKey('search', {
               ...props.settings.search,
               newTab: e,
             });
           }}
         />
         <Select
-          label={messages["search engine"][locale()]}
+          label={messages['search engine'][locale()]}
           value={props.settings.search.engine}
           placeholder={props.settings.search.engine}
           options={searchEngine.map((s) => ({ name: s.name, value: s.name }))}
           onInput={(e) => {
-            settingStore.setKey("search", {
+            settingStore.setKey('search', {
               ...props.settings.search,
               engine: e,
             });
@@ -461,40 +446,38 @@ const SettingContent: Component<Prop> = (props) => {
         helpLink={helpLinks.base + locale() + helpLinks.weather}
       >
         <Toggle
-          label={messages["show weather icon"][locale()]}
+          label={messages['show weather icon'][locale()]}
           checked={props.settings.weather.showIcon}
           onChange={(e) => {
-            settingStore.setKey("weather", {
+            settingStore.setKey('weather', {
               ...props.settings.weather,
               showIcon: e,
             });
           }}
         />
         <Toggle
-          label={messages["show weather text"][locale()]}
+          label={messages['show weather text'][locale()]}
           checked={props.settings.weather.showText}
           onChange={(e) => {
-            settingStore.setKey("weather", {
+            settingStore.setKey('weather', {
               ...props.settings.weather,
               showText: e,
             });
           }}
         />
         <Toggle
-          label={messages["imperial"][locale()]}
+          label={messages['imperial'][locale()]}
           onChange={(e) => {
-            settingStore.setKey("weather", {
+            settingStore.setKey('weather', {
               ...props.settings.weather,
-              unit: e ? "imperial" : "metric",
+              unit: e ? 'imperial' : 'metric',
             });
             props.onWeatherUpdate();
           }}
-          checked={props.settings.weather.unit == "imperial"}
+          checked={props.settings.weather.unit == 'imperial'}
         />
       </Categorie>
-      <Widget
-        settings={props.settings.widgetSetting}
-      />
+      <Widget settings={props.settings.widgetSetting} />
       <Management
         settings={props.settings}
         reset={async () => settingStore.set(await getDefault())}

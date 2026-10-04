@@ -1,37 +1,52 @@
-import { Component, createSignal, For, Show } from "solid-js";
+import { Tabs as KobalteTabs } from '@kobalte/core/tabs';
+import { type Component, createSignal, For, type JSX, children } from 'solid-js';
+import { cn } from '../../lib/utils.js';
 
-const Tabs: Component<Props> = (props) => {
-  const [activeTab, setActiveTab] = createSignal(props.activeTab || 0);
+export interface TabsProps {
+  readonly activeTab?: number;
+  readonly tabs: readonly string[];
+  readonly children: JSX.Element;
+  readonly onchange?: (tab: number) => void;
+}
+
+const Tabs: Component<TabsProps> = (props) => {
+  const [activeTab, setActiveTab] = createSignal(props.activeTab ?? 0);
+  const resolvedChildren = children(() => props.children);
+
   return (
-    <div class="flex flex-col gap-2">
-      <div class="surface-base p-2 flex text-center rounded-xl">
+    <KobalteTabs
+      class="flex flex-col gap-2"
+      value={String(activeTab())}
+      onChange={(val) => {
+        const next = Number.parseInt(val, 10);
+        setActiveTab(next);
+        props.onchange?.(next);
+      }}
+    >
+      <KobalteTabs.List class="surface-base p-2 flex text-center rounded-xl gap-1">
         <For each={props.tabs}>
           {(tab, index) => (
-            <span
-              class={`p-1 rounded-md grow w-full cursor-pointer ${activeTab() == index()
-                ? "text-white bg-blue-500"
-                : "text-blue-500 bg-transparent"
-                }`}
-              onclick={() => {
-                setActiveTab(index());
-                props.onchange?.(index());
-              }}
+            <KobalteTabs.Trigger
+              value={String(index())}
+              class={cn(
+                'p-1.5 rounded-lg grow w-full cursor-pointer text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-blue-500',
+                activeTab() === index()
+                  ? 'text-white bg-blue-500 shadow-sm'
+                  : 'text-blue-500 hover:bg-black/5 dark:hover:bg-white/5',
+              )}
             >
               {tab}
-            </span>
+            </KobalteTabs.Trigger>
           )}
         </For>
+      </KobalteTabs.List>
+      <div>
+        {Array.isArray(resolvedChildren())
+          ? (resolvedChildren() as JSX.Element[])[activeTab()]
+          : resolvedChildren()}
       </div>
-      {props.children[activeTab()] || props.children}
-    </div>
+    </KobalteTabs>
   );
 };
 
 export default Tabs;
-
-interface Props {
-  activeTab?: number;
-  tabs: string[];
-  children: any[] | any;
-  onchange?: (tab: number) => void;
-}

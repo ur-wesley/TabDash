@@ -1,8 +1,14 @@
 {
-  "extends": "astro/tsconfigs/strict",
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true,
+    "rootDir": "src",
+    "outDir": "dist",
     "jsx": "preserve",
-    "jsxImportSource": "solid-js",
-    "typeRoots": ["helper"]
-  }
+    "jsxImportSource": "solid-js"
+  },
+  "include": ["src"]
 }

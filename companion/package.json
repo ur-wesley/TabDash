@@ -1,8 +1,8 @@
 {
   "name": "@ur-wesley/tabdash-companion",
-  "type": "module",
   "version": "0.3.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "astro dev --host --secure",
     "start": "astro dev",

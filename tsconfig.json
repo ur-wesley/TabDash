@@ -1,0 +1,4 @@
+{
+  "files": [],
+  "references": [{ "path": "./extension" }, { "path": "./companion" }, { "path": "./backend" }]
+}

@@ -1,8 +1,10 @@
 ###
-GET http://localhost:3005/api/storage?key=test3&p=pw
+GET http://localhost:3005/api/storage?key=test3
+X-Storage-Key: pw
 
 ###
-POST http://localhost:3005/api/storage?key=test3&p=pw
+POST http://localhost:3005/api/storage?key=test3
+X-Storage-Key: pw
 Content-Type: application/json
 
 {
