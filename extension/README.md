@@ -1,9 +1,20 @@
 # TabDash Extension
 
-a new tab extension
+Browser extension for Chrome, Firefox, and Edge (Manifest V3).
 
-developed on windows 11 with visual studio code.
-source build with SolidJS and Vite.
+Built with **SolidJS**, **Vite**, **UnoCSS**, and **@kobalte/core** primitives.
 
-1. `pnpm install` installs all dependencies
-2. `pnpm dev` build from source and execute as dev addon
+## Development
+
+```bash
+# Install dependencies from root
+bun install
+
+# Start development server
+bun --filter @ur-wesley/tabdash-extension dev
+
+# Build production extension package
+bun --filter @ur-wesley/tabdash-extension build
+```
+
+Generated extension bundles and browser-specific manifests (`manifest.chrome.json`, `manifest.firefox.json`, `manifest.edge.json`) will be emitted into `dist/` and `public/`.
