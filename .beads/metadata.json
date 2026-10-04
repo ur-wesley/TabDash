@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "tabdash",
+  "project_id": "1c1a6a24-57f8-4c4f-9fd4-e0ab47f1149b"
+}
