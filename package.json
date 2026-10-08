@@ -16,17 +16,25 @@
     "check": "oxlint && oxfmt --check",
     "prepare": "lefthook install --force",
     "build": "bun run --filter \"*\" build",
-    "dev:extension": "bun --filter @ur-wesley/tabdash-extension dev",
-    "dev:companion": "bun --filter @ur-wesley/tabdash-companion dev",
-    "dev:backend": "bun --filter tabdash_backend dev"
+    "bump": "bumpp --recursive",
+    "bump:patch": "bumpp --recursive patch --yes",
+    "bump:minor": "bumpp --recursive minor --yes",
+    "bump:major": "bumpp --recursive major --yes",
+    "sync-versions": "bun scripts/sync-versions.ts",
+    "dev": "bun run --filter \"*\" dev",
+    "dev:extension": "bun run --filter @ur-wesley/tabdash-extension dev",
+    "dev:companion": "bun run --filter @ur-wesley/tabdash-companion dev",
+    "dev:backend": "bun run --filter tabdash_backend dev"
   },
   "devDependencies": {
     "@corvu/utils": "^0.4.2",
-    "lefthook": "latest",
+    "@types/node": "^26.6.4",
+    "bumpp": "^12.3.0",
+    "lefthook": "^2.1.17",
     "oxfmt": "latest",
     "oxlint": "latest",
     "oxlint-tsgolint": "latest",
-    "typescript": "^7.0.0"
+    "typescript": "^7.0.2"
   },
   "packageManager": "bun@1.4.2"
 }
