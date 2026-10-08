@@ -2,8 +2,7 @@
 
 This file provides instructions and context for AI coding agents working on this project.
 
-<!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:1105d646 -->
-
+<!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:46cd31e7 -->
 ## Beads Issue Tracker
 
 This project uses **bd (beads)** for issue tracking. Run `bd prime` to see full workflow context and commands.
@@ -47,27 +46,42 @@ This protocol applies when ending a Beads implementation workflow. It is subordi
 
    # Team-maintainer opt-in only, unless current instructions forbid it:
    git pull --rebase
+   bd dolt push
    git push
    git status
    ```
 5. **Hand off** - Summarize changes, validation, issue status, and any blocked sync/commit/push step
 
 **Critical rules:**
-
 - Explicit user or orchestrator instructions override this Beads block.
 - Do not commit or push without clear authority from the active profile or the current user request.
 - If a required sync or push is blocked, stop and report the exact command and error.
-
 <!-- END BEADS INTEGRATION -->
+
 
 ## Build & Test
 
-_Add your build and test commands here_
-
 ```bash
-# Example:
-# npm install
-# npm test
+# Install dependencies
+bun install
+
+# Run all dev servers concurrently
+bun run dev
+
+# Run individual workspace dev servers
+bun run dev:extension
+bun run dev:companion
+bun run dev:backend
+
+# Run tests across workspaces
+bun test
+
+# Quality checks & formatting
+bun run check
+bun run fmt
+
+# Build all packages
+bun run build
 ```
 
 ## Architecture Overview
