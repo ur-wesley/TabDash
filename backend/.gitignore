@@ -1,5 +1,4 @@
 .env
-.nitro
-.output
 data
 node_modules
+dist

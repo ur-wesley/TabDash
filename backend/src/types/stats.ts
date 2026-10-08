@@ -1,11 +1,9 @@
 export const Browser = ['Chrome', 'Firefox', 'Edge', 'Safari'] as const;
 export type AvailableBrowser = (typeof Browser)[number];
 
-export type Statistic = {
-  [key in AvailableBrowser]: BrowserStats;
-};
+export interface BrowserStats {
+  installs: number;
+  deinstalls: number;
+}
 
-export type BrowserStats = {
-  installs: string[];
-  deinstalls: string[];
-};
+export type StatisticResponse = Record<AvailableBrowser, BrowserStats>;

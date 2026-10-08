@@ -1,21 +1,14 @@
-FROM node:alpine
+FROM oven/bun:1-alpine
 
 WORKDIR /usr/src/tabdash/backend
 
 COPY package.json ./
-
-ARG DB_PATH
-ARG PORT
-
-ENV DB_PATH DB_PATH
-ENV PORT PORT
-
-RUN npm install
+RUN bun install --production
 
 COPY . .
 
-RUN npm run build
-
+ENV PORT=3005
+ENV DB_PATH=/opt/TabDash-data
 EXPOSE 3005
 
-CMD [ "npm", "run", "start" ]
+CMD [ "bun", "src/index.ts" ]

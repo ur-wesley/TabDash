@@ -8,7 +8,8 @@ const Crypto = {
   decrypt(encryptedText: string, password: string) {
     try {
       const bytes = crypto.AES.decrypt(encryptedText, password);
-      return bytes.toString(crypto.enc.Utf8);
+      const decrypted = bytes.toString(crypto.enc.Utf8);
+      return decrypted || null;
     } catch {
       return null;
     }

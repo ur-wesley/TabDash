@@ -1,21 +1,35 @@
-###
+### Healthcheck
+GET http://localhost:3005/health
+
+### Get storage by query parameter
 GET http://localhost:3005/api/storage?key=test3
 X-Storage-Key: pw
 
-###
+### Save storage by query parameter
 POST http://localhost:3005/api/storage?key=test3
 X-Storage-Key: pw
 Content-Type: application/json
 
 {
-    "test": "test" 
+    "test": "test"
 }
 
-###
+### Get storage by path alias
+GET http://localhost:3005/api/setting/test3?p=pw
+
+### Save storage by path alias
+POST http://localhost:3005/api/setting/test3?p=pw
+Content-Type: application/json
+
+{
+    "test": "updated-via-alias"
+}
+
+### Install telemetry
 GET http://localhost:3005/api/install?id=2&browser=Chrome
 
-###
-GET http://localhost:3005/api/deinstall?id=3&browser=Chrome
+### Deinstall telemetry
+GET http://localhost:3005/api/deinstall?id=2&browser=Chrome
 
-###
+### Statistics
 GET http://localhost:3005/api/statistic

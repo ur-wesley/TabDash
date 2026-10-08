@@ -2,11 +2,13 @@
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "composite": false,
+    "resolveJsonModule": true,
     "declaration": false,
     "declarationMap": false,
     "noEmit": true,
     "rootDir": "src",
-    "outDir": "dist"
+    "outDir": "dist",
+    "types": ["bun-types"]
   },
   "include": ["src"]
 }
