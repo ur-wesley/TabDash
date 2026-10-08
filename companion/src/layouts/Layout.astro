@@ -7,12 +7,12 @@ const { frontmatter } = Astro.props;
 const url = Astro.url;
 const onlineVersion = `${url.protocol}//online.${url.host}`;
 
-const _len = Astro.url.toString().split("/");
+const urlParts = Astro.url.toString().split("/");
 const allSettings = await Astro.glob("../pages/docs/**/*.md");
 const settings = allSettings.filter((s) => {
 	const l = s.file?.split("/");
 	const lang = l[l.length - 2];
-	return lang == _len[4] && s.frontmatter.title;
+	return lang == urlParts[4] && s.frontmatter.title;
 });
 const currentIndex = settings.findIndex(
 	(m) => m.frontmatter.title == frontmatter.title
@@ -37,11 +37,14 @@ const next =
 		</style>
 		<script>
 			import "uno.css";
-			document.querySelector<HTMLElement>("#mobileMenu")!.onclick = () => {
-				const el = document.querySelector("#navigation")!;
-				el.classList.toggle("translate-x-0");
-				el.classList.toggle("-translate-x-full");
-			};
+			const menuButton = document.querySelector("#mobileMenu");
+			const navigation = document.querySelector("#navigation");
+			if (menuButton && navigation) {
+				menuButton.addEventListener("click", () => {
+					navigation.classList.toggle("translate-x-0");
+					navigation.classList.toggle("-translate-x-full");
+				});
+			}
 		</script>
 	</head>
 	<body class='flex flex-col gap-3 transition'>

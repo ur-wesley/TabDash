@@ -8,19 +8,19 @@ import Footer from './Footer.jsx';
 
 import './styles/animations.scss';
 
+const animateImage = (e: MouseEvent, element: HTMLElement) => {
+  const width = window.screen.width / 2;
+  const height = window.screen.height / 2;
+  const centerX = e.clientX - width;
+  const centerY = e.clientY - height;
+  const degX = centerX * 0.005;
+  const degY = centerY * 0.01;
+  element.style.transform = `perspective(1000px) rotateX(${degX}deg) rotateY(${degY}deg)`;
+};
+
 const Home: Component = () => {
   const isChrome = navigator.userAgent.includes('Chrome');
   const $lang = useStore(language);
-
-  const animateImage = (e: MouseEvent, element: HTMLElement) => {
-    const width = window.screen.width / 2;
-    const height = window.screen.height / 2;
-    const centerX = e.clientX - width;
-    const centerY = e.clientY - height;
-    const degX = centerX * 0.005;
-    const degY = centerY * 0.01;
-    element.style.transform = `perspective(1000px) rotateX(${degX}deg) rotateY(${degY}deg)`;
-  };
 
   onMount(() => {
     const queryLang = useQuery(window.location.href).lang as AvailableLanguages;

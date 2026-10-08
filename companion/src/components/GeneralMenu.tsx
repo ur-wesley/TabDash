@@ -9,10 +9,10 @@ const GeneralMenu: Component<Props> = (props) => {
   const [open, setOpen] = createSignal(false);
   const [stars, setStars] = createSignal(null);
   createEffect(async () => {
-    const stars = await fetch('https://api.github.com/repos/ur-wesley/TabDash')
+    const starCount = await fetch('https://api.github.com/repos/ur-wesley/TabDash')
       .then((r) => r.json())
       .then((r) => r.stargazers_count || 0);
-    setStars(stars);
+    setStars(starCount);
   });
   onMount(() => {
     if (typeof window !== 'undefined') window.addEventListener('resize', onresize);

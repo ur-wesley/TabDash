@@ -8,8 +8,7 @@ const Goodbye: Component = () => {
   const $lang = useStore(language);
   const { id, browser } = useQuery(window.location.href);
   createEffect(() => {
-    console.log({ x: import.meta.env.PUBLIC_BACKEND_BASE });
-    fetch(`${import.meta.env.PUBLIC_BACKEND_BASE}/deinstall?id=${id}&browser=${browser}`);
+    void fetch(`${import.meta.env.PUBLIC_BACKEND_BASE}/deinstall?id=${id}&browser=${browser}`);
   });
   return (
     <div class="grid place-content-center h-screen w-full">

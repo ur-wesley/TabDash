@@ -49,10 +49,21 @@ const Feature: Component<Props> = (props) => {
           props.imgSide == 'right' ? 'col-start-1' : 'col-start-2'
         }`}
       >
-        <h2 ref={headline!} class="font-bold text-xl lg:text-3xl py-4">
+        <h2
+          ref={(el) => {
+            headline = el;
+          }}
+          class="font-bold text-xl lg:text-3xl py-4"
+        >
           {props.feature.title[$lang()]}
         </h2>
-        <span ref={desc!}>{props.feature.description[$lang()]}</span>
+        <span
+          ref={(el) => {
+            desc = el;
+          }}
+        >
+          {props.feature.description[$lang()]}
+        </span>
       </div>
       <div
         class={`w-full row-start-1 p-4 flex flex-col justify-center lg:text-xl ${
@@ -60,7 +71,9 @@ const Feature: Component<Props> = (props) => {
         }`}
       >
         <img
-          ref={image!}
+          ref={(el) => {
+            image = el;
+          }}
           class="rounded-xl"
           src={props.feature.img}
           alt={props.feature.title[$lang()]}

@@ -4,8 +4,8 @@ export interface Props {
   settings: MarkdownInstance<Record<string, unknown>>[];
 }
 const { settings } = Astro.props;
-const _len = Astro.url.toString().split('/');
-const title = _len[_len.length - 1];
+const urlParts = Astro.url.toString().split('/');
+const title = urlParts[urlParts.length - 1];
 ---
 
 <aside>
