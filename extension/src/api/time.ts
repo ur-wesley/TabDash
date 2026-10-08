@@ -1,9 +1,14 @@
+import type { DateSetting } from '../../types/settings.js';
+
 class Time {
   public locale: string;
   public showSeconds: boolean;
-  constructor(locale: string, showSeconds: boolean) {
+  public dateSetting?: DateSetting;
+
+  constructor(locale: string, showSeconds: boolean, dateSetting?: DateSetting) {
     this.locale = locale ?? 'en';
     this.showSeconds = showSeconds ?? false;
+    this.dateSetting = dateSetting;
   }
   public getTime(): string {
     try {
@@ -22,18 +27,15 @@ class Time {
   }
 
   public getDate(): string {
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: (this.dateSetting?.weekday as Intl.DateTimeFormatOptions['weekday']) ?? 'long',
+      day: (this.dateSetting?.date as Intl.DateTimeFormatOptions['day']) ?? '2-digit',
+      month: (this.dateSetting?.month as Intl.DateTimeFormatOptions['month']) ?? 'long',
+    };
     try {
-      return new Date().toLocaleDateString(this.locale, {
-        weekday: 'long',
-        day: '2-digit',
-        month: 'long',
-      });
+      return new Date().toLocaleDateString(this.locale, options);
     } catch {
-      return new Date().toLocaleDateString('en', {
-        weekday: 'long',
-        day: '2-digit',
-        month: 'long',
-      });
+      return new Date().toLocaleDateString('en', options);
     }
   }
 

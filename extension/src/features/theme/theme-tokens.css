@@ -1,0 +1,176 @@
+/**
+ * Global theme tokens (solid-ui / shadcn style).
+ *
+ * Semantic CSS variables with `:root` holding the light values and `.dark`
+ * holding the dark overrides. This file is the single place where literal
+ * colors live; every component references `var(--...)` only, so switching
+ * themes never requires touching component styles.
+ *
+ * Values mirror the previous slate/zinc/blue palette, so introducing the
+ * tokens changes no visuals by itself.
+ */
+
+:root {
+  color-scheme: light;
+  /* ---- Text ---- */
+  --fg-strong: #0f172a; /* slate-900 */
+  --fg-default: #1e293b; /* slate-800 */
+  --fg-label: #334155; /* slate-700 */
+  --fg-muted: #475569; /* slate-600 */
+  --fg-faint: #64748b; /* slate-500 */
+  --fg-placeholder: #94a3b8; /* slate-400 */
+  --fg-icon-muted: #94a3b8; /* slate-400 */
+  --fg-static-muted: #a1a1aa; /* zinc-400, both modes */
+  --fg-error: #ef4444; /* red-500 */
+  --border-error: #ef4444; /* red-500 */
+
+  /* ---- Brand (same both modes unless noted) ---- */
+  --primary: #2563eb; /* blue-600 */
+  --primary-hover: #3b82f6; /* blue-500 */
+  --primary-active: #1d4ed8; /* blue-700 */
+  --primary-fg: #2563eb; /* blue-600 */
+  --primary-fg-vivid: #3b82f6; /* blue-500 */
+  --primary-wash: rgba(59, 130, 246, 0.1); /* blue-500/10 */
+  --primary-drop-wash: rgba(59, 130, 246, 0.1); /* blue-500/10 */
+  --primary-shadow: rgba(59, 130, 246, 0.2); /* blue-500/20 */
+  --primary-border: rgba(59, 130, 246, 0.3); /* blue-500/30 */
+  --ring: #3b82f6; /* blue-500 */
+  --ring-soft: rgba(59, 130, 246, 0.5); /* blue-500/50 */
+  --ring-error: #ef4444; /* red-500 */
+  --danger: #dc2626; /* red-600 */
+  --danger-hover: #ef4444; /* red-500 */
+  --danger-active: #b91c1c; /* red-700 */
+  --danger-shadow: rgba(239, 68, 68, 0.2); /* red-500/20 */
+  --danger-border: rgba(239, 68, 68, 0.3); /* red-500/30 */
+  --on-brand: #ffffff;
+
+  /* ---- Surfaces ---- */
+  --surface: #ffffff;
+  --field: #ffffff;
+  --surface-overlay: rgba(255, 255, 255, 0.6);
+  --surface-header: rgba(255, 255, 255, 0.4);
+  --surface-hover: #f8fafc; /* slate-50 */
+  --thumb: #ffffff;
+  --track: #e2e8f0; /* slate-200 */
+  --switch-off: #cbd5e1; /* slate-300 */
+  --ghost-hover: rgba(241, 245, 249, 0.8); /* slate-100/80 */
+  --ghost-active: rgba(226, 232, 240, 0.6); /* slate-200/60 */
+  --btn-secondary-bg: rgba(241, 245, 249, 0.9); /* slate-100/90 */
+  --btn-secondary-hover: rgba(226, 232, 240, 0.9); /* slate-200/90 */
+  --btn-secondary-active: #e2e8f0; /* slate-200 */
+  --btn-outline-bg: rgba(255, 255, 255, 0.8);
+  --btn-outline-hover: rgba(241, 245, 249, 0.9); /* slate-100/90 */
+  --btn-outline-active: #f1f5f9; /* slate-100 */
+  --btn-icon-hover: #f1f5f9; /* slate-100 */
+  --upload-bg: rgba(255, 255, 255, 0.7);
+  --upload-bg-hover: rgba(241, 245, 249, 0.7); /* slate-100/70 */
+
+  /* ---- Borders ---- */
+  --border-field: #cbd5e1; /* slate-300 */
+  --border-swatch: #cbd5e1; /* slate-300 */
+  --border-menu: #e2e8f0; /* slate-200 */
+  --border-btn-outline: rgba(226, 232, 240, 0.9); /* slate-200/90 */
+  --border-btn-outline-hover: #cbd5e1; /* slate-300 */
+  --border-btn-secondary: rgba(226, 232, 240, 0.5); /* slate-200/50 */
+  --border-upload: #cbd5e1; /* slate-300 */
+  --border-upload-hover: #94a3b8; /* slate-400 */
+  --divider: rgba(0, 0, 0, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.3);
+
+  /* ---- Sidebar tabs (selected state) */
+  --tab-selected-bg: #ffffff;
+  --tab-selected-fg: #0f172a; /* slate-900 */
+  --tab-selected-border: rgba(0, 0, 0, 0.05);
+  --tab-selected-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --tab-icon-selected: #3b82f6; /* blue-500 */
+  --tab-icon-indigo: #818cf8; /* indigo-400 */
+  --tab-icon-amber: #f59e0b; /* amber-500 */
+  --tab-list-bg: rgba(226, 232, 240, 0.6); /* slate-200/60 */
+  --tab-list-border: rgba(203, 213, 225, 0.4); /* slate-300/40 */
+  --tab-fg-idle: #475569; /* slate-600 */
+  --tab-hover-wash: rgba(0, 0, 0, 0.05);
+  --tab-indicator-border: rgba(226, 232, 240, 0.7); /* slate-200/70 */
+
+  /* ---- Toasts (always dark-styled, as before) ---- */
+  --toast-bg: #18181b; /* zinc-900 */
+  --toast-border: #3f3f46; /* zinc-700 */
+  --toast-fg: #f4f4f5; /* zinc-100 */
+  --toast-fg-muted: #a1a1aa; /* zinc-400 */
+  --toast-action-bg: #2563eb; /* blue-600 */
+  --toast-action-hover: #1d4ed8; /* blue-700 */
+  --toast-action-fg: #ffffff;
+  --toast-cancel-bg: #27272a; /* zinc-800 */
+  --toast-cancel-fg: #d4d4d8; /* zinc-300 */
+  --toast-cancel-hover: #3f3f46; /* zinc-700 */
+  --toast-error-border: rgba(239, 68, 68, 0.5); /* red-500/50 */
+  --toast-error-fg: #fecaca; /* red-200 */
+  --toast-success-border: rgba(16, 185, 129, 0.5); /* emerald-500/50 */
+  --toast-success-fg: #a7f3d0; /* emerald-200 */
+  --toast-warning-border: rgba(245, 158, 11, 0.5); /* amber-500/50 */
+  --toast-warning-fg: #fde68a; /* amber-200 */
+  --toast-info-border: rgba(59, 130, 246, 0.5); /* blue-500/50 */
+  --toast-info-fg: #bfdbfe; /* blue-200 */
+
+  /* ---- Page backdrop fallback while no image / color is configured */
+  --backdrop-surface: #18181b; /* zinc-900 */
+
+  /* ---- Unsplash author credit legibility over bright photos */
+  --author-credit-shadow: rgba(0, 0, 0, 0.65);
+
+  /* ---- Canvas editing helpers */
+  --snap-guide-glow: rgba(59, 130, 246, 0.7); /* blue-500 */
+  --canvas-grid-dot: #3b82f6; /* blue-500 */
+}
+
+.dark {
+  color-scheme: dark;
+  --fg-strong: #f4f4f5; /* zinc-100 */
+  --fg-default: #f4f4f5; /* zinc-100 */
+  --fg-label: #e4e4e7; /* zinc-200 */
+  --fg-muted: #d4d4d8; /* zinc-300 */
+  --fg-faint: #a1a1aa; /* zinc-400 */
+  --fg-placeholder: #71717a; /* zinc-500 */
+  --fg-icon-muted: #a1a1aa; /* zinc-400 */
+  --fg-error: #f87171; /* red-400 */
+  --border-error: #ef4444; /* red-500 */
+  --primary-fg: #60a5fa; /* blue-400 */
+  --primary-fg-vivid: #60a5fa; /* blue-400 */
+  --primary-wash: rgba(37, 99, 235, 0.2); /* blue-600/20 */
+  --surface: #18181b; /* zinc-900 */
+  --field: rgba(24, 24, 27, 0.8); /* zinc-900/80 */
+  --surface-overlay: rgba(24, 24, 27, 0.6); /* zinc-900/60 */
+  --surface-header: rgba(24, 24, 27, 0.4); /* zinc-900/40 */
+  --surface-hover: #27272a; /* zinc-800 */
+  --track: #3f3f46; /* zinc-700 */
+  --switch-off: #3f3f46; /* zinc-700 */
+  --ghost-hover: #27272a; /* zinc-800 */
+  --ghost-active: rgba(63, 63, 70, 0.6); /* zinc-700/60 */
+  --btn-secondary-bg: rgba(39, 39, 42, 0.9); /* zinc-800/90 */
+  --btn-secondary-hover: rgba(63, 63, 70, 0.9); /* zinc-700/90 */
+  --btn-secondary-active: #3f3f46; /* zinc-700 */
+  --btn-outline-bg: rgba(39, 39, 42, 0.6); /* zinc-800/60 */
+  --btn-outline-hover: rgba(63, 63, 70, 0.7); /* zinc-700/70 */
+  --btn-outline-active: #27272a; /* zinc-800 */
+  --btn-icon-hover: #27272a; /* zinc-800 */
+  --upload-bg: rgba(24, 24, 27, 0.6); /* zinc-900/60 */
+  --upload-bg-hover: rgba(39, 39, 42, 0.6); /* zinc-800/60 */
+  --border-field: #3f3f46; /* zinc-700 */
+  --border-swatch: #52525b; /* zinc-600 */
+  --border-menu: #3f3f46; /* zinc-700 */
+  --border-btn-outline: rgba(63, 63, 70, 0.8); /* zinc-700/80 */
+  --border-btn-outline-hover: #52525b; /* zinc-600 */
+  --border-btn-secondary: rgba(63, 63, 70, 0.5); /* zinc-700/50 */
+  --border-upload: #3f3f46; /* zinc-700 */
+  --border-upload-hover: #52525b; /* zinc-600 */
+  --divider: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --tab-selected-bg: #27272a; /* zinc-800 */
+  --tab-selected-fg: #ffffff;
+  --tab-selected-border: rgba(255, 255, 255, 0.1);
+  --tab-icon-selected: #60a5fa; /* blue-400 */
+  --tab-list-bg: rgba(24, 24, 27, 0.8); /* zinc-900/80 */
+  --tab-list-border: rgba(255, 255, 255, 0.1);
+  --tab-fg-idle: #e4e4e7; /* zinc-200 */
+  --tab-hover-wash: rgba(255, 255, 255, 0.05);
+  --tab-indicator-border: rgba(63, 63, 70, 0.6); /* zinc-700/60 */
+}

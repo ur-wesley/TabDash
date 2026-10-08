@@ -5,11 +5,11 @@
     "declaration": false,
     "declarationMap": false,
     "noEmit": true,
-    "rootDir": "src",
+    "rootDir": ".",
     "outDir": "dist",
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "types": ["vite/client", "chrome"]
+    "types": ["vite/client", "chrome", "bun-types"]
   },
-  "include": ["src"]
+  "include": ["src", "types"]
 }

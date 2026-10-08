@@ -21,7 +21,7 @@
       "next": "",
       "author": "",
       "profile": "",
-      "orgin": ""
+      "origin": ""
     },
     "static": "https://images.unsplash.com/photo-1426604966848-d7adac402bff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80"
   },
@@ -44,7 +44,18 @@
     "showGreeting": true,
     "showSearchbar": true,
     "showShortcuts": true,
-    "showWeather": true
+    "showWeather": true,
+    "mode": "canvas",
+    "snapToGrid": true,
+    "gridSize": 5,
+    "canvasPositions": {
+      "clock": { "x": 50, "y": 25 },
+      "greeting": { "x": 50, "y": 42 },
+      "searchbar": { "x": 50, "y": 55 },
+      "weather": { "x": 85, "y": 15 },
+      "shortcuts": { "x": 50, "y": 72 }
+    },
+    "flowOrder": ["clock", "greeting", "weather", "searchbar", "shortcuts"]
   },
   "clock": {
     "showSeconds": false
@@ -57,7 +68,12 @@
   "weather": {
     "unit": "metric",
     "showIcon": true,
-    "showText": false
+    "showText": false,
+    "showCity": true,
+    "showHumidity": false,
+    "showWind": false,
+    "showFeelsLike": false,
+    "showMinMax": false
   },
   "search": {
     "focus": false,

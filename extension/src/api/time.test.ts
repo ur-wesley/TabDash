@@ -21,4 +21,15 @@ describe('Time class', () => {
     const formatted = time.format(date.getTime(), true);
     expect(formatted).toContain('45');
   });
+
+  it('formats date using custom dateSetting options', () => {
+    const time = new Time('en', false, {
+      weekday: 'short',
+      date: 'numeric',
+      month: 'short',
+    });
+    const dateStr = time.getDate();
+    expect(typeof dateStr).toBe('string');
+    expect(dateStr.length).toBeGreaterThan(0);
+  });
 });

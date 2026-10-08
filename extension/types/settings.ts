@@ -58,18 +58,34 @@ export interface DateSetting {
   month: DateFormat;
 }
 
+export type WidgetId = 'clock' | 'greeting' | 'weather' | 'searchbar' | 'shortcuts';
+
+export interface WidgetCanvasPosition {
+  x: number;
+  y: number;
+}
+
+export type LayoutMode = 'canvas' | 'flow';
+
 export interface LayoutSetting {
   showClock: boolean;
   showDate: boolean;
   showGreeting: boolean;
   showSearchbar: boolean;
+  showSearch?: boolean;
   showShortcuts: boolean;
   showWeather: boolean;
+  mode?: LayoutMode;
+  snapToGrid?: boolean;
+  gridSize?: number;
+  canvasPositions?: Record<WidgetId, WidgetCanvasPosition>;
+  flowOrder?: WidgetId[];
 }
 
 export interface ShortcutAppereance {
   style: ShortcutStyle;
   elementsPerLine: number;
+  col?: number;
   iconOnly?: boolean;
 }
 
@@ -84,6 +100,11 @@ export interface WeatherSetting {
   unit: WeatherUnit;
   showIcon: boolean;
   showText: boolean;
+  showCity?: boolean;
+  showHumidity?: boolean;
+  showWind?: boolean;
+  showFeelsLike?: boolean;
+  showMinMax?: boolean;
 }
 
 export interface SearchSetting {
@@ -133,5 +154,5 @@ export const theme = ['light', 'dark', 'system', 'automatic'] as const;
 export type Theme = (typeof theme)[number];
 
 export type WeatherUnit = 'metric' | 'imperial';
-export type DateFormat = 'long' | '2-digit' | 'short';
+export type DateFormat = 'long' | '2-digit' | 'short' | 'narrow' | 'numeric';
 export type ShortcutStyle = 'large' | 'medium' | 'small' | 'text';

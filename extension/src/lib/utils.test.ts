@@ -15,4 +15,11 @@ describe('cn utility', () => {
     expect(cn('p-4', 'p-2')).toBe('p-2');
     expect(cn('text-red-500', 'text-blue-500')).toBe('text-blue-500');
   });
+
+  it('exports contrast utilities', async () => {
+    const utils = await import('./utils.js');
+    expect(typeof utils.getContrastRatio).toBe('function');
+    expect(typeof utils.ensureWidgetContrast).toBe('function');
+    expect(typeof utils.getContrastingTextColor).toBe('function');
+  });
 });

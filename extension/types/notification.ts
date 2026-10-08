@@ -1,3 +1,5 @@
+import { toast } from 'solid-sonner';
+
 export interface Notification {
   id: string;
   msg: string;
@@ -12,10 +14,11 @@ export const sendToast = (
   type: NotificationType = 'info',
   duration: number = 5000,
 ) => {
-  const id = crypto.randomUUID().split('-')[0];
-  const e = new CustomEvent<Notification>('toast', {
-    detail: { id, msg, type, duration },
-    bubbles: true,
-  });
-  window.dispatchEvent(e);
+  if (type === 'success') {
+    toast.success(msg, { duration });
+  } else if (type === 'error') {
+    toast.error(msg, { duration });
+  } else {
+    toast.info(msg, { duration });
+  }
 };

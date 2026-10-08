@@ -23,5 +23,6 @@
     "service_worker": "background.js",
     "type": "module"
   },
-  "permissions": ["storage", "unlimitedStorage", "geolocation", "search", "clipboardRead"]
+  "permissions": ["storage", "unlimitedStorage", "geolocation", "search", "clipboardRead"],
+  "host_permissions": ["<all_urls>"]
 }

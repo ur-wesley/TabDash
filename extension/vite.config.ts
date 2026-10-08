@@ -1,8 +1,8 @@
 import { defineConfig, loadEnv } from 'vite';
 import solidPlugin from 'vite-plugin-solid';
 import Unocss from 'unocss/vite';
-import presetUno from '@unocss/preset-uno';
-import presetIcons from '@unocss/preset-icons';
+import { presetUno } from '@unocss/preset-uno';
+import { presetIcons } from '@unocss/preset-icons';
 import { writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
@@ -14,13 +14,31 @@ const corvuDist = path.dirname(require.resolve('@corvu/utils'));
 
 export default defineConfig(({ command, mode }) => {
   if (command == 'build') {
-    buildBackgroundJS(mode);
-    buildManifest();
+    void buildBackgroundJS(mode);
+    void buildManifest();
   }
   return {
+    envPrefix: ['VITE_', 'OPENWEATHER_', 'UNSPLASH_'],
     plugins: [
       solidPlugin(),
       Unocss({
+        // Weather icons are applied dynamically via owmIconToMdi()
+        // (see features/weather/weather-icon.ts), so the scanner cannot see
+        // the final class in the widget markup. Pin them here to guarantee
+        // the icon CSS is always generated ÔÇö otherwise the span renders
+        // empty and no icon is visible at all.
+        safelist: [
+          'i-mdi-weather-sunny',
+          'i-mdi-weather-night',
+          'i-mdi-weather-partly-cloudy',
+          'i-mdi-weather-night-partly-cloudy',
+          'i-mdi-weather-cloudy',
+          'i-mdi-weather-rainy',
+          'i-mdi-weather-pouring',
+          'i-mdi-weather-lightning-rainy',
+          'i-mdi-weather-snowy',
+          'i-mdi-weather-fog',
+        ],
         shortcuts: {
           'border-base': 'border-gray-200 dark:border-dark-200',
           'bg-base': 'bg-slate-200 dark:bg-dark-100',

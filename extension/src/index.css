@@ -1,3 +1,11 @@
+@import 'solid-sonner/styles.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family:
@@ -31,13 +39,258 @@ code {
   background-color: var(--background);
   border-radius: var(--borderRadius);
   text-shadow: var(--shadow);
-  font-family: var(--font);
+  font-family: var(--font), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-weight: var(--weight);
   backdrop-filter: blur(var(--backdrop_blur)) saturate(var(--backdrop_saturate))
     brightness(var(--backdrop_brightness));
   z-index: 20;
 }
 
+.widget input,
+.widget button,
+.widget textarea,
+.widget select,
+.widget span,
+.widget p,
+.widget div {
+  font-family: inherit;
+}
+
+.widget input,
+.widget button {
+  color: inherit;
+}
+
+/* Weather condition icon: inherits --textColor via .widget and uses a dual
+   halo so it stays legible on light and dark photographic backgrounds,
+   including translucent widget backgrounds. text-shadow has no effect on
+   icon glyphs, so filter-based drop-shadows are required here. */
+.weather-icon {
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.65)) drop-shadow(0 1px 4px rgba(0, 0, 0, 0.7));
+}
+
 *::placeholder {
   color: var(--textColor);
+}
+
+/* Kobalte Dialog / Sidebar Primitives & Keyframe Animations */
+@keyframes sidebarOverlayShow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sidebarOverlayHide {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes sidebarSlideInBottom {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes sidebarSlideOutBottom {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes sidebarSlideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0.3;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes sidebarSlideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  background-color: rgba(0, 0, 0, 0.25);
+  backdrop-filter: brightness(0.9);
+  pointer-events: auto;
+}
+
+.sidebar-overlay[data-expanded] {
+  animation: sidebarOverlayShow 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sidebar-overlay[data-closed] {
+  animation: sidebarOverlayHide 250ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.sidebar-content {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  z-index: 50;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 32px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+}
+
+/* Mobile bottom sheet animations */
+.sidebar-content[data-expanded] {
+  animation: sidebarSlideInBottom 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sidebar-content[data-closed] {
+  animation: sidebarSlideOutBottom 250ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Desktop slide-out sheet animations: compact width preventing oversized bloated look */
+@media (min-width: 640px) {
+  .sidebar-content {
+    top: 0;
+    width: 25rem;
+    max-width: 90vw;
+  }
+
+  .sidebar-content[data-expanded] {
+    animation: sidebarSlideInRight 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .sidebar-content[data-closed] {
+    animation: sidebarSlideOutRight 250ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sidebar-content {
+    width: 27rem;
+    max-width: 85vw;
+  }
+}
+
+/* Slim modern scrollbar preventing layout shifts and clipping */
+.sidebar-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.4) transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.4);
+  border-radius: 9999px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-overlay[data-expanded],
+  .sidebar-overlay[data-closed],
+  .sidebar-content[data-expanded],
+  .sidebar-content[data-closed],
+  .tab-content-animate {
+    animation-duration: 1ms !important;
+  }
+}
+
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tab-content-animate {
+  animation: tabFadeIn 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Sidebar tabs selected state. Kobalte sets data-selected on the active
+   trigger. Plain CSS (not Uno utilities) because UnoCSS does not generate
+   data-[selected]: / group-data-[selected]: variants, so those classes
+   silently produce no rules. Colors come from the global theme tokens
+   (theme-tokens.css) — no hardcoded colors here. The :hover pairing keeps
+   the selected look winning over the hover utilities regardless of
+   stylesheet order. */
+.tabs-trigger {
+  /* Transparent by default so the tab-list pill shows through. Without
+     this, the UA button face (ButtonFace, light gray in light color-scheme)
+     leaks through on unselected tabs — invisible in light mode, white tabs
+     in dark mode. */
+  background-color: transparent;
+}
+.tabs-trigger[data-selected],
+.tabs-trigger[data-selected]:hover {
+  background-color: var(--tab-selected-bg);
+  color: var(--tab-selected-fg);
+  font-weight: 600;
+  border-color: var(--tab-selected-border);
+  box-shadow: var(--tab-selected-shadow);
+}
+
+.tabs-trigger[data-selected] .tabs-trigger-icon {
+  color: var(--tab-icon-selected);
+}
+
+.tabs-trigger[data-selected] .tabs-trigger-icon-indigo {
+  color: var(--tab-icon-indigo);
+}
+
+.tabs-trigger[data-selected] .tabs-trigger-icon-amber {
+  color: var(--tab-icon-amber);
+}
+
+/* Select dropdown items. Kobalte sets data-highlighted on the
+   keyboard/pointer-highlighted item. Plain CSS (not Uno utilities)
+   because UnoCSS does not generate data-[highlighted]: variants. */
+.select-item[data-highlighted] {
+  background-color: var(--primary-wash);
 }
