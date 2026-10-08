@@ -1,0 +1,44 @@
+apps:
+  - antigravity
+
+agent: pi
+
+models:
+  default: inherit
+
+session:
+  auto_lock: true
+  auto_commit: false
+
+tools:
+  rtk: true
+  engram: true
+  graphify: true
+  beads: true
+  ponytail: true
+
+skills:
+  - i-have-adhd
+  - ponytail
+  - rtk-usage
+  - tdd
+  - diagnose
+  - guardrails
+  - grill-with-docs
+  - to-prd
+  - to-issues
+  - to-backlog
+
+subagents:
+  - plan
+  - orchestrator
+  - explore
+  - researcher
+  - briefer
+  - planner
+  - builder
+  - tester
+  - reviewer
+  - style-smells
+  - security
+  - backlog

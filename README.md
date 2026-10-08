@@ -20,7 +20,7 @@ An open-source, modern browser extension that transforms your new tab page into 
 - **Weather Widget**: Current conditions and temperature via OpenWeather supporting metric and imperial units.
 - **Quick Shortcuts**: Bookmark management with small, medium, large, and text-only layout options.
 - **Multi-Engine Search**: Instant search bar with support for Google, DuckDuckGo, Bing, and Ecosia.
-- **Accessible UI**: Modern controls powered by [@kobalte/core](https://kobalte.dev/) primitives (Switch, Slider, Tabs, Select, Button).
+- **Accessible UI**: Modern controls and sidebar powered by [@kobalte/core](https://kobalte.dev/) primitives (Dialog, Switch, Slider, Tabs, Select, Button).
 - **Encrypted Sync**: Optional settings sync with client-side encryption via Nitro & Unstorage backend.
 - **Privacy First**: Zero tracking, zero telemetry cookies, and strict CSP.
 
@@ -59,6 +59,9 @@ bun install
 ### Development
 
 ```bash
+# Start all dev servers concurrently
+bun run dev
+
 # Start extension dev server
 bun run dev:extension
 

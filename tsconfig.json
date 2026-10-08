@@ -1,4 +1,8 @@
 {
   "files": [],
+  "compilerOptions": {
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js"
+  },
   "references": [{ "path": "./extension" }, { "path": "./companion" }, { "path": "./backend" }]
 }

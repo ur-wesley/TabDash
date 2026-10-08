@@ -2,30 +2,30 @@
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "unicorn", "oxc", "import", "jsdoc", "vitest"],
   "options": {
-    "typeAware": false,
-    "typeCheck": false
+    "typeAware": true,
+    "typeCheck": true
   },
   "categories": {
     "correctness": "error",
-    "suspicious": "warn",
-    "pedantic": "off",
-    "style": "off",
-    "restriction": "off"
+    "suspicious": "error",
+    "pedantic": "warn",
+    "style": "warn",
+    "restriction": "warn"
   },
   "rules": {
     "no-unused-vars": "error",
-    "no-unassigned-vars": "off",
-    "no-console": "warn",
-    "no-nested-ternary": "warn",
-    "unicorn/no-nested-ternary": "warn",
-    "max-depth": "warn",
-    "max-params": "warn",
+    "import/no-unassigned-import": "off",
+    "no-console": "error",
+    "no-nested-ternary": "error",
+    "unicorn/no-nested-ternary": "error",
+    "max-depth": ["error", { "max": 4 }],
+    "max-params": ["error", { "max": 4 }],
     "max-lines": ["warn", { "max": 500, "skipBlankLines": true, "skipComments": true }],
     "typescript/no-explicit-any": "error",
-    "typescript/no-non-null-assertion": "warn",
-    "typescript/consistent-type-imports": "warn",
-    "typescript/no-floating-promises": "warn",
-    "typescript/no-misused-promises": "warn",
+    "typescript/no-non-null-assertion": "error",
+    "typescript/consistent-type-imports": "error",
+    "typescript/no-floating-promises": "error",
+    "typescript/no-misused-promises": "error",
     "typescript/await-thenable": "error",
     "typescript/no-unnecessary-type-assertion": "warn",
     "typescript/restrict-template-expressions": "warn",
@@ -61,9 +61,20 @@
       }
     },
     {
-      "files": ["apps/web/src/locales/**", "extension/src/lang.ts", "companion/src/lang.ts"],
+      "files": [
+        "apps/web/src/locales/**",
+        "extension/src/locales/**",
+        "extension/src/lang.ts",
+        "companion/src/lang.ts"
+      ],
       "rules": {
         "max-lines": "off"
+      }
+    },
+    {
+      "files": ["scripts/**"],
+      "rules": {
+        "no-console": "off"
       }
     },
     {
