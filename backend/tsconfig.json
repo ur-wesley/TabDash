@@ -1,11 +1,17 @@
 {
-  "extends": "../tsconfig.base.json",
   "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "noEmit": true,
     "composite": false,
     "resolveJsonModule": true,
     "declaration": false,
     "declarationMap": false,
-    "noEmit": true,
     "rootDir": "src",
     "outDir": "dist",
     "types": ["bun-types"]
