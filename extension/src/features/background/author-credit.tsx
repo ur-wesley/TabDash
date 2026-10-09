@@ -1,4 +1,5 @@
-import { type Component, createMemo } from 'solid-js';
+import { createMemo } from 'solid-js';
+import type { Component } from 'solid-js';
 import type { BackgroundData, Setting } from '../../../types/settings';
 import { useI18n } from '../../i18n';
 import { DEFAULT_WIDGET_BACKGROUND, ensureWidgetContrast } from '../../lib/colorContrast';
@@ -15,14 +16,14 @@ export function getAuthorCreditContrast(
   background?: string,
   preferredTextColor?: string,
 ): { color: string; background: string } {
-  const bg = background ?? DEFAULT_WIDGET_BACKGROUND;
-  const color = ensureWidgetContrast({
-    background: bg,
-    preferredTextColor,
-  });
+  const bg = background ?? DEFAULT_WIDGET_BACKGROUND,
+    color = ensureWidgetContrast({
+      background: bg,
+      preferredTextColor,
+    });
   return {
-    color,
     background: bg,
+    color,
   };
 }
 
@@ -40,8 +41,12 @@ export interface AuthorCreditProps {
 }
 
 function resolveThemeKey(activeTheme?: string): 'light' | 'dark' {
-  if (activeTheme === 'dark') return 'dark';
-  if (activeTheme === 'light') return 'light';
+  if (activeTheme === 'dark') {
+    return 'dark';
+  }
+  if (activeTheme === 'light') {
+    return 'light';
+  }
   if (typeof document !== 'undefined' && document.documentElement.classList.contains('dark')) {
     return 'dark';
   }
@@ -60,35 +65,39 @@ export const AuthorCredit: Component<AuthorCreditProps> = (props) => {
   }
 
   const effectiveBackground = createMemo(() => {
-    if (props.background) return props.background;
-    if (contextSettings?.widgetSetting) {
-      const themeKey = resolveThemeKey(contextSettings.general?.theme);
-      const bg = contextSettings.widgetSetting[themeKey]?.background;
-      if (bg) return bg;
-    }
-    return DEFAULT_WIDGET_BACKGROUND;
-  });
-
-  const effectivePreferredText = createMemo(() => {
-    if (props.textColor) return props.textColor;
-    if (contextSettings?.widgetSetting) {
-      const activeTheme = contextSettings.general?.theme ?? 'light';
-      const themeKey = activeTheme === 'dark' ? 'dark' : 'light';
-      return contextSettings.widgetSetting[themeKey]?.textColor;
-    }
-    return undefined;
-  });
-
-  const contrastStyle = createMemo(() =>
-    getAuthorCreditContrast(effectiveBackground(), effectivePreferredText()),
-  );
+      if (props.background) {
+        return props.background;
+      }
+      if (contextSettings?.widgetSetting) {
+        const themeKey = resolveThemeKey(contextSettings.general?.theme),
+          bg = contextSettings.widgetSetting[themeKey]?.background;
+        if (bg) {
+          return bg;
+        }
+      }
+      return DEFAULT_WIDGET_BACKGROUND;
+    }),
+    effectivePreferredText = createMemo(() => {
+      if (props.textColor) {
+        return props.textColor;
+      }
+      if (contextSettings?.widgetSetting) {
+        const activeTheme = contextSettings.general?.theme ?? 'light',
+          themeKey = activeTheme === 'dark' ? 'dark' : 'light';
+        return contextSettings.widgetSetting[themeKey]?.textColor;
+      }
+      return undefined;
+    }),
+    contrastStyle = createMemo(() =>
+      getAuthorCreditContrast(effectiveBackground(), effectivePreferredText()),
+    );
 
   return (
     <span
       class={AUTHOR_CREDIT_CLASS}
       style={{
-        color: contrastStyle().color,
         'background-color': contrastStyle().background,
+        color: contrastStyle().color,
         'text-shadow': AUTHOR_CREDIT_TEXT_SHADOW,
       }}
     >

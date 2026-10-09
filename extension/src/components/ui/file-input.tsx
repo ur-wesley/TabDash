@@ -1,4 +1,5 @@
-import { type Component, createSignal, splitProps } from 'solid-js';
+import { createSignal, splitProps } from 'solid-js';
+import type { Component } from 'solid-js';
 import { cn } from '../../lib/utils';
 
 export interface FileInputProps {
@@ -10,12 +11,14 @@ export interface FileInputProps {
 }
 
 export const FileInput: Component<FileInputProps> = (props) => {
-  const [local, others] = splitProps(props, ['label', 'accept', 'onFileRead', 'class', 'disabled']);
-  const [dragOver, setDragOver] = createSignal(false);
+  const [local, others] = splitProps(props, ['label', 'accept', 'onFileRead', 'class', 'disabled']),
+    [dragOver, setDragOver] = createSignal(false);
   let fileInputRef: HTMLInputElement | undefined;
 
   const readFile = (file: File) => {
-    if (!file) return;
+    if (!file) {
+      return;
+    }
     const reader = new FileReader();
     reader.readAsText(file);
     reader.addEventListener('load', () => {

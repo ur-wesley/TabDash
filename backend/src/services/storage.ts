@@ -1,8 +1,11 @@
 import type { Database, Statement } from 'bun:sqlite';
-import { type AvailableBrowser, Browser, type StatisticResponse } from '../types/stats.js';
+import { Browser } from '../types/stats.js';
+import type { AvailableBrowser, StatisticResponse } from '../types/stats.js';
 
 export function normalizeBrowser(raw: string | null | undefined): AvailableBrowser | null {
-  if (!raw) return null;
+  if (!raw) {
+    return null;
+  }
   const lower = raw.trim().toLowerCase();
   for (const b of Browser) {
     if (b.toLowerCase() === lower) {
@@ -56,8 +59,8 @@ export class StorageService {
   }
 
   saveSetting(key: string, data: string): { created: boolean } {
-    const exists = this.hasSettingStmt.get(key) !== null;
-    const now = Date.now();
+    const exists = this.hasSettingStmt.get(key) !== null,
+      now = Date.now();
     this.upsertSettingStmt.run(key, data, now, now);
     return { created: !exists };
   }
@@ -89,19 +92,18 @@ export class StorageService {
 
   getStatistics(): StatisticResponse {
     const initialStats: StatisticResponse = {
-      Chrome: { installs: 0, deinstalls: 0 },
-      Firefox: { installs: 0, deinstalls: 0 },
-      Edge: { installs: 0, deinstalls: 0 },
-      Safari: { installs: 0, deinstalls: 0 },
-    };
-
-    const rows = this.getStatsStmt.all();
+        Chrome: { deinstalls: 0, installs: 0 },
+        Edge: { deinstalls: 0, installs: 0 },
+        Firefox: { deinstalls: 0, installs: 0 },
+        Safari: { deinstalls: 0, installs: 0 },
+      },
+      rows = this.getStatsStmt.all();
     for (const row of rows) {
       const b = normalizeBrowser(row.browser);
       if (b && initialStats[b]) {
         initialStats[b] = {
-          installs: row.installs,
           deinstalls: row.deinstalls,
+          installs: row.installs,
         };
       }
     }

@@ -1,4 +1,4 @@
-import { type Component, type JSX } from 'solid-js';
+import type { Component, JSX } from 'solid-js';
 import { ContextMenu } from '../../components/ui/context-menu';
 import { useI18n } from '../../i18n';
 

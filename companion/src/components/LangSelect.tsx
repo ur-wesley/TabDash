@@ -1,5 +1,7 @@
-import { type AvailableLanguages, availableLanguages } from '../lang.js';
-import { type Component, For } from 'solid-js';
+import { availableLanguages } from '../lang.js';
+import type { AvailableLanguages } from '../lang.js';
+import { For } from 'solid-js';
+import type { Component } from 'solid-js';
 import { language } from '../helper/store.js';
 import { useStore } from '@nanostores/solid';
 

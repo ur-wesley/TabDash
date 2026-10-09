@@ -4,8 +4,8 @@ import { StorageService } from './storage-service';
 describe('StorageService', () => {
   it('stores and retrieves items with ResultAsync', async () => {
     // In test environment, window.localStorage is available
-    const service = new StorageService(false);
-    const setResult = await service.set({ testKey: { greeting: 'hello' } });
+    const service = new StorageService(false),
+      setResult = await service.set({ testKey: { greeting: 'hello' } });
     expect(setResult.isOk()).toBe(true);
 
     const getResult = await service.get<{ testKey: { greeting: string } }>('testKey');

@@ -5,8 +5,8 @@ export function defaultPositions(): Record<WidgetId, WidgetCanvasPosition> {
     clock: { x: 50, y: 25 },
     greeting: { x: 50, y: 42 },
     searchbar: { x: 50, y: 55 },
-    weather: { x: 85, y: 15 },
     shortcuts: { x: 50, y: 72 },
+    weather: { x: 85, y: 15 },
   };
 }
 
@@ -21,14 +21,14 @@ export function withPosition(
   id: WidgetId,
   pos: WidgetCanvasPosition,
 ): Record<WidgetId, WidgetCanvasPosition> {
-  const defaults = defaultPositions();
-  const next: Record<WidgetId, WidgetCanvasPosition> = {
-    clock: positions?.clock ?? defaults.clock,
-    greeting: positions?.greeting ?? defaults.greeting,
-    searchbar: positions?.searchbar ?? defaults.searchbar,
-    weather: positions?.weather ?? defaults.weather,
-    shortcuts: positions?.shortcuts ?? defaults.shortcuts,
-  };
+  const defaults = defaultPositions(),
+    next: Record<WidgetId, WidgetCanvasPosition> = {
+      clock: positions?.clock ?? defaults.clock,
+      greeting: positions?.greeting ?? defaults.greeting,
+      searchbar: positions?.searchbar ?? defaults.searchbar,
+      shortcuts: positions?.shortcuts ?? defaults.shortcuts,
+      weather: positions?.weather ?? defaults.weather,
+    };
   next[id] = pos;
   return next;
 }
@@ -39,12 +39,18 @@ export function moveFlowItem(
   direction: FlowDirection,
 ): WidgetId[] {
   const index = order.indexOf(id);
-  if (index === -1) return [...order];
+  if (index === -1) {
+    return [...order];
+  }
   const targetIndex = direction === 'up' ? index - 1 : index + 1;
-  if (targetIndex < 0 || targetIndex >= order.length) return [...order];
-  const next = [...order];
-  const [removed] = next.splice(index, 1);
-  if (removed === undefined) return [...order];
+  if (targetIndex < 0 || targetIndex >= order.length) {
+    return [...order];
+  }
+  const next = [...order],
+    [removed] = next.splice(index, 1);
+  if (removed === undefined) {
+    return [...order];
+  }
   next.splice(targetIndex, 0, removed);
   return next;
 }

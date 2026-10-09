@@ -1,10 +1,12 @@
-import { type Component, Show } from 'solid-js';
+import { Show } from 'solid-js';
+import type { Component } from 'solid-js';
 import type { AvailableLanguages } from '../../lang';
 import type { ShortcutStyle } from '../../../types/settings';
 import { Button } from '../../components/ui/button';
 import { ColorPicker } from '../../components/ui/color-picker';
 import { Input } from '../../components/ui/input';
-import { Select, type SelectOption } from '../../components/ui/select';
+import { Select } from '../../components/ui/select';
+import type { SelectOption } from '../../components/ui/select';
 import { Slider } from '../../components/ui/slider';
 import { Switch } from '../../components/ui/switch';
 import { useI18n } from '../../i18n';
@@ -24,8 +26,8 @@ export interface SettingsSearchControlProps {
 }
 
 export const SettingsSearchControl: Component<SettingsSearchControlProps> = (props) => {
-  const { t, setLocale } = useI18n();
-  const [state, actions] = useSettingsContext();
+  const { t, setLocale } = useI18n(),
+    [state, actions] = useSettingsContext();
 
   return (
     <div class="w-full">
@@ -46,11 +48,11 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
           label={t('theme')}
           value={state.general.theme}
           options={props.themeOptions}
-          onChange={(val) =>
+          onChange={(val) => {
             actions.updateGeneral({
               theme: val as 'automatic' | 'light' | 'dark',
-            })
-          }
+            });
+          }}
         />
       </Show>
 
@@ -58,7 +60,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Switch
           label={t('sync')}
           checked={state.general.sync}
-          onChange={(val) => actions.updateGeneral({ sync: val })}
+          onChange={(val) => {
+            actions.updateGeneral({ sync: val });
+          }}
         />
       </Show>
 
@@ -66,7 +70,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Switch
           label={t('bg active')}
           checked={state.background.active}
-          onChange={(val) => actions.updateBackground({ active: val })}
+          onChange={(val) => {
+            actions.updateBackground({ active: val });
+          }}
         />
       </Show>
 
@@ -74,14 +80,14 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Input
           label={t('collections')}
           value={state.background.collections?.join(', ') ?? ''}
-          onInput={(e) =>
+          onInput={(e) => {
             actions.updateBackground({
               collections: e.currentTarget.value
                 .split(',')
                 .map((i) => i.trim())
                 .filter(Boolean),
-            })
-          }
+            });
+          }}
         />
       </Show>
 
@@ -89,7 +95,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Input
           label={t('static img')}
           value={state.background.static ?? ''}
-          onInput={(e) => actions.updateBackground({ static: e.currentTarget.value })}
+          onInput={(e) => {
+            actions.updateBackground({ static: e.currentTarget.value });
+          }}
         />
       </Show>
 
@@ -97,7 +105,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <ColorPicker
           label={t('color')}
           value={state.background.color ?? '#000000'}
-          onChange={(color) => actions.updateBackground({ color })}
+          onChange={(color) => {
+            actions.updateBackground({ color });
+          }}
         />
       </Show>
 
@@ -106,7 +116,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
           <Switch
             label={t('backdrop')}
             checked={state.background.backdropActive}
-            onChange={(val) => actions.updateBackground({ backdropActive: val })}
+            onChange={(val) => {
+              actions.updateBackground({ backdropActive: val });
+            }}
           />
           <Show when={state.background.backdropActive}>
             <Slider
@@ -114,11 +126,11 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
               min={0}
               max={50}
               value={Number.parseInt(state.background.backdrop?.blur || '0', 10) || 0}
-              onChange={(val) =>
+              onChange={(val) => {
                 actions.updateBackground({
                   backdrop: { ...state.background.backdrop, blur: `${val}px` },
-                })
-              }
+                });
+              }}
               showValue
             />
           </Show>
@@ -129,7 +141,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Switch
           label={t('show clock')}
           checked={state.layout.showClock}
-          onChange={(val) => actions.updateLayout({ showClock: val })}
+          onChange={(val) => {
+            actions.updateLayout({ showClock: val });
+          }}
         />
       </Show>
 
@@ -137,7 +151,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Switch
           label={t('show date')}
           checked={state.layout.showDate}
-          onChange={(val) => actions.updateLayout({ showDate: val })}
+          onChange={(val) => {
+            actions.updateLayout({ showDate: val });
+          }}
         />
       </Show>
 
@@ -145,7 +161,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Switch
           label={t('show seconds')}
           checked={state.clock.showSeconds}
-          onChange={(val) => actions.updateClock({ showSeconds: val })}
+          onChange={(val) => {
+            actions.updateClock({ showSeconds: val });
+          }}
         />
       </Show>
 
@@ -153,7 +171,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Switch
           label={t('show weather')}
           checked={state.layout.showWeather}
-          onChange={(val) => actions.updateLayout({ showWeather: val })}
+          onChange={(val) => {
+            actions.updateLayout({ showWeather: val });
+          }}
         />
       </Show>
 
@@ -162,7 +182,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
           label={t('unit')}
           value={state.weather.unit}
           options={props.weatherUnitOptions}
-          onChange={(val) => actions.updateWeather({ unit: val as 'metric' | 'imperial' })}
+          onChange={(val) => {
+            actions.updateWeather({ unit: val as 'metric' | 'imperial' });
+          }}
         />
       </Show>
 
@@ -170,7 +192,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Switch
           label={t('show weather icon')}
           checked={state.weather.showIcon}
-          onChange={(val) => actions.updateWeather({ showIcon: val })}
+          onChange={(val) => {
+            actions.updateWeather({ showIcon: val });
+          }}
         />
       </Show>
 
@@ -178,7 +202,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Switch
           label={t('show weather text')}
           checked={state.weather.showText}
-          onChange={(val) => actions.updateWeather({ showText: val })}
+          onChange={(val) => {
+            actions.updateWeather({ showText: val });
+          }}
         />
       </Show>
 
@@ -186,7 +212,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Switch
           label={t('show city')}
           checked={state.weather.showCity ?? true}
-          onChange={(val) => actions.updateWeather({ showCity: val })}
+          onChange={(val) => {
+            actions.updateWeather({ showCity: val });
+          }}
         />
       </Show>
 
@@ -194,7 +222,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Switch
           label={t('show feels like')}
           checked={state.weather.showFeelsLike ?? false}
-          onChange={(val) => actions.updateWeather({ showFeelsLike: val })}
+          onChange={(val) => {
+            actions.updateWeather({ showFeelsLike: val });
+          }}
         />
       </Show>
 
@@ -202,7 +232,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Switch
           label={t('show min max')}
           checked={state.weather.showMinMax ?? false}
-          onChange={(val) => actions.updateWeather({ showMinMax: val })}
+          onChange={(val) => {
+            actions.updateWeather({ showMinMax: val });
+          }}
         />
       </Show>
 
@@ -210,7 +242,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Switch
           label={t('show humidity')}
           checked={state.weather.showHumidity ?? false}
-          onChange={(val) => actions.updateWeather({ showHumidity: val })}
+          onChange={(val) => {
+            actions.updateWeather({ showHumidity: val });
+          }}
         />
       </Show>
 
@@ -218,7 +252,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Switch
           label={t('show wind')}
           checked={state.weather.showWind ?? false}
-          onChange={(val) => actions.updateWeather({ showWind: val })}
+          onChange={(val) => {
+            actions.updateWeather({ showWind: val });
+          }}
         />
       </Show>
 
@@ -226,7 +262,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Switch
           label={t('show searchbar')}
           checked={state.layout.showSearchbar}
-          onChange={(val) => actions.updateLayout({ showSearchbar: val })}
+          onChange={(val) => {
+            actions.updateLayout({ showSearchbar: val });
+          }}
         />
       </Show>
 
@@ -235,7 +273,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
           label={t('search engine')}
           value={state.search.engine}
           options={props.searchEngineOptions}
-          onChange={(val) => actions.updateSearch({ engine: val })}
+          onChange={(val) => {
+            actions.updateSearch({ engine: val });
+          }}
         />
       </Show>
 
@@ -243,7 +283,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Switch
           label={t('auto focus')}
           checked={state.search.focus}
-          onChange={(val) => actions.updateSearch({ focus: val })}
+          onChange={(val) => {
+            actions.updateSearch({ focus: val });
+          }}
         />
       </Show>
 
@@ -251,7 +293,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Switch
           label={t('show shortcuts')}
           checked={state.layout.showShortcuts}
-          onChange={(val) => actions.updateLayout({ showShortcuts: val })}
+          onChange={(val) => {
+            actions.updateLayout({ showShortcuts: val });
+          }}
         />
       </Show>
 
@@ -260,7 +304,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
           label={t('style')}
           value={state.shortcutAppereance.style}
           options={props.shortcutStyleOptions}
-          onChange={(val) => actions.updateShortcutAppearance({ style: val as ShortcutStyle })}
+          onChange={(val) => {
+            actions.updateShortcutAppearance({ style: val as ShortcutStyle });
+          }}
         />
       </Show>
 
@@ -271,9 +317,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
           max={10}
           showValue
           value={state.shortcutAppereance.elementsPerLine ?? state.shortcutAppereance.col ?? 4}
-          onChange={(elementsPerLine) =>
-            actions.updateShortcutAppearance({ elementsPerLine, col: elementsPerLine })
-          }
+          onChange={(elementsPerLine) => {
+            actions.updateShortcutAppearance({ col: elementsPerLine, elementsPerLine });
+          }}
         />
       </Show>
 
@@ -281,7 +327,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Switch
           label={t('icon only')}
           checked={state.shortcutAppereance.iconOnly}
-          onChange={(val) => actions.updateShortcutAppearance({ iconOnly: val })}
+          onChange={(val) => {
+            actions.updateShortcutAppearance({ iconOnly: val });
+          }}
         />
       </Show>
 
@@ -289,7 +337,9 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
         <Switch
           label={t('show greeting')}
           checked={state.layout.showGreeting}
-          onChange={(val) => actions.updateLayout({ showGreeting: val })}
+          onChange={(val) => {
+            actions.updateLayout({ showGreeting: val });
+          }}
         />
       </Show>
 

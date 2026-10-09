@@ -21,19 +21,18 @@ export interface SelectProps {
 
 export function Select(props: SelectProps) {
   const [local, others] = splitProps(props, [
-    'id',
-    'label',
-    'placeholder',
-    'required',
-    'value',
-    'options',
-    'onChange',
-    'disabled',
-    'class',
-  ]);
-
-  const selectId = () => local.id ?? `select-${createUniqueId()}`;
-  const selectedOption = () => local.options.find((opt) => opt.value === local.value);
+      'id',
+      'label',
+      'placeholder',
+      'required',
+      'value',
+      'options',
+      'onChange',
+      'disabled',
+      'class',
+    ]),
+    selectId = () => local.id ?? `select-${createUniqueId()}`,
+    selectedOption = () => local.options.find((opt) => opt.value === local.value);
 
   return (
     <KobalteSelect<SelectOption>

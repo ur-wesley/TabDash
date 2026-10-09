@@ -2,7 +2,7 @@ import { ResultAsync } from '@ur-wesley/ts-prelude/result';
 import type { Setting } from '../../types/settings';
 
 export class SyncService {
-  private companionBase: string;
+  private readonly companionBase: string;
 
   constructor(companionBase?: string) {
     this.companionBase =
@@ -22,8 +22,8 @@ export class SyncService {
   }
 
   public fetchFromCloud(key: string, password?: string): ResultAsync<Setting, Error> {
-    const pwQuery = password ? `?p=${encodeURIComponent(password)}` : '';
-    const url = `${this.companionBase}/api/setting/${encodeURIComponent(key)}${pwQuery}`;
+    const pwQuery = password ? `?p=${encodeURIComponent(password)}` : '',
+      url = `${this.companionBase}/api/setting/${encodeURIComponent(key)}${pwQuery}`;
 
     return ResultAsync.fromPromise(
       fetch(url).then(async (res) => {
@@ -37,14 +37,14 @@ export class SyncService {
   }
 
   public saveToCloud(key: string, settings: Setting, password?: string): ResultAsync<void, Error> {
-    const pwQuery = password ? `?p=${encodeURIComponent(password)}` : '';
-    const url = `${this.companionBase}/api/setting/${encodeURIComponent(key)}${pwQuery}`;
+    const pwQuery = password ? `?p=${encodeURIComponent(password)}` : '',
+      url = `${this.companionBase}/api/setting/${encodeURIComponent(key)}${pwQuery}`;
 
     return ResultAsync.fromPromise(
       fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(settings),
+        headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
       }).then(async (res) => {
         if (!res.ok) {
           throw new Error(`Cloud save failed: ${res.status} ${res.statusText}`);

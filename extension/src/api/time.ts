@@ -28,9 +28,9 @@ class Time {
 
   public getDate(): string {
     const options: Intl.DateTimeFormatOptions = {
-      weekday: (this.dateSetting?.weekday as Intl.DateTimeFormatOptions['weekday']) ?? 'long',
       day: (this.dateSetting?.date as Intl.DateTimeFormatOptions['day']) ?? '2-digit',
-      month: (this.dateSetting?.month as Intl.DateTimeFormatOptions['month']) ?? 'long',
+      month: this.dateSetting?.month ?? 'long',
+      weekday: (this.dateSetting?.weekday as Intl.DateTimeFormatOptions['weekday']) ?? 'long',
     };
     try {
       return new Date().toLocaleDateString(this.locale, options);

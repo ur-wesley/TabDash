@@ -3,22 +3,22 @@ import HelpMenu from "../components/HelpMenu.astro";
 import GeneralMenu from "../components/GeneralMenu";
 import "../components/styles/index.scss";
 
-const { frontmatter } = Astro.props;
-const url = Astro.url;
-const onlineVersion = `${url.protocol}//online.${url.host}`;
+const { frontmatter } = Astro.props,
+ {url} = Astro;
+const onlineVersion = `${url.protocol}//online.${url.host}`,
 
-const urlParts = Astro.url.toString().split("/");
-const allSettings = await Astro.glob("../pages/docs/**/*.md");
-const settings = allSettings.filter((s) => {
-	const l = s.file?.split("/");
-	const lang = l[l.length - 2];
+ urlParts = Astro.url.toString().split("/"),
+ allSettings = await Astro.glob("../pages/docs/**/*.md"),
+ settings = allSettings.filter((s) => {
+	const l = s.file?.split("/"),
+	 lang = l.at(-2);
 	return lang == urlParts[4] && s.frontmatter.title;
-});
-const currentIndex = settings.findIndex(
+}),
+ currentIndex = settings.findIndex(
 	(m) => m.frontmatter.title == frontmatter.title
-);
-const prev = currentIndex - 1 > -1 ? settings[currentIndex - 1] : null;
-const next =
+),
+ prev = currentIndex - 1 > -1 ? settings[currentIndex - 1] : null,
+ next =
 	currentIndex + 1 < settings.length ? settings[currentIndex + 1] : null;
 ---
 
@@ -37,8 +37,9 @@ const next =
 		</style>
 		<script>
 			import "uno.css";
-			const menuButton = document.querySelector("#mobileMenu");
-			const navigation = document.querySelector("#navigation");
+
+			const menuButton = document.querySelector("#mobileMenu"),
+			 navigation = document.querySelector("#navigation");
 			if (menuButton && navigation) {
 				menuButton.addEventListener("click", () => {
 					navigation.classList.toggle("translate-x-0");

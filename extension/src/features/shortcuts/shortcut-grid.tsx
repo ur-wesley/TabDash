@@ -1,14 +1,14 @@
-import { type Component, For } from 'solid-js';
+import { For } from 'solid-js';
+import type { Component } from 'solid-js';
 import { useSettingsContext } from '../settings/settings-context';
 import { ShortcutItem } from './shortcut-item';
 
 export const ShortcutGrid: Component = () => {
-  const [state, actions] = useSettingsContext();
-
-  const shortcuts = () => state.shortcuts ?? [];
-  const appearance = () => state.shortcutAppereance;
-  const colCount = () => appearance()?.elementsPerLine ?? appearance()?.col ?? 4;
-  const colPercent = () => (colCount() > 0 ? 100 / colCount() : 25);
+  const [state, actions] = useSettingsContext(),
+    shortcuts = () => state.shortcuts ?? [],
+    appearance = () => state.shortcutAppereance,
+    colCount = () => appearance()?.elementsPerLine ?? appearance()?.col ?? 4,
+    colPercent = () => (colCount() > 0 ? 100 / colCount() : 25);
 
   return (
     <div
@@ -23,8 +23,12 @@ export const ShortcutGrid: Component = () => {
             shortcut={shortcut}
             appearance={appearance()}
             colPercent={colPercent()}
-            onEdit={(updated) => actions.editShortcut(index(), updated)}
-            onRemove={() => actions.removeShortcut(shortcut)}
+            onEdit={(updated) => {
+              actions.editShortcut(index(), updated);
+            }}
+            onRemove={() => {
+              actions.removeShortcut(shortcut);
+            }}
           />
         )}
       </For>

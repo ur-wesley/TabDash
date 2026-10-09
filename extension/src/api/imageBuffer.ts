@@ -31,15 +31,17 @@ export const LOW_WATERMARK = 2;
 export const BATCH_SIZE = 6;
 const UNSPLASH_API = 'https://api.unsplash.com';
 
-let memoryBuffer: CachedImage[] = [];
-let inFlightReplenish: Promise<CachedImage[]> | null = null;
+let memoryBuffer: CachedImage[] = [],
+  inFlightReplenish: Promise<CachedImage[]> | null = null;
 
 export const buildOptimizedImageUrl = (rawUrl: string, width?: number, dpr?: number): string => {
-  if (!rawUrl) return '';
+  if (!rawUrl) {
+    return '';
+  }
   const screenWidth =
-    width ?? (typeof screen !== 'undefined' ? Math.max(screen.width, screen.height) : 1920);
-  const ratio = dpr ?? (typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1);
-  const separator = rawUrl.includes('?') ? '&' : '?';
+      width ?? (typeof screen === 'undefined' ? 1920 : Math.max(screen.width, screen.height)),
+    ratio = dpr ?? (typeof window === 'undefined' ? 1 : window.devicePixelRatio || 1),
+    separator = rawUrl.includes('?') ? '&' : '?';
   return `${rawUrl}${separator}auto=format&fit=crop&w=${screenWidth}&q=80&dpr=${ratio}`;
 };
 
@@ -48,18 +50,20 @@ export const sanitizeUnsplashImage = (
   screenWidth?: number,
   dpr?: number,
 ): CachedImage | null => {
-  if (!raw?.urls?.raw) return null;
+  if (!raw?.urls?.raw) {
+    return null;
+  }
   return {
+    author: raw.user?.name ?? '',
+    downloadLocation: raw.links?.download_location ?? '',
     id:
       raw.id ??
       (typeof crypto !== 'undefined' && crypto.randomUUID
         ? crypto.randomUUID()
         : String(Date.now())),
-    src: buildOptimizedImageUrl(raw.urls.raw, screenWidth, dpr),
-    author: raw.user?.name ?? '',
-    profile: raw.user?.links?.html ?? '',
     origin: raw.links?.html ?? '',
-    downloadLocation: raw.links?.download_location ?? '',
+    profile: raw.user?.links?.html ?? '',
+    src: buildOptimizedImageUrl(raw.urls.raw, screenWidth, dpr),
   };
 };
 
@@ -78,7 +82,9 @@ export const readBufferFromStorage = async (): Promise<CachedImage[]> => {
       const raw = window.localStorage.getItem(BUFFER_STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) return parsed;
+        if (Array.isArray(parsed)) {
+          return parsed;
+        }
       }
     } catch {
       // Fall through to memory buffer
@@ -93,7 +99,9 @@ export const writeBufferToStorage = async (buffer: CachedImage[]): Promise<void>
 
   if (typeof chrome !== 'undefined' && chrome.storage?.local) {
     await new Promise<void>((resolve) => {
-      chrome.storage.local.set({ [BUFFER_STORAGE_KEY]: buffer }, () => resolve());
+      chrome.storage.local.set({ [BUFFER_STORAGE_KEY]: buffer }, () => {
+        resolve();
+      });
     });
     return;
   }
@@ -112,7 +120,9 @@ export const clearBuffer = async (): Promise<void> => {
   inFlightReplenish = null;
   if (typeof chrome !== 'undefined' && chrome.storage?.local) {
     await new Promise<void>((resolve) => {
-      chrome.storage.local.remove(BUFFER_STORAGE_KEY, () => resolve());
+      chrome.storage.local.remove(BUFFER_STORAGE_KEY, () => {
+        resolve();
+      });
     });
     return;
   }
@@ -126,7 +136,9 @@ export const clearBuffer = async (): Promise<void> => {
 };
 
 export const preloadImage = (url: string): void => {
-  if (!url || typeof window === 'undefined') return;
+  if (!url || typeof window === 'undefined') {
+    return;
+  }
   try {
     const img = new Image();
     img.src = url;
@@ -136,7 +148,9 @@ export const preloadImage = (url: string): void => {
 };
 
 export const triggerDownloadTracking = (downloadLocation: string, apiKey: string): void => {
-  if (!downloadLocation || !apiKey) return;
+  if (!downloadLocation || !apiKey) {
+    return;
+  }
   try {
     void fetch(downloadLocation, {
       headers: {
@@ -160,14 +174,13 @@ export const replenishBuffer = async (
 
   const key = apiKey ?? import.meta.env.VITE_UNSPLASH_API_KEY;
   if (!key) {
-    return await readBufferFromStorage();
+    return readBufferFromStorage();
   }
 
   inFlightReplenish = (async (): Promise<CachedImage[]> => {
     try {
-      const validCollections = collections.map((c) => c.trim()).filter((c) => c.length > 0);
-
-      const params = new URLSearchParams({ count: String(BATCH_SIZE) });
+      const validCollections = collections.map((c) => c.trim()).filter((c) => c.length > 0),
+        params = new URLSearchParams({ count: String(BATCH_SIZE) });
       if (validCollections.length > 0) {
         params.set('collections', validCollections.join(','));
       }
@@ -195,8 +208,8 @@ export const replenishBuffer = async (
         return await readBufferFromStorage();
       }
 
-      const current = await readBufferFromStorage();
-      const updated = [...current, ...sanitized];
+      const current = await readBufferFromStorage(),
+        updated = [...current, ...sanitized];
       await writeBufferToStorage(updated);
       return updated;
     } catch {
@@ -247,10 +260,10 @@ export const consumeNextImage = async (
   }
 
   return {
-    src: head.src,
-    next: nextSrc,
     author: head.author,
-    profile: head.profile,
+    next: nextSrc,
     origin: head.origin,
+    profile: head.profile,
+    src: head.src,
   };
 };

@@ -1,6 +1,7 @@
 import type { Dict } from './types.js';
 
 export const en: Dict = {
+  '2-digit': '2-digit',
   add: 'add',
   appearance: 'appearance',
   'auto focus': 'focus searchbar',
@@ -15,7 +16,6 @@ export const en: Dict = {
   'border radius': 'Border radius',
   brightness: 'brightness',
   'browser sync': 'browser syncing',
-  '2-digit': '2-digit',
   'clear search': 'Clear search',
   clipboard: 'clipboard',
   clock: 'clock',
@@ -81,9 +81,9 @@ export const en: Dict = {
   'layout mode': 'layout mode',
   light: 'Light',
   'light mode': 'Light mode',
+  loading: 'Loading',
   local: 'local',
   locale: 'language',
-  loading: 'Loading',
   long: 'Long',
   management: 'management',
   'manually setting input': 'manual input',

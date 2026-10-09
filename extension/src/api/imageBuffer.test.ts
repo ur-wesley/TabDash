@@ -7,8 +7,8 @@ import {
   replenishBuffer,
   sanitizeUnsplashImage,
   writeBufferToStorage,
-  type RawUnsplashImage,
 } from './imageBuffer.js';
+import type { RawUnsplashImage } from './imageBuffer.js';
 
 describe('imageBuffer utility', () => {
   const originalFetch = globalThis.fetch;
@@ -22,8 +22,8 @@ describe('imageBuffer utility', () => {
   });
 
   it('builds optimized image URL with proper parameters', () => {
-    const raw = 'https://images.unsplash.com/photo-123';
-    const optimized = buildOptimizedImageUrl(raw, 2560, 2);
+    const raw = 'https://images.unsplash.com/photo-123',
+      optimized = buildOptimizedImageUrl(raw, 2560, 2);
     expect(optimized).toContain('auto=format');
     expect(optimized).toContain('fit=crop');
     expect(optimized).toContain('w=2560');
@@ -33,23 +33,22 @@ describe('imageBuffer utility', () => {
 
   it('sanitizes raw Unsplash image into minimal cached representation', () => {
     const raw: RawUnsplashImage = {
-      id: 'photo-abc',
-      links: {
-        download_location: 'https://api.unsplash.com/photos/photo-abc/download',
-        html: 'https://unsplash.com/photos/photo-abc',
-      },
-      urls: {
-        raw: 'https://images.unsplash.com/photo-abc',
-      },
-      user: {
-        name: 'Jane Doe',
+        id: 'photo-abc',
         links: {
-          html: 'https://unsplash.com/@janedoe',
+          download_location: 'https://api.unsplash.com/photos/photo-abc/download',
+          html: 'https://unsplash.com/photos/photo-abc',
+        },
+        urls: {
+          raw: 'https://images.unsplash.com/photo-abc',
+        },
+        user: {
+          links: {
+            html: 'https://unsplash.com/@janedoe',
+          },
+          name: 'Jane Doe',
         },
       },
-    };
-
-    const sanitized = sanitizeUnsplashImage(raw, 1920, 1);
+      sanitized = sanitizeUnsplashImage(raw, 1920, 1);
     expect(sanitized).not.toBeNull();
     expect(sanitized?.id).toBe('photo-abc');
     expect(sanitized?.author).toBe('Jane Doe');
@@ -67,20 +66,20 @@ describe('imageBuffer utility', () => {
   it('consumes head image immediately when buffer is pre-populated', async () => {
     await writeBufferToStorage([
       {
-        id: 'img1',
-        src: 'https://images.unsplash.com/1',
         author: 'User 1',
-        profile: 'https://user1',
-        origin: 'https://photo1',
         downloadLocation: 'https://download1',
+        id: 'img1',
+        origin: 'https://photo1',
+        profile: 'https://user1',
+        src: 'https://images.unsplash.com/1',
       },
       {
-        id: 'img2',
-        src: 'https://images.unsplash.com/2',
         author: 'User 2',
-        profile: 'https://user2',
-        origin: 'https://photo2',
         downloadLocation: 'https://download2',
+        id: 'img2',
+        origin: 'https://photo2',
+        profile: 'https://user2',
+        src: 'https://images.unsplash.com/2',
       },
     ]);
 
@@ -113,7 +112,7 @@ describe('imageBuffer utility', () => {
               html: 'https://unsplash.com/photo-1',
             },
             urls: { raw: 'https://images.unsplash.com/photo-1' },
-            user: { name: 'Photographer 1', links: { html: 'https://unsplash.com/@p1' } },
+            user: { links: { html: 'https://unsplash.com/@p1' }, name: 'Photographer 1' },
           },
           {
             id: 'mock-2',
@@ -122,7 +121,7 @@ describe('imageBuffer utility', () => {
               html: 'https://unsplash.com/photo-2',
             },
             urls: { raw: 'https://images.unsplash.com/photo-2' },
-            user: { name: 'Photographer 2', links: { html: 'https://unsplash.com/@p2' } },
+            user: { links: { html: 'https://unsplash.com/@p2' }, name: 'Photographer 2' },
           },
         ]),
         { status: 200 },
@@ -149,8 +148,8 @@ describe('imageBuffer utility', () => {
         JSON.stringify([
           {
             id: `call-${callCount}`,
-            urls: { raw: 'https://images.unsplash.com/test' },
             links: {},
+            urls: { raw: 'https://images.unsplash.com/test' },
             user: {},
           },
         ]),
@@ -168,9 +167,10 @@ describe('imageBuffer utility', () => {
   });
 
   it('handles non-200 API responses gracefully without throwing', async () => {
-    globalThis.fetch = (async () => {
-      return new Response(JSON.stringify({ errors: ['Rate limit exceeded'] }), { status: 403 });
-    }) as unknown as typeof fetch;
+    globalThis.fetch = (async () =>
+      new Response(JSON.stringify({ errors: ['Rate limit exceeded'] }), {
+        status: 403,
+      })) as unknown as typeof fetch;
 
     const result = await consumeNextImage([], 'key');
     expect(result).toBeNull();

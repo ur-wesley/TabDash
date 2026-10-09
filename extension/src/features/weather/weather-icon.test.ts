@@ -31,7 +31,7 @@ describe('owmIconToMdi', () => {
 
   it('falls back to a cloudy icon for unknown or missing codes', () => {
     expect(owmIconToMdi('99x')).toBe('i-mdi-weather-cloudy');
-    expect(owmIconToMdi(undefined)).toBe('i-mdi-weather-cloudy');
+    expect(owmIconToMdi()).toBe('i-mdi-weather-cloudy');
     expect(owmIconToMdi(null)).toBe('i-mdi-weather-cloudy');
     expect(owmIconToMdi('')).toBe('i-mdi-weather-cloudy');
   });

@@ -42,7 +42,7 @@ describe('AuthorCredit widget', () => {
   });
 
   it('falls back to the shared widget background constant instead of an inline literal', () => {
-    const style = getAuthorCreditContrast(undefined);
+    const style = getAuthorCreditContrast();
     expect(style.color).toBe('#ffffff');
     expect(style.background).toBe(DEFAULT_WIDGET_BACKGROUND);
   });
@@ -53,7 +53,7 @@ describe('AuthorCredit widget', () => {
   });
 
   it('overrides preferred text color when it fails contrast criteria', () => {
-    const style = getAuthorCreditContrast('#ffffff', '#fef08a'); // yellow on white fails
+    const style = getAuthorCreditContrast('#ffffff', '#fef08a'); // Yellow on white fails
     expect(style.color).toBe('#000000');
   });
 });

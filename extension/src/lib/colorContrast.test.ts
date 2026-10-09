@@ -1,20 +1,20 @@
 import { describe, expect, it } from 'bun:test';
 import {
-  parseColor,
-  getRelativeLuminance,
-  getContrastRatio,
-  isContrastSufficient,
-  getContrastingTextColor,
-  ensureWidgetContrast,
   compositeColors,
+  ensureWidgetContrast,
+  getContrastRatio,
+  getContrastingTextColor,
+  getRelativeLuminance,
+  isContrastSufficient,
+  parseColor,
 } from './colorContrast.js';
 
 describe('colorContrast - parseColor', () => {
   it('parses 3-digit and 6-digit hex codes', () => {
-    expect(parseColor('#fff')).toEqual({ r: 255, g: 255, b: 255, a: 1 });
-    expect(parseColor('#000')).toEqual({ r: 0, g: 0, b: 0, a: 1 });
-    expect(parseColor('#123456')).toEqual({ r: 0x12, g: 0x34, b: 0x56, a: 1 });
-    expect(parseColor('ffffff')).toEqual({ r: 255, g: 255, b: 255, a: 1 });
+    expect(parseColor('#fff')).toEqual({ a: 1, b: 255, g: 255, r: 255 });
+    expect(parseColor('#000')).toEqual({ a: 1, b: 0, g: 0, r: 0 });
+    expect(parseColor('#123456')).toEqual({ a: 1, b: 0x56, g: 0x34, r: 0x12 });
+    expect(parseColor('ffffff')).toEqual({ a: 1, b: 255, g: 255, r: 255 });
   });
 
   it('parses 4-digit and 8-digit hex codes with alpha', () => {
@@ -32,14 +32,14 @@ describe('colorContrast - parseColor', () => {
   });
 
   it('parses rgb and rgba strings', () => {
-    expect(parseColor('rgb(255, 0, 128)')).toEqual({ r: 255, g: 0, b: 128, a: 1 });
-    expect(parseColor('rgba(64, 64, 64, 0.4)')).toEqual({ r: 64, g: 64, b: 64, a: 0.4 });
-    expect(parseColor('rgb(100%, 0%, 50%)')).toEqual({ r: 255, g: 0, b: 128, a: 1 });
+    expect(parseColor('rgb(255, 0, 128)')).toEqual({ a: 1, b: 128, g: 0, r: 255 });
+    expect(parseColor('rgba(64, 64, 64, 0.4)')).toEqual({ a: 0.4, b: 64, g: 64, r: 64 });
+    expect(parseColor('rgb(100%, 0%, 50%)')).toEqual({ a: 1, b: 128, g: 0, r: 255 });
   });
 
   it('parses modern space and slash CSS syntax', () => {
-    expect(parseColor('rgb(255 100 50 / 0.5)')).toEqual({ r: 255, g: 100, b: 50, a: 0.5 });
-    expect(parseColor('rgba(255 100 50 / 50%)')).toEqual({ r: 255, g: 100, b: 50, a: 0.5 });
+    expect(parseColor('rgb(255 100 50 / 0.5)')).toEqual({ a: 0.5, b: 50, g: 100, r: 255 });
+    expect(parseColor('rgba(255 100 50 / 50%)')).toEqual({ a: 0.5, b: 50, g: 100, r: 255 });
   });
 
   it('parses hsl and hsla strings', () => {
@@ -62,22 +62,22 @@ describe('colorContrast - parseColor', () => {
   });
 
   it('parses named CSS colors and transparent', () => {
-    expect(parseColor('white')).toEqual({ r: 255, g: 255, b: 255, a: 1 });
-    expect(parseColor('black')).toEqual({ r: 0, g: 0, b: 0, a: 1 });
-    expect(parseColor('transparent')).toEqual({ r: 0, g: 0, b: 0, a: 0 });
+    expect(parseColor('white')).toEqual({ a: 1, b: 255, g: 255, r: 255 });
+    expect(parseColor('black')).toEqual({ a: 1, b: 0, g: 0, r: 0 });
+    expect(parseColor('transparent')).toEqual({ a: 0, b: 0, g: 0, r: 0 });
   });
 
   it('handles invalid strings gracefully by falling back to black with alpha 1', () => {
-    expect(parseColor('')).toEqual({ r: 0, g: 0, b: 0, a: 1 });
-    expect(parseColor('invalid-color-string')).toEqual({ r: 0, g: 0, b: 0, a: 1 });
+    expect(parseColor('')).toEqual({ a: 1, b: 0, g: 0, r: 0 });
+    expect(parseColor('invalid-color-string')).toEqual({ a: 1, b: 0, g: 0, r: 0 });
   });
 });
 
 describe('colorContrast - alpha compositing', () => {
   it('blends semi-transparent color onto underlying surface', () => {
-    const fg = { r: 255, g: 255, b: 255, a: 0.5 };
-    const bg = { r: 0, g: 0, b: 0, a: 1 };
-    const composite = compositeColors(fg, bg);
+    const fg = { a: 0.5, b: 255, g: 255, r: 255 },
+      bg = { a: 1, b: 0, g: 0, r: 0 },
+      composite = compositeColors(fg, bg);
     expect(composite.r).toBe(128);
     expect(composite.g).toBe(128);
     expect(composite.b).toBe(128);
@@ -85,10 +85,10 @@ describe('colorContrast - alpha compositing', () => {
   });
 
   it('preserves fully opaque foreground color', () => {
-    const fg = { r: 10, g: 20, b: 30, a: 1 };
-    const bg = { r: 200, g: 200, b: 200, a: 1 };
-    const composite = compositeColors(fg, bg);
-    expect(composite).toEqual({ r: 10, g: 20, b: 30, a: 1 });
+    const fg = { a: 1, b: 30, g: 20, r: 10 },
+      bg = { a: 1, b: 200, g: 200, r: 200 },
+      composite = compositeColors(fg, bg);
+    expect(composite).toEqual({ a: 1, b: 30, g: 20, r: 10 });
   });
 });
 
@@ -131,9 +131,9 @@ describe('colorContrast - isContrastSufficient', () => {
 
   it('respects custom minimum contrast ratio threshold', () => {
     // 3:1 is WCAG AA for large text
-    const text = '#888888';
-    const bg = '#ffffff';
-    const ratio = getContrastRatio(text, bg);
+    const text = '#888888',
+      bg = '#ffffff',
+      ratio = getContrastRatio(text, bg);
     expect(isContrastSufficient(text, bg, ratio - 0.1)).toBe(true);
     expect(isContrastSufficient(text, bg, ratio + 0.1)).toBe(false);
   });
@@ -152,16 +152,16 @@ describe('colorContrast - getContrastingTextColor & ensureWidgetContrast', () =>
 
   it('preserves preferred text color when it meets contrast requirement', () => {
     const chosen = getContrastingTextColor('#000000', {
-      preferredTextColor: '#38bdf8', // Light blue on black has high contrast (> 4.5)
       minRatio: 4.5,
+      preferredTextColor: '#38bdf8', // Light blue on black has high contrast (> 4.5),
     });
     expect(chosen).toBe('#38bdf8');
   });
 
   it('overrides preferred text color when it has poor contrast', () => {
     const chosen = getContrastingTextColor('#ffffff', {
-      preferredTextColor: '#fef08a', // Pale yellow on white has very poor contrast
       minRatio: 4.5,
+      preferredTextColor: '#fef08a', // Pale yellow on white has very poor contrast,
     });
     // Should fallback to dark text
     expect(chosen).toBe('#000000');
@@ -185,8 +185,8 @@ describe('colorContrast - getContrastingTextColor & ensureWidgetContrast', () =>
 
   it('supports custom light and dark text colors', () => {
     const chosen = getContrastingTextColor('#000000', {
-      lightTextColor: '#f1f5f9',
       darkTextColor: '#0f172a',
+      lightTextColor: '#f1f5f9',
     });
     expect(chosen).toBe('#f1f5f9');
   });

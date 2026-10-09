@@ -4,26 +4,26 @@ import type { MessageKey } from '../../lang';
 export type Translate = (key: MessageKey) => string;
 
 export const SEARCH_ENGINE_OPTIONS: readonly SelectOption[] = [
-  { value: 'google', name: 'Google' },
-  { value: 'bing', name: 'Bing' },
-  { value: 'duckduckgo', name: 'DuckDuckGo' },
-  { value: 'ecosia', name: 'Ecosia' },
-  { value: 'brave', name: 'Brave' },
-  { value: 'yahoo', name: 'Yahoo' },
+  { name: 'Google', value: 'google' },
+  { name: 'Bing', value: 'bing' },
+  { name: 'DuckDuckGo', value: 'duckduckgo' },
+  { name: 'Ecosia', value: 'ecosia' },
+  { name: 'Brave', value: 'brave' },
+  { name: 'Yahoo', value: 'yahoo' },
 ];
 
 export function weatherUnitOptions(t: Translate): readonly SelectOption[] {
   return [
-    { value: 'metric', name: `${t('metric')} (°C)` },
-    { value: 'imperial', name: `${t('imperial')} (°F)` },
+    { name: `${t('metric')} (°C)`, value: 'metric' },
+    { name: `${t('imperial')} (°F)`, value: 'imperial' },
   ];
 }
 
 export function shortcutStyleOptions(t: Translate): readonly SelectOption[] {
   return [
-    { value: 'small', name: t('small') },
-    { value: 'medium', name: t('medium') },
-    { value: 'large', name: t('large') },
-    { value: 'text', name: t('text only') },
+    { name: t('small'), value: 'small' },
+    { name: t('medium'), value: 'medium' },
+    { name: t('large'), value: 'large' },
+    { name: t('text only'), value: 'text' },
   ];
 }

@@ -1,24 +1,29 @@
-import { type Component, createEffect, createSignal, onCleanup, onMount, Show } from 'solid-js';
+import { createEffect, createSignal, onCleanup, onMount, Show } from 'solid-js';
+import type { Component } from 'solid-js';
 import LangSelect from './LangSelect.jsx';
 import Link from './Link.jsx';
 import { language } from '../helper/store.js';
 import { useStore } from '@nanostores/solid';
 
 const GeneralMenu: Component<Props> = (props) => {
-  const $language = useStore(language);
-  const [open, setOpen] = createSignal(false);
-  const [stars, setStars] = createSignal(null);
+  const $language = useStore(language),
+    [open, setOpen] = createSignal(false),
+    [stars, setStars] = createSignal(null);
   createEffect(async () => {
     const starCount = await fetch('https://api.github.com/repos/ur-wesley/TabDash')
-      .then((r) => r.json())
+      .then(async (r) => r.json())
       .then((r) => r.stargazers_count || 0);
     setStars(starCount);
   });
   onMount(() => {
-    if (typeof window !== 'undefined') window.addEventListener('resize', onresize);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', onresize);
+    }
   });
   onCleanup(() => {
-    if (typeof window !== 'undefined') window.removeEventListener('resize', onresize);
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('resize', onresize);
+    }
   });
   const onresize = () => setOpen(false);
   return (
@@ -45,7 +50,7 @@ const GeneralMenu: Component<Props> = (props) => {
           <Link href={`/docs/${$language()}`}>Docs</Link>
         </li>
         <li>
-          <Link href={props.url + '/' + $language()}>Online Version</Link>
+          <Link href={`${props.url}/${$language()}`}>Online Version</Link>
         </li>
         <li class="flex items-center gap-2">
           <Link href="https://github.com/ur-wesley/tabdash">GitHub</Link>

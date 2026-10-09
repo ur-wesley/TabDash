@@ -21,15 +21,12 @@ import { useI18n } from '../../i18n';
 export function useDashboardWidgets(
   isEditingLayout: Accessor<boolean>,
 ): () => CanvasWidgetConfig[] {
-  const { t } = useI18n();
-  const [state] = useSettingsContext();
-  const [weatherState] = useWeatherContext();
+  const { t } = useI18n(),
+    [state] = useSettingsContext(),
+    [weatherState] = useWeatherContext();
 
   return () => [
     {
-      id: 'clock',
-      label: t('clock and date') || 'Clock & Date',
-      visible: state.layout?.showClock || state.layout?.showDate,
       content: (
         <WidgetContextMenu
           title={t('clock and date') || 'Clock & Date'}
@@ -45,11 +42,11 @@ export function useDashboardWidgets(
           />
         </WidgetContextMenu>
       ),
+      id: 'clock',
+      label: t('clock and date') || 'Clock & Date',
+      visible: state.layout?.showClock || state.layout?.showDate,
     },
     {
-      id: 'greeting',
-      label: t('greeting') || 'Greeting',
-      visible: state.layout?.showGreeting,
       content: (
         <WidgetContextMenu
           title={t('greeting') || 'Greeting'}
@@ -59,11 +56,11 @@ export function useDashboardWidgets(
           <GreetingWidget name={state.general?.username} />
         </WidgetContextMenu>
       ),
+      id: 'greeting',
+      label: t('greeting') || 'Greeting',
+      visible: state.layout?.showGreeting,
     },
     {
-      id: 'weather',
-      label: t('weather') || 'Weather',
-      visible: state.layout?.showWeather,
       content: (
         <WidgetContextMenu
           title={t('weather') || 'Weather'}
@@ -78,11 +75,11 @@ export function useDashboardWidgets(
           />
         </WidgetContextMenu>
       ),
+      id: 'weather',
+      label: t('weather') || 'Weather',
+      visible: state.layout?.showWeather,
     },
     {
-      id: 'searchbar',
-      label: t('search') || 'Search',
-      visible: state.layout?.showSearchbar,
       content: (
         <WidgetContextMenu
           title={t('search') || 'Search'}
@@ -92,11 +89,11 @@ export function useDashboardWidgets(
           <SearchBar settings={state.search} />
         </WidgetContextMenu>
       ),
+      id: 'searchbar',
+      label: t('search') || 'Search',
+      visible: state.layout?.showSearchbar,
     },
     {
-      id: 'shortcuts',
-      label: t('shortcuts') || 'Shortcuts',
-      visible: state.layout?.showShortcuts,
       content: (
         <WidgetContextMenu
           title={t('shortcuts') || 'Shortcuts'}
@@ -106,6 +103,9 @@ export function useDashboardWidgets(
           <ShortcutGrid />
         </WidgetContextMenu>
       ),
+      id: 'shortcuts',
+      label: t('shortcuts') || 'Shortcuts',
+      visible: state.layout?.showShortcuts,
     },
   ];
 }

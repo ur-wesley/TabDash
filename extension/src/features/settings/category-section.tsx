@@ -1,4 +1,5 @@
-import { type Component, type JSX, Show, children } from 'solid-js';
+import { Show, children } from 'solid-js';
+import type { Component, JSX } from 'solid-js';
 import { cn } from '../../lib/utils';
 
 export interface CategorySectionProps {

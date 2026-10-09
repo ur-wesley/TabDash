@@ -1,6 +1,7 @@
 ---
 import GeneralMenu from '../components/GeneralMenu';
-const url = Astro.url;
+
+const {url} = Astro;
 const onlineVersion = `${url.protocol}//online.${url.host}`;
 ---
 

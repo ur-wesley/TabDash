@@ -1,4 +1,5 @@
-import { type Component, For, Show, createMemo } from 'solid-js';
+import { For, Show, createMemo } from 'solid-js';
+import type { Component } from 'solid-js';
 import type { MessageKey } from '../../lang';
 import { Button } from '../../components/ui/button';
 import type { SelectOption } from '../../components/ui/select';
@@ -25,215 +26,223 @@ interface SearchItem {
 }
 
 export const SettingsSearch: Component<SettingsSearchProps> = (props) => {
-  const { t } = useI18n();
-
-  const searchItems = createMemo<SearchItem[]>(() => [
-    {
-      id: 'language',
-      name: t('language') || 'Language',
-      category: 'general',
-      subcategory: 'locale',
-      keywords: ['language', 'sprache', 'langue', 'idioma', 'translation'],
-    },
-    {
-      id: 'theme',
-      name: t('theme') || 'Theme',
-      category: 'general',
-      subcategory: 'theme',
-      keywords: ['theme', 'dark', 'light', 'automatic', 'system', 'dunkel', 'hell', 'mode'],
-    },
-    {
-      id: 'sync',
-      name: t('sync') || 'Sync',
-      category: 'general',
-      subcategory: 'browser',
-      keywords: ['sync', 'cloud', 'browser sync', 'storage'],
-    },
-    {
-      id: 'bg-active',
-      name: t('bg active') || 'Background Active',
-      category: 'general',
-      subcategory: 'background',
-      keywords: ['background', 'wallpaper', 'unsplash', 'photo', 'hintergrund'],
-    },
-    {
-      id: 'collections',
-      name: t('collections') || 'Collections',
-      category: 'general',
-      subcategory: 'background',
-      keywords: ['collections', 'sammlungen', 'nature', 'tags'],
-    },
-    {
-      id: 'static-img',
-      name: t('static img') || 'Static Image',
-      category: 'general',
-      subcategory: 'background',
-      keywords: ['static', 'image', 'url', 'statisches bild'],
-    },
-    {
-      id: 'color',
-      name: t('color') || 'Color',
-      category: 'general',
-      subcategory: 'background',
-      keywords: ['color', 'farbe', 'solid color'],
-    },
-    {
-      id: 'backdrop',
-      name: t('backdrop') || 'Backdrop',
-      category: 'general',
-      subcategory: 'background',
-      keywords: [
-        'backdrop',
-        'filter',
-        'blur',
-        'brightness',
-        'saturate',
-        'hintergrundfilter',
-        'verwischen',
-      ],
-    },
-    {
-      id: 'show-clock',
-      name: t('show clock') || 'Show Clock',
-      category: 'widgets',
-      subcategory: 'clock',
-      keywords: ['clock', 'time', 'uhr', 'uhrzeit', 'hour'],
-    },
-    {
-      id: 'show-date',
-      name: t('show date') || 'Show Date',
-      category: 'widgets',
-      subcategory: 'clock',
-      keywords: ['date', 'calendar', 'datum', 'kalender', 'tag'],
-    },
-    {
-      id: 'show-seconds',
-      name: t('show seconds') || 'Show Seconds',
-      category: 'widgets',
-      subcategory: 'clock',
-      keywords: ['seconds', 'sekunden', 'ticker', 'precision'],
-    },
-    {
-      id: 'show-weather',
-      name: t('show weather') || 'Show Weather',
-      category: 'widgets',
-      subcategory: 'weather',
-      keywords: ['weather', 'wetter', 'temperature', 'forecast'],
-    },
-    {
-      id: 'unit',
-      name: t('unit') || 'Weather Unit',
-      category: 'widgets',
-      subcategory: 'weather',
-      keywords: ['unit', 'celsius', 'fahrenheit', 'metric', 'imperial', 'grad', 'einheit'],
-    },
-    {
-      id: 'show-search',
-      name: t('show search') || 'Show Search',
-      category: 'widgets',
-      subcategory: 'search',
-      keywords: ['search', 'suche', 'searchbar', 'suchleiste'],
-    },
-    {
-      id: 'search-engine',
-      name: t('search engine') || 'Search Engine',
-      category: 'widgets',
-      subcategory: 'search',
-      keywords: ['search engine', 'suchmaschine', 'google', 'duckduckgo', 'ecosia', 'bing'],
-    },
-    {
-      id: 'auto-focus',
-      name: t('auto focus') || 'Auto Focus',
-      category: 'widgets',
-      subcategory: 'search',
-      keywords: ['focus', 'cursor', 'autofocus', 'fokussieren'],
-    },
-    {
-      id: 'show-shortcuts',
-      name: t('show shortcuts') || 'Show Shortcuts',
-      category: 'widgets',
-      subcategory: 'shortcuts',
-      keywords: ['shortcuts', 'schnelllinks', 'bookmarks', 'links'],
-    },
-    {
-      id: 'shortcut-style',
-      name: t('style') || 'Shortcut Style',
-      category: 'widgets',
-      subcategory: 'shortcuts',
-      keywords: ['style', 'size', 'small', 'medium', 'large', 'text'],
-    },
-    {
-      id: 'shortcut-columns',
-      name: t('columns') || 'Shortcut Columns',
-      category: 'widgets',
-      subcategory: 'shortcuts',
-      keywords: ['columns', 'spalten', 'grid', 'row'],
-    },
-    {
-      id: 'shortcut-icon-only',
-      name: t('icon only') || 'Icon Only',
-      category: 'widgets',
-      subcategory: 'shortcuts',
-      keywords: ['icon only', 'nur symbol', 'minimal'],
-    },
-    {
-      id: 'show-greeting',
-      name: t('show greeting') || 'Show Greeting',
-      category: 'widgets',
-      subcategory: 'greeting',
-      keywords: ['greeting', 'gruß', 'gruss', 'welcome', 'hallo'],
-    },
-    {
-      id: 'appearance',
-      name: t('appearance') || 'Appearance',
-      category: 'appearance',
-      subcategory: 'widgets',
-      keywords: [
-        'appearance',
-        'styling',
-        'widget',
-        'font',
-        'shadow',
-        'border',
-        'radius',
-        'text color',
-      ],
-    },
-    {
-      id: 'management',
-      name: t('management') || 'Management',
-      category: 'management',
-      subcategory: 'data',
-      keywords: [
-        'management',
-        'backup',
-        'export',
-        'import',
-        'restore',
-        'reset',
-        'cloud',
-        'clipboard',
-      ],
-    },
-  ]);
-
-  const filtered = createMemo(() => {
-    const q = (props.query ?? '').trim().toLowerCase();
-    if (!q) return [];
-    return searchItems().filter((item) => {
-      if (!item) return false;
-      const name = (item.name ?? '').toLowerCase();
-      if (name.includes(q)) return true;
-      const category = (item.category ?? '').toLowerCase();
-      if (category.includes(q)) return true;
-      const subcategory = (item.subcategory ?? '').toLowerCase();
-      if (subcategory && subcategory.includes(q)) return true;
-      return (
-        Array.isArray(item.keywords) &&
-        item.keywords.some((kw) => typeof kw === 'string' && kw.toLowerCase().includes(q))
-      );
+  const { t } = useI18n(),
+    searchItems = createMemo<SearchItem[]>(() => [
+      {
+        category: 'general',
+        id: 'language',
+        keywords: ['language', 'sprache', 'langue', 'idioma', 'translation'],
+        name: t('language') || 'Language',
+        subcategory: 'locale',
+      },
+      {
+        category: 'general',
+        id: 'theme',
+        keywords: ['theme', 'dark', 'light', 'automatic', 'system', 'dunkel', 'hell', 'mode'],
+        name: t('theme') || 'Theme',
+        subcategory: 'theme',
+      },
+      {
+        category: 'general',
+        id: 'sync',
+        keywords: ['sync', 'cloud', 'browser sync', 'storage'],
+        name: t('sync') || 'Sync',
+        subcategory: 'browser',
+      },
+      {
+        category: 'general',
+        id: 'bg-active',
+        keywords: ['background', 'wallpaper', 'unsplash', 'photo', 'hintergrund'],
+        name: t('bg active') || 'Background Active',
+        subcategory: 'background',
+      },
+      {
+        category: 'general',
+        id: 'collections',
+        keywords: ['collections', 'sammlungen', 'nature', 'tags'],
+        name: t('collections') || 'Collections',
+        subcategory: 'background',
+      },
+      {
+        category: 'general',
+        id: 'static-img',
+        keywords: ['static', 'image', 'url', 'statisches bild'],
+        name: t('static img') || 'Static Image',
+        subcategory: 'background',
+      },
+      {
+        category: 'general',
+        id: 'color',
+        keywords: ['color', 'farbe', 'solid color'],
+        name: t('color') || 'Color',
+        subcategory: 'background',
+      },
+      {
+        category: 'general',
+        id: 'backdrop',
+        keywords: [
+          'backdrop',
+          'filter',
+          'blur',
+          'brightness',
+          'saturate',
+          'hintergrundfilter',
+          'verwischen',
+        ],
+        name: t('backdrop') || 'Backdrop',
+        subcategory: 'background',
+      },
+      {
+        category: 'widgets',
+        id: 'show-clock',
+        keywords: ['clock', 'time', 'uhr', 'uhrzeit', 'hour'],
+        name: t('show clock') || 'Show Clock',
+        subcategory: 'clock',
+      },
+      {
+        category: 'widgets',
+        id: 'show-date',
+        keywords: ['date', 'calendar', 'datum', 'kalender', 'tag'],
+        name: t('show date') || 'Show Date',
+        subcategory: 'clock',
+      },
+      {
+        category: 'widgets',
+        id: 'show-seconds',
+        keywords: ['seconds', 'sekunden', 'ticker', 'precision'],
+        name: t('show seconds') || 'Show Seconds',
+        subcategory: 'clock',
+      },
+      {
+        category: 'widgets',
+        id: 'show-weather',
+        keywords: ['weather', 'wetter', 'temperature', 'forecast'],
+        name: t('show weather') || 'Show Weather',
+        subcategory: 'weather',
+      },
+      {
+        category: 'widgets',
+        id: 'unit',
+        keywords: ['unit', 'celsius', 'fahrenheit', 'metric', 'imperial', 'grad', 'einheit'],
+        name: t('unit') || 'Weather Unit',
+        subcategory: 'weather',
+      },
+      {
+        category: 'widgets',
+        id: 'show-search',
+        keywords: ['search', 'suche', 'searchbar', 'suchleiste'],
+        name: t('show search') || 'Show Search',
+        subcategory: 'search',
+      },
+      {
+        category: 'widgets',
+        id: 'search-engine',
+        keywords: ['search engine', 'suchmaschine', 'google', 'duckduckgo', 'ecosia', 'bing'],
+        name: t('search engine') || 'Search Engine',
+        subcategory: 'search',
+      },
+      {
+        category: 'widgets',
+        id: 'auto-focus',
+        keywords: ['focus', 'cursor', 'autofocus', 'fokussieren'],
+        name: t('auto focus') || 'Auto Focus',
+        subcategory: 'search',
+      },
+      {
+        category: 'widgets',
+        id: 'show-shortcuts',
+        keywords: ['shortcuts', 'schnelllinks', 'bookmarks', 'links'],
+        name: t('show shortcuts') || 'Show Shortcuts',
+        subcategory: 'shortcuts',
+      },
+      {
+        category: 'widgets',
+        id: 'shortcut-style',
+        keywords: ['style', 'size', 'small', 'medium', 'large', 'text'],
+        name: t('style') || 'Shortcut Style',
+        subcategory: 'shortcuts',
+      },
+      {
+        category: 'widgets',
+        id: 'shortcut-columns',
+        keywords: ['columns', 'spalten', 'grid', 'row'],
+        name: t('columns') || 'Shortcut Columns',
+        subcategory: 'shortcuts',
+      },
+      {
+        category: 'widgets',
+        id: 'shortcut-icon-only',
+        keywords: ['icon only', 'nur symbol', 'minimal'],
+        name: t('icon only') || 'Icon Only',
+        subcategory: 'shortcuts',
+      },
+      {
+        category: 'widgets',
+        id: 'show-greeting',
+        keywords: ['greeting', 'gruß', 'gruss', 'welcome', 'hallo'],
+        name: t('show greeting') || 'Show Greeting',
+        subcategory: 'greeting',
+      },
+      {
+        category: 'appearance',
+        id: 'appearance',
+        keywords: [
+          'appearance',
+          'styling',
+          'widget',
+          'font',
+          'shadow',
+          'border',
+          'radius',
+          'text color',
+        ],
+        name: t('appearance') || 'Appearance',
+        subcategory: 'widgets',
+      },
+      {
+        category: 'management',
+        id: 'management',
+        keywords: [
+          'management',
+          'backup',
+          'export',
+          'import',
+          'restore',
+          'reset',
+          'cloud',
+          'clipboard',
+        ],
+        name: t('management') || 'Management',
+        subcategory: 'data',
+      },
+    ]),
+    filtered = createMemo(() => {
+      const q = (props.query ?? '').trim().toLowerCase();
+      if (!q) {
+        return [];
+      }
+      return searchItems().filter((item) => {
+        if (!item) {
+          return false;
+        }
+        const name = (item.name ?? '').toLowerCase();
+        if (name.includes(q)) {
+          return true;
+        }
+        const category = (item.category ?? '').toLowerCase();
+        if (category.includes(q)) {
+          return true;
+        }
+        const subcategory = (item.subcategory ?? '').toLowerCase();
+        if (subcategory && subcategory.includes(q)) {
+          return true;
+        }
+        return (
+          Array.isArray(item.keywords) &&
+          item.keywords.some((kw) => typeof kw === 'string' && kw.toLowerCase().includes(q))
+        );
+      });
     });
-  });
 
   return (
     <div class="w-full min-w-0 flex flex-col gap-3">

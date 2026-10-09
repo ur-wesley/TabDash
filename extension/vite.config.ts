@@ -9,8 +9,8 @@ import path from 'node:path';
 import pkg from './package.json';
 import manifest from './public/manifest.json';
 
-const require = createRequire(import.meta.url);
-const corvuDist = path.dirname(require.resolve('@corvu/utils'));
+const require = createRequire(import.meta.url),
+  corvuDist = path.dirname(require.resolve('@corvu/utils'));
 
 export default defineConfig(({ command, mode }) => {
   if (command == 'build') {
@@ -18,6 +18,10 @@ export default defineConfig(({ command, mode }) => {
     void buildManifest();
   }
   return {
+    build: {
+      minify: false,
+      target: 'esnext',
+    },
     envPrefix: ['VITE_', 'OPENWEATHER_', 'UNSPLASH_'],
     plugins: [
       solidPlugin(),
@@ -62,6 +66,9 @@ export default defineConfig(({ command, mode }) => {
         ],
       }),
     ],
+    preview: {
+      port: 3003,
+    },
     resolve: {
       alias: [
         {
@@ -77,21 +84,14 @@ export default defineConfig(({ command, mode }) => {
     server: {
       port: 3003,
     },
-    preview: {
-      port: 3003,
-    },
-    build: {
-      target: 'esnext',
-      minify: false,
-    },
   };
 });
 
 const buildBackgroundJS = async (mode: string) => {
-  const env = loadEnv(mode, process.cwd(), '');
-  await writeFile(
-    './public/background.js',
-    `const isOnChrome = navigator.userAgent.includes('Chrome');
+    const env = loadEnv(mode, process.cwd(), '');
+    await writeFile(
+      './public/background.js',
+      `const isOnChrome = navigator.userAgent.includes('Chrome');
 const newTab = () => chrome.tabs.create({ url: 'chrome://newtab' });
 const url = "${env.VITE_COMPANION_BASE || ''}";
 chrome.runtime.onInstalled.addListener(function (d) {
@@ -105,43 +105,40 @@ chrome.runtime.onInstalled.addListener(function (d) {
     newTab();
   }
 });`,
-  );
-};
-
-const buildManifest = async () => {
-  const browsers = ['firefox', 'chrome', 'edge'];
-  for (const browser of browsers) {
-    const newManifest = {
-      ...manifest,
-      manifest_version: 3,
-      version: pkg.version,
-      background: setBackground(browser),
-      ...setAction(browser),
-    };
-    await writeFile(`./public/manifest.${browser}.json`, JSON.stringify(newManifest, null, 2));
-  }
-};
-
-const setBackground = (browser: string) => {
-  switch (browser) {
-    case 'firefox':
-      return { scripts: ['background.js'] };
-    case 'chrome':
-    case 'edge':
-    default:
-      return {
-        service_worker: 'background.js',
-        type: 'module',
-        offline_enabled: true,
+    );
+  },
+  buildManifest = async () => {
+    const browsers = ['firefox', 'chrome', 'edge'];
+    for (const browser of browsers) {
+      const newManifest = {
+        ...manifest,
+        background: setBackground(browser),
+        manifest_version: 3,
+        version: pkg.version,
+        ...setAction(browser),
       };
-  }
-};
-
-const setAction = (_browser: string) => {
-  return {
+      await writeFile(`./public/manifest.${browser}.json`, JSON.stringify(newManifest, null, 2));
+    }
+  },
+  setBackground = (browser: string) => {
+    switch (browser) {
+      case 'firefox': {
+        return { scripts: ['background.js'] };
+      }
+      case 'chrome':
+      case 'edge':
+      default: {
+        return {
+          service_worker: 'background.js',
+          type: 'module',
+          offline_enabled: true,
+        };
+      }
+    }
+  },
+  setAction = (_browser: string) => ({
     action: {
       default_icon: 'tabdash_128.png',
       default_title: '__MSG_extensionName__',
     },
-  };
-};
+  });

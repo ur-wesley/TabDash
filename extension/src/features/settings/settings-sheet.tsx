@@ -1,11 +1,13 @@
-import { type Component, Show, createSignal, createMemo } from 'solid-js';
+import { Show, createSignal, createMemo } from 'solid-js';
+import type { Component } from 'solid-js';
 import type { AvailableLanguages } from '../../lang';
 import { availableLanguages, helpLinks } from '../../lang';
 import { theme } from '../../../types/settings';
 import { Button } from '../../components/ui/button';
 import { ColorPicker } from '../../components/ui/color-picker';
 import { Input } from '../../components/ui/input';
-import { Select, type SelectOption } from '../../components/ui/select';
+import { Select } from '../../components/ui/select';
+import type { SelectOption } from '../../components/ui/select';
 import { Sheet } from '../../components/ui/sheet';
 import { Slider } from '../../components/ui/slider';
 import { Switch } from '../../components/ui/switch';
@@ -24,44 +26,36 @@ import { useSettingsContext } from './settings-context';
 import { WidgetsTab } from './widgets-tab';
 
 const languageLabels: Record<AvailableLanguages, string> = {
-  en: 'English',
-  de: 'Deutsch',
-  fr: 'Français',
-  es: 'Español',
-};
-
-const languageOptions: readonly SelectOption[] = availableLanguages.map((key) => ({
-  value: key,
-  name: languageLabels[key] ?? key,
-}));
-
-const searchEngineOptions: readonly SelectOption[] = SEARCH_ENGINE_OPTIONS;
+    de: 'Deutsch',
+    en: 'English',
+    es: 'Español',
+    fr: 'Français',
+  },
+  languageOptions: readonly SelectOption[] = availableLanguages.map((key) => ({
+    name: languageLabels[key] ?? key,
+    value: key,
+  })),
+  searchEngineOptions: readonly SelectOption[] = SEARCH_ENGINE_OPTIONS;
 
 export interface SettingsSheetProps {
   readonly onCustomizeLayout?: () => void;
 }
 
 export const SettingsSheet: Component<SettingsSheetProps> = (props) => {
-  const { t, locale, setLocale } = useI18n();
-  const [state, actions] = useSettingsContext();
-  const [isOpen, setIsOpen] = createSignal(false);
-  const [activeTab, setActiveTab] = createSignal('general');
-  const [searchQuery, setSearchQuery] = createSignal('');
-
-  const getHelpLink = (path?: string) => (path ? `${helpLinks.base}${locale()}${path}` : undefined);
-
-  const themeOptions = createMemo<readonly SelectOption[]>(() =>
-    theme.map((key) => ({
-      value: key,
-      name: t(key),
-    })),
-  );
-
-  const weatherUnitOptions = createMemo<readonly SelectOption[]>(() => getWeatherUnitOptions(t));
-
-  const shortcutStyleOptions = createMemo<readonly SelectOption[]>(() =>
-    getShortcutStyleOptions(t),
-  );
+  const { t, locale, setLocale } = useI18n(),
+    [state, actions] = useSettingsContext(),
+    [isOpen, setIsOpen] = createSignal(false),
+    [activeTab, setActiveTab] = createSignal('general'),
+    [searchQuery, setSearchQuery] = createSignal(''),
+    getHelpLink = (path?: string) => (path ? `${helpLinks.base}${locale()}${path}` : undefined),
+    themeOptions = createMemo<readonly SelectOption[]>(() =>
+      theme.map((key) => ({
+        name: t(key),
+        value: key,
+      })),
+    ),
+    weatherUnitOptions = createMemo<readonly SelectOption[]>(() => getWeatherUnitOptions(t)),
+    shortcutStyleOptions = createMemo<readonly SelectOption[]>(() => getShortcutStyleOptions(t));
 
   return (
     <Sheet open={isOpen()} onOpenChange={setIsOpen}>
@@ -176,16 +170,18 @@ export const SettingsSheet: Component<SettingsSheetProps> = (props) => {
                       label={t('theme')}
                       value={state.general.theme}
                       options={themeOptions()}
-                      onChange={(val) =>
+                      onChange={(val) => {
                         actions.updateGeneral({
                           theme: val as 'automatic' | 'light' | 'dark',
-                        })
-                      }
+                        });
+                      }}
                     />
                     <Switch
                       label={t('sync')}
                       checked={state.general.sync}
-                      onChange={(val) => actions.updateGeneral({ sync: val })}
+                      onChange={(val) => {
+                        actions.updateGeneral({ sync: val });
+                      }}
                     />
                   </CategorySection>
 
@@ -196,20 +192,22 @@ export const SettingsSheet: Component<SettingsSheetProps> = (props) => {
                     <Switch
                       label={t('bg active')}
                       checked={state.background.active}
-                      onChange={(val) => actions.updateBackground({ active: val })}
+                      onChange={(val) => {
+                        actions.updateBackground({ active: val });
+                      }}
                     />
                     <Show when={state.background.active}>
                       <Input
                         label={t('collections')}
                         value={state.background.collections?.join(', ') ?? ''}
-                        onInput={(e) =>
+                        onInput={(e) => {
                           actions.updateBackground({
                             collections: e.currentTarget.value
                               .split(',')
                               .map((i) => i.trim())
                               .filter(Boolean),
-                          })
-                        }
+                          });
+                        }}
                       />
                       <Button
                         variant="outline"
@@ -228,63 +226,73 @@ export const SettingsSheet: Component<SettingsSheetProps> = (props) => {
                       <Input
                         label={t('static img')}
                         value={state.background.static ?? ''}
-                        onInput={(e) => actions.updateBackground({ static: e.currentTarget.value })}
+                        onInput={(e) => {
+                          actions.updateBackground({ static: e.currentTarget.value });
+                        }}
                       />
                       <ColorPicker
                         label={t('color')}
                         value={state.background.color ?? '#000000'}
-                        onChange={(color) => actions.updateBackground({ color })}
+                        onChange={(color) => {
+                          actions.updateBackground({ color });
+                        }}
                       />
                     </Show>
                     <Switch
                       label={t('backdrop')}
                       checked={state.background.backdropActive}
-                      onChange={(val) => actions.updateBackground({ backdropActive: val })}
+                      onChange={(val) => {
+                        actions.updateBackground({ backdropActive: val });
+                      }}
                     />
                     <Show when={state.background.backdropActive}>
                       <Slider
                         label={t('blur')}
                         min={0}
                         max={50}
-                        value={parseInt(state.background.backdrop?.blur || '0', 10) || 0}
-                        onChange={(val) =>
+                        value={Number.parseInt(state.background.backdrop?.blur || '0', 10) || 0}
+                        onChange={(val) => {
                           actions.updateBackground({
                             backdrop: {
                               ...state.background.backdrop,
                               blur: `${val}px`,
                             },
-                          })
-                        }
+                          });
+                        }}
                         showValue
                       />
                       <Slider
                         label={t('brightness')}
                         min={0}
                         max={200}
-                        value={parseInt(state.background.backdrop?.brightness || '100', 10) || 100}
-                        onChange={(val) =>
+                        value={
+                          Number.parseInt(state.background.backdrop?.brightness || '100', 10) || 100
+                        }
+                        onChange={(val) => {
                           actions.updateBackground({
                             backdrop: {
                               ...state.background.backdrop,
                               brightness: `${val}%`,
                             },
-                          })
-                        }
+                          });
+                        }}
                         showValue
                       />
                       <Slider
                         label={t('saturate')}
                         min={0}
                         max={200}
-                        value={parseInt(state.background.backdrop?.saturate || '100', 10) || 100}
-                        onChange={(val) =>
+                        value={
+                          Number.parseInt(state.background.backdrop?.saturate || '100', 10) || 100
+                        }
+                        onChange={(val) => {
                           actions.updateBackground({
                             backdrop: {
                               ...state.background.backdrop,
                               saturate: `${val}%`,
                             },
-                          })
-                        }
+                          });
+                        }}
                         showValue
                       />
                     </Show>

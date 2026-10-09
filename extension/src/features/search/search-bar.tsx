@@ -1,4 +1,5 @@
-import { type Component, onMount } from 'solid-js';
+import { onMount } from 'solid-js';
+import type { Component } from 'solid-js';
 import type { SearchSetting } from '../../../types/settings';
 import { searchQuery } from '../../api/search';
 import { useI18n } from '../../i18n';
@@ -21,7 +22,9 @@ export const SearchBar: Component<SearchBarProps> = (props) => {
     const val = inputRef?.value?.trim();
     if (val && props.settings) {
       searchQuery(val, props.settings);
-      if (inputRef) inputRef.value = '';
+      if (inputRef) {
+        inputRef.value = '';
+      }
     }
   };
 
@@ -43,8 +46,8 @@ export const SearchBar: Component<SearchBarProps> = (props) => {
         style={{
           color: 'var(--textColor)',
           'font-family': 'var(--font), sans-serif',
-          'font-weight': 'var(--weight)',
           'font-size': 'var(--textSize)',
+          'font-weight': 'var(--weight)',
         }}
         autocomplete="off"
         spellcheck={false}

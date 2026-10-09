@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'bun:test';
-import {
-  calculatePercentage,
-  calculateSmartSnap,
-  clamp,
-  snapCoordinate,
-  type ElementRect,
-} from './canvasUtils';
+import { calculatePercentage, calculateSmartSnap, clamp, snapCoordinate } from './canvasUtils';
+import type { ElementRect } from './canvasUtils';
 import defaultSettings from '../../../public/defaultSettings.json';
 import {
   defaultFlowOrder,
@@ -33,24 +28,23 @@ describe('canvas layout coordinate math', () => {
   });
 
   it('calculates viewport percentage coordinates with boundary clamping and snapping', () => {
-    const bounds = { left: 0, top: 0, width: 1000, height: 1000 };
-
-    // Point at (234, 482) -> raw (23.4%, 48.2%) -> snapped (25%, 50%)
-    const snapped = calculatePercentage({
-      clientX: 234,
-      clientY: 482,
-      bounds,
-      snap: true,
-      step: 5,
-    });
+    const bounds = { height: 1000, left: 0, top: 0, width: 1000 },
+      // Point at (234, 482) -> raw (23.4%, 48.2%) -> snapped (25%, 50%)
+      snapped = calculatePercentage({
+        bounds,
+        clientX: 234,
+        clientY: 482,
+        snap: true,
+        step: 5,
+      });
     expect(snapped.x).toBe(25);
     expect(snapped.y).toBe(50);
 
     // Unsnapped
     const unsnapped = calculatePercentage({
+      bounds,
       clientX: 234,
       clientY: 482,
-      bounds,
       snap: false,
       step: 5,
     });
@@ -59,9 +53,9 @@ describe('canvas layout coordinate math', () => {
 
     // Out of bounds (< 5% or > 95%)
     const clampedEdge = calculatePercentage({
+      bounds,
       clientX: -50,
       clientY: 1200,
-      bounds,
       snap: true,
       step: 5,
     });
@@ -70,45 +64,44 @@ describe('canvas layout coordinate math', () => {
   });
 
   it('handles zero or negative container bounds gracefully', () => {
-    const invalidBounds = { left: 0, top: 0, width: 0, height: 0 };
-    const result = calculatePercentage({
-      clientX: 100,
-      clientY: 100,
-      bounds: invalidBounds,
-      snap: true,
-      step: 5,
-    });
+    const invalidBounds = { height: 0, left: 0, top: 0, width: 0 },
+      result = calculatePercentage({
+        bounds: invalidBounds,
+        clientX: 100,
+        clientY: 100,
+        snap: true,
+        step: 5,
+      });
     expect(result).toEqual({ x: 50, y: 50 });
   });
 });
 
 describe('calculateSmartSnap relative magnetic snapping', () => {
-  const containerBounds = { left: 0, top: 0, width: 1000, height: 1000 };
-
-  // Reference widget: top=150, bottom=230, left=200, right=400, width=200, height=80
-  const otherWidget: ElementRect = {
-    left: 200,
-    top: 150,
-    right: 400,
-    bottom: 230,
-    width: 200,
-    height: 80,
-    centerX: 300,
-    centerY: 190,
-  };
+  const containerBounds = { height: 1000, left: 0, top: 0, width: 1000 },
+    // Reference widget: top=150, bottom=230, left=200, right=400, width=200, height=80
+    otherWidget: ElementRect = {
+      bottom: 230,
+      centerX: 300,
+      centerY: 190,
+      height: 80,
+      left: 200,
+      right: 400,
+      top: 150,
+      width: 200,
+    };
 
   it('snaps to exact same top border of another element within threshold', () => {
     // Dragged widget: width=120, height=60 -> halfHeight=30
     // If targetCenterY is 184, draggedTop = 184 - 30 = 154 (diff with other.top=150 is 4px <= 10px)
     const result = calculateSmartSnap({
-      targetCenterX: 700,
-      targetCenterY: 184,
-      width: 120,
-      height: 60,
       containerBounds,
+      height: 60,
       otherElements: [otherWidget],
       snapEnabled: true,
+      targetCenterX: 700,
+      targetCenterY: 184,
       thresholdPx: 10,
+      width: 120,
     });
 
     // Snapped center Y must be other.top + height / 2 = 150 + 30 = 180
@@ -127,14 +120,14 @@ describe('calculateSmartSnap relative magnetic snapping', () => {
     // Dragged widget: width=120, height=60 -> halfHeight=30
     // If targetCenterY is 202, draggedBottom = 202 + 30 = 232 (diff with other.bottom=230 is 2px <= 10px)
     const result = calculateSmartSnap({
-      targetCenterX: 700,
-      targetCenterY: 202,
-      width: 120,
-      height: 60,
       containerBounds,
+      height: 60,
       otherElements: [otherWidget],
       snapEnabled: true,
+      targetCenterX: 700,
+      targetCenterY: 202,
       thresholdPx: 10,
+      width: 120,
     });
 
     // Snapped center Y must be other.bottom - height / 2 = 230 - 30 = 200
@@ -152,14 +145,14 @@ describe('calculateSmartSnap relative magnetic snapping', () => {
     // Dragged widget: width=80, height=50 -> halfWidth=40
     // If targetCenterX is 243, draggedLeft = 243 - 40 = 203 (diff with other.left=200 is 3px <= 10px)
     const result = calculateSmartSnap({
-      targetCenterX: 243,
-      targetCenterY: 600,
-      width: 80,
-      height: 50,
       containerBounds,
+      height: 50,
       otherElements: [otherWidget],
       snapEnabled: true,
+      targetCenterX: 243,
+      targetCenterY: 600,
       thresholdPx: 10,
+      width: 80,
     });
 
     // Snapped center X must be other.left + width / 2 = 200 + 40 = 240
@@ -174,16 +167,16 @@ describe('calculateSmartSnap relative magnetic snapping', () => {
   });
 
   it('snaps to exact center of another element', () => {
-    // other.centerY = 190, other.centerX = 300
+    // Other.centerY = 190, other.centerX = 300
     const result = calculateSmartSnap({
-      targetCenterX: 303,
-      targetCenterY: 192,
-      width: 100,
-      height: 100,
       containerBounds,
+      height: 100,
       otherElements: [otherWidget],
       snapEnabled: true,
+      targetCenterX: 303,
+      targetCenterY: 192,
       thresholdPx: 10,
+      width: 100,
     });
 
     expect(result.x).toBe(30); // 300 / 1000 * 100
@@ -192,16 +185,16 @@ describe('calculateSmartSnap relative magnetic snapping', () => {
   });
 
   it('snaps to container center when close to middle', () => {
-    // container center is (500, 500)
+    // Container center is (500, 500)
     const result = calculateSmartSnap({
-      targetCenterX: 504,
-      targetCenterY: 497,
-      width: 100,
-      height: 100,
       containerBounds,
+      height: 100,
       otherElements: [],
       snapEnabled: true,
+      targetCenterX: 504,
+      targetCenterY: 497,
       thresholdPx: 10,
+      width: 100,
     });
 
     expect(result.x).toBe(50);
@@ -211,13 +204,13 @@ describe('calculateSmartSnap relative magnetic snapping', () => {
 
   it('allows smooth continuous movement when snapEnabled is false', () => {
     const result = calculateSmartSnap({
+      containerBounds,
+      height: 60,
+      otherElements: [otherWidget],
+      snapEnabled: false,
       targetCenterX: 243,
       targetCenterY: 184,
       width: 120,
-      height: 60,
-      containerBounds,
-      otherElements: [otherWidget],
-      snapEnabled: false,
     });
 
     expect(result.x).toBe(24.3);
@@ -228,8 +221,8 @@ describe('calculateSmartSnap relative magnetic snapping', () => {
 
 describe('layout defaults & flow order', () => {
   it('exposes a default canvas position for every widget', () => {
-    const ids: readonly WidgetId[] = ['clock', 'greeting', 'searchbar', 'weather', 'shortcuts'];
-    const positions = defaultPositions();
+    const ids: readonly WidgetId[] = ['clock', 'greeting', 'searchbar', 'weather', 'shortcuts'],
+      positions = defaultPositions();
     for (const id of ids) {
       expect(positions[id]).toBeDefined();
     }
@@ -269,14 +262,14 @@ describe('layout defaults & flow order', () => {
 
   it('merges a moved widget into a full position record', () => {
     const positions: Record<WidgetId, WidgetCanvasPosition> = {
-      ...defaultPositions(),
-      clock: { x: 20, y: 15 },
-    };
-    const next = withPosition(positions, 'weather', { x: 10, y: 10 });
+        ...defaultPositions(),
+        clock: { x: 20, y: 15 },
+      },
+      next = withPosition(positions, 'weather', { x: 10, y: 10 });
     expect(next.clock).toEqual({ x: 20, y: 15 });
     expect(next.weather).toEqual({ x: 10, y: 10 });
     expect(next.greeting).toEqual(defaultPositions().greeting);
-    // input is untouched
+    // Input is untouched
     expect(positions.weather).toEqual({ x: 85, y: 15 });
   });
 

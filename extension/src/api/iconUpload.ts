@@ -4,11 +4,11 @@
  * when browser sync is on) while staying sharp on HiDPI tiles.
  */
 export const fileToIconDataUrl = async (file: File, maxSize = 128): Promise<string> => {
-  const bitmap = await createImageBitmap(file);
-  const scale = Math.min(1, maxSize / Math.max(bitmap.width, bitmap.height));
-  const width = Math.max(1, Math.round(bitmap.width * scale));
-  const height = Math.max(1, Math.round(bitmap.height * scale));
-  const canvas = document.createElement('canvas');
+  const bitmap = await createImageBitmap(file),
+    scale = Math.min(1, maxSize / Math.max(bitmap.width, bitmap.height)),
+    width = Math.max(1, Math.round(bitmap.width * scale)),
+    height = Math.max(1, Math.round(bitmap.height * scale)),
+    canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext('2d');

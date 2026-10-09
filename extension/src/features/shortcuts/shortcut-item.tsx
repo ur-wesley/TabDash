@@ -1,4 +1,5 @@
-import { type Component, Show, createSignal } from 'solid-js';
+import { Show, createSignal } from 'solid-js';
+import type { Component } from 'solid-js';
 import type { ShortcutAppereance, ShortcutSetting } from '../../../types/settings';
 import { ContextMenu } from '../../components/ui/context-menu';
 import { ShortcutIcon } from './shortcut-icon';
@@ -13,57 +14,67 @@ export interface ShortcutItemProps {
 }
 
 export const ShortcutItem: Component<ShortcutItemProps> = (props) => {
-  const [open, setOpen] = createSignal(false);
-
-  const size = (): number => {
-    switch (props.appearance?.style) {
-      case 'large':
-        return 100;
-      case 'medium':
-        return 75;
-      case 'small':
-        return 50;
-      default:
-        return 25;
-    }
-  };
-
-  const textSize = (): string => {
-    switch (props.appearance?.style) {
-      case 'large':
-        return 'text-lg';
-      case 'medium':
-        return 'text-base';
-      case 'small':
-        return 'text-sm';
-      default:
-        return 'text-lg';
-    }
-  };
-
-  const shortcutWidth = () => {
-    if (props.appearance?.style === 'text') return 'auto';
-    return `${props.appearance?.iconOnly ? size() : size() * 1.2}px`;
-  };
-
-  const shortcutHeight = () => {
-    if (props.appearance?.style === 'text') return '50px';
-    return `${props.appearance?.iconOnly ? size() : size() * 1.5}px`;
-  };
-
-  const shortcutPadding = () => {
-    if (props.appearance?.style === 'text') return '16px 8px';
-    return '0';
-  };
-
-  // Tile is wider than the base icon size (size * 1.2) when the label shows.
-  // Render the icon at full tile width so full-bleed icons (e.g. apple-touch
-  // icons with their own background color) touch the tile edges instead of
-  // leaving tile-background gutters left and right.
-  const iconSize = () => {
-    if (props.appearance?.style === 'text') return 0;
-    return props.appearance?.iconOnly ? size() : size() * 1.2;
-  };
+  const [open, setOpen] = createSignal(false),
+    size = (): number => {
+      switch (props.appearance?.style) {
+        case 'large': {
+          return 100;
+        }
+        case 'medium': {
+          return 75;
+        }
+        case 'small': {
+          return 50;
+        }
+        default: {
+          return 25;
+        }
+      }
+    },
+    textSize = (): string => {
+      switch (props.appearance?.style) {
+        case 'large': {
+          return 'text-lg';
+        }
+        case 'medium': {
+          return 'text-base';
+        }
+        case 'small': {
+          return 'text-sm';
+        }
+        default: {
+          return 'text-lg';
+        }
+      }
+    },
+    shortcutWidth = () => {
+      if (props.appearance?.style === 'text') {
+        return 'auto';
+      }
+      return `${props.appearance?.iconOnly ? size() : size() * 1.2}px`;
+    },
+    shortcutHeight = () => {
+      if (props.appearance?.style === 'text') {
+        return '50px';
+      }
+      return `${props.appearance?.iconOnly ? size() : size() * 1.5}px`;
+    },
+    shortcutPadding = () => {
+      if (props.appearance?.style === 'text') {
+        return '16px 8px';
+      }
+      return '0';
+    },
+    // Tile is wider than the base icon size (size * 1.2) when the label shows.
+    // Render the icon at full tile width so full-bleed icons (e.g. apple-touch
+    // icons with their own background color) touch the tile edges instead of
+    // leaving tile-background gutters left and right.
+    iconSize = () => {
+      if (props.appearance?.style === 'text') {
+        return 0;
+      }
+      return props.appearance?.iconOnly ? size() : size() * 1.2;
+    };
 
   return (
     <ContextMenu onOpenChange={setOpen}>
@@ -71,8 +82,8 @@ export const ShortcutItem: Component<ShortcutItemProps> = (props) => {
         class="flex justify-center items-center relative"
         style={{
           flex: `0 0 ${props.colPercent}%`,
-          width: shortcutWidth(),
           height: shortcutHeight(),
+          width: shortcutWidth(),
         }}
       >
         <ContextMenu.Trigger

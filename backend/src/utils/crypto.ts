@@ -1,10 +1,6 @@
 import crypto from 'crypto-js';
 
 const Crypto = {
-  encrypt(clearText: string, password: string) {
-    return crypto.AES.encrypt(clearText, password).toString();
-  },
-
   decrypt(encryptedText: string, password: string) {
     try {
       const bytes = crypto.AES.decrypt(encryptedText, password);
@@ -13,6 +9,10 @@ const Crypto = {
     } catch {
       return null;
     }
+  },
+
+  encrypt(clearText: string, password: string) {
+    return crypto.AES.encrypt(clearText, password).toString();
   },
 };
 export default Crypto;

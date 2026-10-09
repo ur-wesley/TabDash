@@ -1,10 +1,8 @@
-import { type JSX, createContext, createEffect, createSignal, onMount, useContext } from 'solid-js';
+import { createContext, createEffect, createSignal, onMount, useContext } from 'solid-js';
+import type { JSX } from 'solid-js';
 import type { WeatherUnit } from '../../../types/settings';
-import {
-  type WeatherData,
-  WeatherService,
-  normalizeWeatherLang,
-} from '../../services/weather-service';
+import { WeatherService, normalizeWeatherLang } from '../../services/weather-service';
+import type { WeatherData } from '../../services/weather-service';
 
 export interface WeatherState {
   data: WeatherData | null;
@@ -26,12 +24,12 @@ export function createWeatherStore(
   lang: string,
   storage?: ConstructorParameters<typeof WeatherService>[2],
 ): WeatherContextValue {
-  const service = new WeatherService(unit, lang, storage);
-  const [state, setState] = createSignal<WeatherState>({
-    data: null,
-    status: 'idle',
-    error: null,
-  });
+  const service = new WeatherService(unit, lang, storage),
+    [state, setState] = createSignal<WeatherState>({
+      data: null,
+      error: null,
+      status: 'idle',
+    });
 
   // Pre-load cached weather immediately so old data is shown while fetching
   void service.getCachedWeather().then((res) => {
@@ -44,16 +42,16 @@ export function createWeatherStore(
   });
 
   const refreshWeather = async (): Promise<WeatherData | null> => {
-    setState((prev) => ({ ...prev, status: 'loading', error: null }));
-    const res = await service.refreshWeather();
-    if (res.isOk()) {
-      setState({
-        data: res.value,
-        status: res.value ? 'success' : 'idle',
-        error: null,
-      });
-      return res.value;
-    } else {
+      setState((prev) => ({ ...prev, error: null, status: 'loading' }));
+      const res = await service.refreshWeather();
+      if (res.isOk()) {
+        setState({
+          data: res.value,
+          error: null,
+          status: res.value ? 'success' : 'idle',
+        });
+        return res.value;
+      }
       const errMsg = res.error?.message ?? 'Failed to fetch weather';
       setState((prev) => ({
         ...prev,
@@ -61,12 +59,9 @@ export function createWeatherStore(
         error: errMsg,
       }));
       return null;
-    }
-  };
-
-  const updateParams = (nextUnit: WeatherUnit, nextLang: string): boolean => {
-    return service.setParams(nextUnit, normalizeWeatherLang(nextLang));
-  };
+    },
+    updateParams = (nextUnit: WeatherUnit, nextLang: string): boolean =>
+      service.setParams(nextUnit, normalizeWeatherLang(nextLang));
 
   return [state, { refreshWeather, updateParams }] as const;
 }
@@ -90,8 +85,8 @@ export function WeatherProvider(props: {
   // The first run is skipped because autoFetch onMount already covers initial load.
   let isFirstRun = true;
   createEffect(() => {
-    const nextUnit = props.unit ?? 'metric';
-    const nextLang = props.lang ?? 'en';
+    const nextUnit = props.unit ?? 'metric',
+      nextLang = props.lang ?? 'en';
     if (isFirstRun) {
       isFirstRun = false;
       return;

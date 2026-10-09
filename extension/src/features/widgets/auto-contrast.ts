@@ -1,9 +1,5 @@
-import {
-  compositeColors,
-  getContrastRatio,
-  parseColor,
-  type RGBA,
-} from '../../lib/colorContrast.js';
+import { compositeColors, getContrastRatio, parseColor } from '../../lib/colorContrast.js';
+import type { RGBA } from '../../lib/colorContrast.js';
 
 export interface AutoTextOptions {
   preferredTextColor?: string;
@@ -21,9 +17,13 @@ export interface AutoTextResult {
  * Returns 1 for missing/invalid input.
  */
 export function parseBrightnessFactor(brightness?: string): number {
-  if (!brightness) return 1;
+  if (!brightness) {
+    return 1;
+  }
   const v = Number.parseFloat(brightness.replace('%', ''));
-  if (!Number.isFinite(v)) return 1;
+  if (!Number.isFinite(v)) {
+    return 1;
+  }
   return Math.min(Math.max(v / 100, 0), 3);
 }
 
@@ -32,12 +32,14 @@ function clampChannel(value: number): number {
 }
 
 function applyBrightness(rgb: { r: number; g: number; b: number }, factor: number): RGBA {
-  if (factor === 1) return { r: rgb.r, g: rgb.g, b: rgb.b, a: 1 };
+  if (factor === 1) {
+    return { r: rgb.r, g: rgb.g, b: rgb.b, a: 1 };
+  }
   return {
-    r: clampChannel(rgb.r * factor),
-    g: clampChannel(rgb.g * factor),
-    b: clampChannel(rgb.b * factor),
     a: 1,
+    b: clampChannel(rgb.b * factor),
+    g: clampChannel(rgb.g * factor),
+    r: clampChannel(rgb.r * factor),
   };
 }
 
@@ -56,13 +58,13 @@ export function effectiveWidgetSurface(
   if (typeof wallpaperAvg === 'string') {
     wallpaper = { ...parseColor(wallpaperAvg), a: 1 };
   } else if (wallpaperAvg) {
-    wallpaper = { r: wallpaperAvg.r, g: wallpaperAvg.g, b: wallpaperAvg.b, a: 1 };
+    wallpaper = { a: 1, b: wallpaperAvg.b, g: wallpaperAvg.g, r: wallpaperAvg.r };
   } else {
-    wallpaper = { r: 128, g: 128, b: 128, a: 1 };
+    wallpaper = { a: 1, b: 128, g: 128, r: 128 };
   }
 
-  const brightened = applyBrightness(wallpaper, parseBrightnessFactor(backdropBrightness));
-  const fg = parseColor(widgetBackground ?? 'rgba(64, 64, 64, 0.4)');
+  const brightened = applyBrightness(wallpaper, parseBrightnessFactor(backdropBrightness)),
+    fg = parseColor(widgetBackground ?? 'rgba(64, 64, 64, 0.4)');
   return compositeColors(fg, brightened);
 }
 
@@ -76,14 +78,14 @@ export function pickBestTextColor(
   effectiveSurface: string | RGBA,
   options?: AutoTextOptions,
 ): AutoTextResult {
-  const light = options?.lightTextColor ?? '#ffffff';
-  const dark = options?.darkTextColor ?? '#000000';
-  const candidates: string[] = options?.preferredTextColor
-    ? [options.preferredTextColor, light, dark]
-    : [light, dark];
+  const light = options?.lightTextColor ?? '#ffffff',
+    dark = options?.darkTextColor ?? '#000000',
+    candidates: string[] = options?.preferredTextColor
+      ? [options.preferredTextColor, light, dark]
+      : [light, dark];
 
-  let best = candidates[0] ?? light;
-  let bestRatio = -1;
+  let best = candidates[0] ?? light,
+    bestRatio = -1;
   for (const candidate of candidates) {
     const ratio = getContrastRatio(candidate, effectiveSurface);
     if (ratio > bestRatio) {

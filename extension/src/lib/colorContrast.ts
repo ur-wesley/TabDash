@@ -67,21 +67,21 @@ export interface WidgetContrastParams {
 export const DEFAULT_WIDGET_BACKGROUND = 'rgba(64, 64, 64, 0.4)';
 
 const NAMED_COLORS: Record<string, RGBA> = {
-  transparent: { r: 0, g: 0, b: 0, a: 0 },
-  black: { r: 0, g: 0, b: 0, a: 1 },
-  white: { r: 255, g: 255, b: 255, a: 1 },
-  gray: { r: 128, g: 128, b: 128, a: 1 },
-  grey: { r: 128, g: 128, b: 128, a: 1 },
-  red: { r: 255, g: 0, b: 0, a: 1 },
-  green: { r: 0, g: 128, b: 0, a: 1 },
-  blue: { r: 0, g: 0, b: 255, a: 1 },
-  yellow: { r: 255, g: 255, b: 0, a: 1 },
-  cyan: { r: 0, g: 255, b: 255, a: 1 },
-  magenta: { r: 255, g: 0, b: 255, a: 1 },
-  orange: { r: 255, g: 165, b: 0, a: 1 },
-  purple: { r: 128, g: 0, b: 128, a: 1 },
-  slate: { r: 100, g: 116, b: 139, a: 1 },
-  zinc: { r: 113, g: 113, b: 122, a: 1 },
+  black: { a: 1, b: 0, g: 0, r: 0 },
+  blue: { a: 1, b: 255, g: 0, r: 0 },
+  cyan: { a: 1, b: 255, g: 255, r: 0 },
+  gray: { a: 1, b: 128, g: 128, r: 128 },
+  green: { a: 1, b: 0, g: 128, r: 0 },
+  grey: { a: 1, b: 128, g: 128, r: 128 },
+  magenta: { a: 1, b: 255, g: 0, r: 255 },
+  orange: { a: 1, b: 0, g: 165, r: 255 },
+  purple: { a: 1, b: 128, g: 0, r: 128 },
+  red: { a: 1, b: 0, g: 0, r: 255 },
+  slate: { a: 1, b: 139, g: 116, r: 100 },
+  transparent: { a: 0, b: 0, g: 0, r: 0 },
+  white: { a: 1, b: 255, g: 255, r: 255 },
+  yellow: { a: 1, b: 0, g: 255, r: 255 },
+  zinc: { a: 1, b: 122, g: 113, r: 113 },
 };
 
 function clamp(val: number, min: number, max: number): number {
@@ -90,11 +90,21 @@ function clamp(val: number, min: number, max: number): number {
 
 function hue2rgb(p: number, q: number, t: number): number {
   let tNorm = t;
-  if (tNorm < 0) tNorm += 1;
-  if (tNorm > 1) tNorm -= 1;
-  if (tNorm < 1 / 6) return p + (q - p) * 6 * tNorm;
-  if (tNorm < 1 / 2) return q;
-  if (tNorm < 2 / 3) return p + (q - p) * (2 / 3 - tNorm) * 6;
+  if (tNorm < 0) {
+    tNorm += 1;
+  }
+  if (tNorm > 1) {
+    tNorm -= 1;
+  }
+  if (tNorm < 1 / 6) {
+    return p + (q - p) * 6 * tNorm;
+  }
+  if (tNorm < 1 / 2) {
+    return q;
+  }
+  if (tNorm < 2 / 3) {
+    return p + (q - p) * (2 / 3 - tNorm) * 6;
+  }
   return p;
 }
 
@@ -102,22 +112,22 @@ function hue2rgb(p: number, q: number, t: number): number {
  * Converts HSL values to RGB [0-255].
  */
 function hslToRgb(h: number, s: number, l: number): { r: number; g: number; b: number } {
-  const normH = (((h % 360) + 360) % 360) / 360;
-  const normS = clamp(s, 0, 100) / 100;
-  const normL = clamp(l, 0, 100) / 100;
+  const normH = (((h % 360) + 360) % 360) / 360,
+    normS = clamp(s, 0, 100) / 100,
+    normL = clamp(l, 0, 100) / 100;
 
   if (normS === 0) {
     const val = Math.round(normL * 255);
-    return { r: val, g: val, b: val };
+    return { b: val, g: val, r: val };
   }
 
-  const q = normL < 0.5 ? normL * (1 + normS) : normL + normS - normL * normS;
-  const p = 2 * normL - q;
+  const q = normL < 0.5 ? normL * (1 + normS) : normL + normS - normL * normS,
+    p = 2 * normL - q;
 
   return {
-    r: Math.round(hue2rgb(p, q, normH + 1 / 3) * 255),
-    g: Math.round(hue2rgb(p, q, normH) * 255),
     b: Math.round(hue2rgb(p, q, normH - 1 / 3) * 255),
+    g: Math.round(hue2rgb(p, q, normH) * 255),
+    r: Math.round(hue2rgb(p, q, normH + 1 / 3) * 255),
   };
 }
 
@@ -130,7 +140,7 @@ function parseChannelValue(str: string, max = 255): number {
 
 function srgbToLinear(channel: number): number {
   const c = channel / 255;
-  return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
 }
 
 /**
@@ -140,20 +150,20 @@ function srgbToLinear(channel: number): number {
 export function parseColor(color: string | RGBA): RGBA {
   if (typeof color === 'object' && color !== null && 'r' in color) {
     return {
-      r: clamp(color.r, 0, 255),
-      g: clamp(color.g, 0, 255),
-      b: clamp(color.b, 0, 255),
       a: clamp(color.a ?? 1, 0, 1),
+      b: clamp(color.b, 0, 255),
+      g: clamp(color.g, 0, 255),
+      r: clamp(color.r, 0, 255),
     };
   }
 
   if (typeof color !== 'string') {
-    return { r: 0, g: 0, b: 0, a: 1 };
+    return { a: 1, b: 0, g: 0, r: 0 };
   }
 
   const trimmed = color.trim().toLowerCase();
   if (!trimmed) {
-    return { r: 0, g: 0, b: 0, a: 1 };
+    return { a: 1, b: 0, g: 0, r: 0 };
   }
 
   if (NAMED_COLORS[trimmed]) {
@@ -161,64 +171,64 @@ export function parseColor(color: string | RGBA): RGBA {
   }
 
   // Hex format (#rgb, #rgba, #rrggbb, #rrggbbaa)
-  const hexMatch = trimmed.match(/^#?([0-9a-f]{3,8})$/i);
+  const hexMatch = /^#?([0-9a-f]{3,8})$/i.exec(trimmed);
   if (hexMatch && hexMatch[1]) {
     const raw = hexMatch[1];
     if (raw.length === 3) {
-      const rChar = raw.charAt(0);
-      const gChar = raw.charAt(1);
-      const bChar = raw.charAt(2);
+      const rChar = raw.charAt(0),
+        gChar = raw.charAt(1),
+        bChar = raw.charAt(2);
       return {
-        r: Number.parseInt(rChar + rChar, 16),
-        g: Number.parseInt(gChar + gChar, 16),
-        b: Number.parseInt(bChar + bChar, 16),
         a: 1,
+        b: Number.parseInt(bChar + bChar, 16),
+        g: Number.parseInt(gChar + gChar, 16),
+        r: Number.parseInt(rChar + rChar, 16),
       };
     }
     if (raw.length === 4) {
-      const rChar = raw.charAt(0);
-      const gChar = raw.charAt(1);
-      const bChar = raw.charAt(2);
-      const aChar = raw.charAt(3);
+      const rChar = raw.charAt(0),
+        gChar = raw.charAt(1),
+        bChar = raw.charAt(2),
+        aChar = raw.charAt(3);
       return {
-        r: Number.parseInt(rChar + rChar, 16),
-        g: Number.parseInt(gChar + gChar, 16),
-        b: Number.parseInt(bChar + bChar, 16),
         a: Number.parseInt(aChar + aChar, 16) / 255,
+        b: Number.parseInt(bChar + bChar, 16),
+        g: Number.parseInt(gChar + gChar, 16),
+        r: Number.parseInt(rChar + rChar, 16),
       };
     }
     if (raw.length === 6) {
       return {
-        r: Number.parseInt(raw.slice(0, 2), 16),
-        g: Number.parseInt(raw.slice(2, 4), 16),
-        b: Number.parseInt(raw.slice(4, 6), 16),
         a: 1,
+        b: Number.parseInt(raw.slice(4, 6), 16),
+        g: Number.parseInt(raw.slice(2, 4), 16),
+        r: Number.parseInt(raw.slice(0, 2), 16),
       };
     }
     if (raw.length === 8) {
       return {
-        r: Number.parseInt(raw.slice(0, 2), 16),
-        g: Number.parseInt(raw.slice(2, 4), 16),
-        b: Number.parseInt(raw.slice(4, 6), 16),
         a: Number.parseInt(raw.slice(6, 8), 16) / 255,
+        b: Number.parseInt(raw.slice(4, 6), 16),
+        g: Number.parseInt(raw.slice(2, 4), 16),
+        r: Number.parseInt(raw.slice(0, 2), 16),
       };
     }
   }
 
-  // rgb / rgba format
+  // Rgb / rgba format
   // Handles rgb(r, g, b), rgba(r, g, b, a), rgb(r g b / a)
-  const rgbMatch = trimmed.match(/^rgba?\((.+)\)$/);
+  const rgbMatch = /^rgba?\((.+)\)$/.exec(trimmed);
   if (rgbMatch && rgbMatch[1]) {
-    const inner = rgbMatch[1].replace(/,/g, ' ').replace(/\//g, ' ').trim();
-    const parts = inner.split(/\s+/).filter(Boolean);
-    const p0 = parts[0];
-    const p1 = parts[1];
-    const p2 = parts[2];
-    const p3 = parts[3];
+    const inner = rgbMatch[1].replaceAll(',', ' ').replaceAll('/', ' ').trim(),
+      parts = inner.split(/\s+/).filter(Boolean),
+      p0 = parts[0],
+      p1 = parts[1],
+      p2 = parts[2],
+      p3 = parts[3];
     if (p0 !== undefined && p1 !== undefined && p2 !== undefined) {
-      const r = clamp(Math.round(parseChannelValue(p0, 255)), 0, 255);
-      const g = clamp(Math.round(parseChannelValue(p1, 255)), 0, 255);
-      const b = clamp(Math.round(parseChannelValue(p2, 255)), 0, 255);
+      const r = clamp(Math.round(parseChannelValue(p0, 255)), 0, 255),
+        g = clamp(Math.round(parseChannelValue(p1, 255)), 0, 255),
+        b = clamp(Math.round(parseChannelValue(p2, 255)), 0, 255);
       let a = 1;
       if (p3 !== undefined) {
         if (p3.endsWith('%')) {
@@ -227,24 +237,24 @@ export function parseColor(color: string | RGBA): RGBA {
           a = clamp(Number.parseFloat(p3), 0, 1);
         }
       }
-      return { r, g, b, a };
+      return { a, b, g, r };
     }
   }
 
-  // hsl / hsla format
-  const hslMatch = trimmed.match(/^hsla?\((.+)\)$/);
+  // Hsl / hsla format
+  const hslMatch = /^hsla?\((.+)\)$/.exec(trimmed);
   if (hslMatch && hslMatch[1]) {
-    const inner = hslMatch[1].replace(/,/g, ' ').replace(/\//g, ' ').trim();
-    const parts = inner.split(/\s+/).filter(Boolean);
-    const p0 = parts[0];
-    const p1 = parts[1];
-    const p2 = parts[2];
-    const p3 = parts[3];
+    const inner = hslMatch[1].replaceAll(',', ' ').replaceAll('/', ' ').trim(),
+      parts = inner.split(/\s+/).filter(Boolean),
+      p0 = parts[0],
+      p1 = parts[1],
+      p2 = parts[2],
+      p3 = parts[3];
     if (p0 !== undefined && p1 !== undefined && p2 !== undefined) {
-      const h = Number.parseFloat(p0);
-      const s = Number.parseFloat(p1.replace('%', ''));
-      const l = Number.parseFloat(p2.replace('%', ''));
-      const { r, g, b } = hslToRgb(h, s, l);
+      const h = Number.parseFloat(p0),
+        s = Number.parseFloat(p1.replace('%', '')),
+        l = Number.parseFloat(p2.replace('%', '')),
+        { r, g, b } = hslToRgb(h, s, l);
       let a = 1;
       if (p3 !== undefined) {
         if (p3.endsWith('%')) {
@@ -253,11 +263,11 @@ export function parseColor(color: string | RGBA): RGBA {
           a = clamp(Number.parseFloat(p3), 0, 1);
         }
       }
-      return { r, g, b, a };
+      return { a, b, g, r };
     }
   }
 
-  return { r: 0, g: 0, b: 0, a: 1 };
+  return { a: 1, b: 0, g: 0, r: 0 };
 }
 
 /**
@@ -266,7 +276,7 @@ export function parseColor(color: string | RGBA): RGBA {
  */
 export function compositeColors(
   foreground: RGBA,
-  background: RGBA = { r: 0, g: 0, b: 0, a: 1 },
+  background: RGBA = { a: 1, b: 0, g: 0, r: 0 },
 ): RGBA {
   const alpha = foreground.a;
   if (alpha >= 1) {
@@ -277,10 +287,10 @@ export function compositeColors(
   }
 
   return {
-    r: Math.round(foreground.r * alpha + background.r * (1 - alpha)),
-    g: Math.round(foreground.g * alpha + background.g * (1 - alpha)),
-    b: Math.round(foreground.b * alpha + background.b * (1 - alpha)),
     a: 1,
+    b: Math.round(foreground.b * alpha + background.b * (1 - alpha)),
+    g: Math.round(foreground.g * alpha + background.g * (1 - alpha)),
+    r: Math.round(foreground.r * alpha + background.r * (1 - alpha)),
   };
 }
 
@@ -291,13 +301,12 @@ export function getRelativeLuminance(
   color: string | RGBA,
   underlyingColor?: string | RGBA,
 ): number {
-  const parsed = parseColor(color);
-  const base = underlyingColor ? parseColor(underlyingColor) : { r: 0, g: 0, b: 0, a: 1 };
-  const composited = parsed.a < 1 ? compositeColors(parsed, base) : parsed;
-
-  const rLin = srgbToLinear(composited.r);
-  const gLin = srgbToLinear(composited.g);
-  const bLin = srgbToLinear(composited.b);
+  const parsed = parseColor(color),
+    base = underlyingColor ? parseColor(underlyingColor) : { a: 1, b: 0, g: 0, r: 0 },
+    composited = parsed.a < 1 ? compositeColors(parsed, base) : parsed,
+    rLin = srgbToLinear(composited.r),
+    gLin = srgbToLinear(composited.g),
+    bLin = srgbToLinear(composited.b);
 
   return 0.2126 * rLin + 0.7152 * gLin + 0.0722 * bLin;
 }
@@ -311,11 +320,10 @@ export function getContrastRatio(
   colorB: string | RGBA,
   options?: { underlyingColor?: string | RGBA },
 ): number {
-  const lumA = getRelativeLuminance(colorA, options?.underlyingColor);
-  const lumB = getRelativeLuminance(colorB, options?.underlyingColor);
-
-  const lighter = Math.max(lumA, lumB);
-  const darker = Math.min(lumA, lumB);
+  const lumA = getRelativeLuminance(colorA, options?.underlyingColor),
+    lumB = getRelativeLuminance(colorB, options?.underlyingColor),
+    lighter = Math.max(lumA, lumB),
+    darker = Math.min(lumA, lumB);
 
   return (lighter + 0.05) / (darker + 0.05);
 }
@@ -329,13 +337,12 @@ export function isContrastSufficient(
   optionsOrMinRatio?: number | { minRatio?: number; underlyingColor?: string | RGBA },
 ): boolean {
   const minRatio =
-    typeof optionsOrMinRatio === 'number'
-      ? optionsOrMinRatio
-      : (optionsOrMinRatio?.minRatio ?? 4.5);
-  const underlyingColor =
-    typeof optionsOrMinRatio === 'object' ? optionsOrMinRatio.underlyingColor : undefined;
-
-  const ratio = getContrastRatio(textColor, backgroundColor, { underlyingColor });
+      typeof optionsOrMinRatio === 'number'
+        ? optionsOrMinRatio
+        : (optionsOrMinRatio?.minRatio ?? 4.5),
+    underlyingColor =
+      typeof optionsOrMinRatio === 'object' ? optionsOrMinRatio.underlyingColor : undefined,
+    ratio = getContrastRatio(textColor, backgroundColor, { underlyingColor });
   return ratio >= minRatio;
 }
 
@@ -350,10 +357,10 @@ export function getContrastingTextColor(
   backgroundColor: string | RGBA,
   options?: ContrastOptions,
 ): string {
-  const minRatio = options?.minRatio ?? 4.5;
-  const lightColor = options?.lightTextColor ?? '#ffffff';
-  const darkColor = options?.darkTextColor ?? '#000000';
-  const underlying = options?.underlyingColor ?? '#000000';
+  const minRatio = options?.minRatio ?? 4.5,
+    lightColor = options?.lightTextColor ?? '#ffffff',
+    darkColor = options?.darkTextColor ?? '#000000',
+    underlying = options?.underlyingColor ?? '#000000';
 
   if (options?.preferredTextColor) {
     const preferredRatio = getContrastRatio(options.preferredTextColor, backgroundColor, {
@@ -365,11 +372,11 @@ export function getContrastingTextColor(
   }
 
   const lightRatio = getContrastRatio(lightColor, backgroundColor, {
-    underlyingColor: underlying,
-  });
-  const darkRatio = getContrastRatio(darkColor, backgroundColor, {
-    underlyingColor: underlying,
-  });
+      underlyingColor: underlying,
+    }),
+    darkRatio = getContrastRatio(darkColor, backgroundColor, {
+      underlyingColor: underlying,
+    });
 
   return lightRatio >= darkRatio ? lightColor : darkColor;
 }
@@ -381,10 +388,10 @@ export function getContrastingTextColor(
 export function ensureWidgetContrast(params: WidgetContrastParams = {}): string {
   const background = params.background ?? DEFAULT_WIDGET_BACKGROUND;
   return getContrastingTextColor(background, {
-    preferredTextColor: params.preferredTextColor,
-    minRatio: params.minRatio ?? 4.5,
-    lightTextColor: params.lightTextColor ?? '#ffffff',
     darkTextColor: params.darkTextColor ?? '#000000',
+    lightTextColor: params.lightTextColor ?? '#ffffff',
+    minRatio: params.minRatio ?? 4.5,
+    preferredTextColor: params.preferredTextColor,
     underlyingColor: params.underlyingColor ?? '#000000',
   });
 }

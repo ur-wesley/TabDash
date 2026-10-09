@@ -14,10 +14,14 @@ const DEBOUNCE_MS = 120;
 
 /** Widgets are scoped to the dashboard canvas (excludes the settings gear button). */
 function collectWidgetElements(): HTMLElement[] {
-  if (typeof document === 'undefined') return [];
+  if (typeof document === 'undefined') {
+    return [];
+  }
   const container = document.querySelector('[data-canvas-container]');
-  if (!container) return [];
-  return Array.from(container.querySelectorAll<HTMLElement>('.widget'));
+  if (!container) {
+    return [];
+  }
+  return [...container.querySelectorAll<HTMLElement>('.widget')];
 }
 
 function snapshotSettings(state: {
@@ -33,9 +37,9 @@ function snapshotSettings(state: {
       ? 'dark'
       : 'light';
   return {
-    appearance: state.widgetSetting?.[themeClass as 'light' | 'dark'],
+    appearance: state.widgetSetting?.[themeClass],
     background: state.background,
-    themeKey: themeClass as 'light' | 'dark',
+    themeKey: themeClass,
   };
 }
 
@@ -54,71 +58,82 @@ function fallbackUnderlying(background: BackgroundSetting | undefined): string {
  * resizes, and widget moves (dragging mutates ancestor style attributes).
  */
 export function usePerWidgetAutoContrast(): void {
-  const [state] = useSettingsContext();
-  // Subscribe to the resolved theme so appearance lookups follow it.
-  // `resolvedTheme` is read inside the effect below via theme class; the
-  // hook only needs the context to exist — keep a reference for reactivity.
-  const theme = useTheme();
+  const [state] = useSettingsContext(),
+    // Subscribe to the resolved theme so appearance lookups follow it.
+    // `resolvedTheme` is read inside the effect below via theme class; the
+    // hook only needs the context to exist — keep a reference for reactivity.
+    theme = useTheme();
 
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  let runId = 0;
-  let disposed = false;
+  let timer: ReturnType<typeof setTimeout> | undefined,
+    runId = 0,
+    disposed = false;
 
   const applyAll = async (): Promise<void> => {
-    const myRun = ++runId;
-    // Track reactive deps.
-    theme.resolvedTheme();
-    const { appearance, background } = snapshotSettings(state);
-    if (typeof document === 'undefined' || typeof window === 'undefined') return;
+      const myRun = ++runId;
+      // Track reactive deps.
+      theme.resolvedTheme();
+      const { appearance, background } = snapshotSettings(state);
+      if (typeof document === 'undefined' || typeof window === 'undefined') {
+        return;
+      }
 
-    const elements = collectWidgetElements();
-    if (elements.length === 0) return;
+      const elements = collectWidgetElements();
+      if (elements.length === 0) {
+        return;
+      }
 
-    const source = resolveBackgroundSource(background);
-    const fallback = fallbackUnderlying(background);
-    const viewport = { w: window.innerWidth, h: window.innerHeight };
+      const source = resolveBackgroundSource(background),
+        fallback = fallbackUnderlying(background),
+        viewport = { h: window.innerHeight, w: window.innerWidth };
 
-    await Promise.all(
-      elements.map(async (el) => {
-        try {
-          const rect = el.getBoundingClientRect();
-          if (rect.width <= 0 || rect.height <= 0) return;
+      await Promise.all(
+        elements.map(async (el) => {
+          try {
+            const rect = el.getBoundingClientRect();
+            if (rect.width <= 0 || rect.height <= 0) {
+              return;
+            }
 
-          let wallpaper: { r: number; g: number; b: number } | string = fallback;
-          if (source.kind === 'image') {
-            const sampled = await sampleWallpaperRegion(
-              source.src,
-              { x: rect.left, y: rect.top, w: rect.width, h: rect.height },
-              viewport,
-            );
-            if (sampled) wallpaper = sampled;
+            let wallpaper: { r: number; g: number; b: number } | string = fallback;
+            if (source.kind === 'image') {
+              const sampled = await sampleWallpaperRegion(
+                source.src,
+                { h: rect.height, w: rect.width, x: rect.left, y: rect.top },
+                viewport,
+              );
+              if (sampled) {
+                wallpaper = sampled;
+              }
+            }
+
+            const { color } = autoWidgetTextColor(appearance?.background, wallpaper, {
+              backdropBrightness: appearance?.backdrop?.brightness,
+              preferredTextColor: appearance?.textColor,
+            });
+
+            if (disposed || myRun !== runId) {
+              return;
+            }
+            // Validate the computed color parses before applying.
+            parseColor(color);
+            el.style.setProperty('--textColor', color);
+          } catch {
+            // Never break the dashboard because of contrast sampling.
           }
-
-          const { color } = autoWidgetTextColor(appearance?.background, wallpaper, {
-            preferredTextColor: appearance?.textColor,
-            backdropBrightness: appearance?.backdrop?.brightness,
-          });
-
-          if (disposed || myRun !== runId) return;
-          // Validate the computed color parses before applying.
-          parseColor(color);
-          el.style.setProperty('--textColor', color);
-        } catch {
-          // Never break the dashboard because of contrast sampling.
-        }
-      }),
-    );
-  };
-
-  const schedule = (): void => {
-    if (timer !== undefined) clearTimeout(timer);
-    timer = setTimeout(() => {
-      void applyAll();
-    }, DEBOUNCE_MS);
-  };
+        }),
+      );
+    },
+    schedule = (): void => {
+      if (timer !== undefined) {
+        clearTimeout(timer);
+      }
+      timer = setTimeout(() => {
+        void applyAll();
+      }, DEBOUNCE_MS);
+    };
 
   // Re-run whenever reactive settings change. Deps are read explicitly so
-  // theme switches, appearance edits, and background rotations retrigger.
+  // Theme switches, appearance edits, and background rotations retrigger.
   createEffect(() => {
     const deps = [
       theme.resolvedTheme(),
@@ -136,22 +151,34 @@ export function usePerWidgetAutoContrast(): void {
   onMount(() => {
     void applyAll();
 
-    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      return;
+    }
 
     window.addEventListener('resize', schedule);
 
-    const container = document.querySelector('[data-canvas-container]');
-    const resizeObserver =
-      typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => schedule()) : undefined;
-    if (container && resizeObserver) resizeObserver.observe(container);
+    const container = document.querySelector('[data-canvas-container]'),
+      resizeObserver =
+        typeof ResizeObserver === 'undefined'
+          ? undefined
+          : new ResizeObserver(() => {
+              schedule();
+            });
+    if (container && resizeObserver) {
+      resizeObserver.observe(container);
+    }
 
     // Catches canvas drags (ancestor left/top style changes) and list changes.
     const mutationObserver =
-      typeof MutationObserver !== 'undefined' ? new MutationObserver(() => schedule()) : undefined;
+      typeof MutationObserver === 'undefined'
+        ? undefined
+        : new MutationObserver(() => {
+            schedule();
+          });
     if (container && mutationObserver) {
       mutationObserver.observe(container, {
-        attributes: true,
         attributeFilter: ['style', 'class'],
+        attributes: true,
         childList: true,
         subtree: true,
       });
@@ -162,11 +189,15 @@ export function usePerWidgetAutoContrast(): void {
     bgImg?.addEventListener('load', schedule);
 
     // Late image loads after settings arrive from storage.
-    const lateTimer = setTimeout(() => schedule(), 500);
+    const lateTimer = setTimeout(() => {
+      schedule();
+    }, 500);
 
     onCleanup(() => {
       disposed = true;
-      if (timer !== undefined) clearTimeout(timer);
+      if (timer !== undefined) {
+        clearTimeout(timer);
+      }
       clearTimeout(lateTimer);
       window.removeEventListener('resize', schedule);
       resizeObserver?.disconnect();

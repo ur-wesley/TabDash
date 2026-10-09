@@ -1,4 +1,5 @@
-import { type Component, Show, createSignal } from 'solid-js';
+import { Show, createSignal } from 'solid-js';
+import type { Component } from 'solid-js';
 import type { DateFormat, LayoutMode, ShortcutStyle } from '../../../types/settings';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -21,37 +22,36 @@ export interface WidgetsTabProps {
 }
 
 export const WidgetsTab: Component<WidgetsTabProps> = (props) => {
-  const { t, locale } = useI18n();
-  const [state, actions] = useSettingsContext();
-
-  const [newShortcutName, setNewShortcutName] = createSignal('');
-  const [newShortcutLink, setNewShortcutLink] = createSignal('');
-  const [newShortcutIcon, setNewShortcutIcon] = createSignal('');
-  const [newShortcutNewTab, setNewShortcutNewTab] = createSignal(false);
-
-  const getHelpLink = (path?: string) => (path ? `${helpLinks.base}${locale()}${path}` : undefined);
-
-  const handleAddShortcut = () => {
-    const name = newShortcutName().trim();
-    let link = newShortcutLink().trim();
-    if (!name || !link) return;
-    if (!link.startsWith('http://') && !link.startsWith('https://')) {
-      link = `https://${link}`;
-    }
-    let icon = newShortcutIcon().trim();
-    // Empty means auto-resolve at render time (page-declared icons first,
-    // then the static waterfall, then a letter avatar).
-    actions.addShortcut({
-      name,
-      link,
-      icon,
-      newTab: newShortcutNewTab(),
-    });
-    setNewShortcutName('');
-    setNewShortcutLink('');
-    setNewShortcutIcon('');
-    setNewShortcutNewTab(false);
-  };
+  const { t, locale } = useI18n(),
+    [state, actions] = useSettingsContext(),
+    [newShortcutName, setNewShortcutName] = createSignal(''),
+    [newShortcutLink, setNewShortcutLink] = createSignal(''),
+    [newShortcutIcon, setNewShortcutIcon] = createSignal(''),
+    [newShortcutNewTab, setNewShortcutNewTab] = createSignal(false),
+    getHelpLink = (path?: string) => (path ? `${helpLinks.base}${locale()}${path}` : undefined),
+    handleAddShortcut = () => {
+      const name = newShortcutName().trim();
+      let link = newShortcutLink().trim();
+      if (!name || !link) {
+        return;
+      }
+      if (!link.startsWith('http://') && !link.startsWith('https://')) {
+        link = `https://${link}`;
+      }
+      const icon = newShortcutIcon().trim();
+      // Empty means auto-resolve at render time (page-declared icons first,
+      // Then the static waterfall, then a letter avatar).
+      actions.addShortcut({
+        icon,
+        link,
+        name,
+        newTab: newShortcutNewTab(),
+      });
+      setNewShortcutName('');
+      setNewShortcutLink('');
+      setNewShortcutIcon('');
+      setNewShortcutNewTab(false);
+    };
 
   return (
     <div class="w-full flex flex-col gap-3 pt-2">
@@ -60,17 +60,21 @@ export const WidgetsTab: Component<WidgetsTabProps> = (props) => {
           label={t('layout mode')}
           value={state.layout.mode ?? 'canvas'}
           options={[
-            { value: 'canvas', name: t('free canvas') },
-            { value: 'flow', name: t('flow order') },
+            { name: t('free canvas'), value: 'canvas' },
+            { name: t('flow order'), value: 'flow' },
           ]}
-          onChange={(val) => actions.updateLayout({ mode: val as LayoutMode })}
+          onChange={(val) => {
+            actions.updateLayout({ mode: val as LayoutMode });
+          }}
         />
 
         <Show when={(state.layout.mode ?? 'canvas') === 'canvas'}>
           <Switch
             label={t('snap to grid')}
             checked={state.layout.snapToGrid ?? true}
-            onChange={(val) => actions.updateLayout({ snapToGrid: val })}
+            onChange={(val) => {
+              actions.updateLayout({ snapToGrid: val });
+            }}
           />
         </Show>
 
@@ -99,32 +103,44 @@ export const WidgetsTab: Component<WidgetsTabProps> = (props) => {
         <Switch
           label={t('show clock')}
           checked={state.layout.showClock}
-          onChange={(val) => actions.updateLayout({ showClock: val })}
+          onChange={(val) => {
+            actions.updateLayout({ showClock: val });
+          }}
         />
         <Switch
           label={t('show date')}
           checked={state.layout.showDate}
-          onChange={(val) => actions.updateLayout({ showDate: val })}
+          onChange={(val) => {
+            actions.updateLayout({ showDate: val });
+          }}
         />
         <Switch
           label={t('show weather')}
           checked={state.layout.showWeather}
-          onChange={(val) => actions.updateLayout({ showWeather: val })}
+          onChange={(val) => {
+            actions.updateLayout({ showWeather: val });
+          }}
         />
         <Switch
           label={t('show searchbar')}
           checked={state.layout.showSearchbar}
-          onChange={(val) => actions.updateLayout({ showSearchbar: val })}
+          onChange={(val) => {
+            actions.updateLayout({ showSearchbar: val });
+          }}
         />
         <Switch
           label={t('show shortcuts')}
           checked={state.layout.showShortcuts}
-          onChange={(val) => actions.updateLayout({ showShortcuts: val })}
+          onChange={(val) => {
+            actions.updateLayout({ showShortcuts: val });
+          }}
         />
         <Switch
           label={t('show greeting')}
           checked={state.layout.showGreeting}
-          onChange={(val) => actions.updateLayout({ showGreeting: val })}
+          onChange={(val) => {
+            actions.updateLayout({ showGreeting: val });
+          }}
         />
       </CategorySection>
 
@@ -133,7 +149,9 @@ export const WidgetsTab: Component<WidgetsTabProps> = (props) => {
           <Switch
             label={t('show seconds')}
             checked={state.clock.showSeconds}
-            onChange={(val) => actions.updateClock({ showSeconds: val })}
+            onChange={(val) => {
+              actions.updateClock({ showSeconds: val });
+            }}
           />
         </CategorySection>
       </Show>
@@ -144,31 +162,37 @@ export const WidgetsTab: Component<WidgetsTabProps> = (props) => {
             label={t('weekday')}
             value={state.date?.weekday ?? 'long'}
             options={[
-              { value: 'long', name: t('long') },
-              { value: 'short', name: t('short') },
-              { value: 'narrow', name: t('narrow') },
+              { name: t('long'), value: 'long' },
+              { name: t('short'), value: 'short' },
+              { name: t('narrow'), value: 'narrow' },
             ]}
-            onChange={(val) => actions.updateDate({ weekday: val as DateFormat })}
+            onChange={(val) => {
+              actions.updateDate({ weekday: val as DateFormat });
+            }}
           />
           <Select
             label={t('day')}
             value={state.date?.date ?? '2-digit'}
             options={[
-              { value: '2-digit', name: t('2-digit') },
-              { value: 'numeric', name: t('numeric') },
+              { name: t('2-digit'), value: '2-digit' },
+              { name: t('numeric'), value: 'numeric' },
             ]}
-            onChange={(val) => actions.updateDate({ date: val as DateFormat })}
+            onChange={(val) => {
+              actions.updateDate({ date: val as DateFormat });
+            }}
           />
           <Select
             label={t('month')}
             value={state.date?.month ?? 'long'}
             options={[
-              { value: 'long', name: t('long') },
-              { value: 'short', name: t('short') },
-              { value: '2-digit', name: t('2-digit') },
-              { value: 'numeric', name: t('numeric') },
+              { name: t('long'), value: 'long' },
+              { name: t('short'), value: 'short' },
+              { name: t('2-digit'), value: '2-digit' },
+              { name: t('numeric'), value: 'numeric' },
             ]}
-            onChange={(val) => actions.updateDate({ month: val as DateFormat })}
+            onChange={(val) => {
+              actions.updateDate({ month: val as DateFormat });
+            }}
           />
         </CategorySection>
       </Show>
@@ -179,42 +203,58 @@ export const WidgetsTab: Component<WidgetsTabProps> = (props) => {
             label={t('unit')}
             value={state.weather.unit}
             options={props.weatherUnitOptions}
-            onChange={(val) => actions.updateWeather({ unit: val as 'metric' | 'imperial' })}
+            onChange={(val) => {
+              actions.updateWeather({ unit: val as 'metric' | 'imperial' });
+            }}
           />
           <Switch
             label={t('show weather icon')}
             checked={state.weather.showIcon}
-            onChange={(val) => actions.updateWeather({ showIcon: val })}
+            onChange={(val) => {
+              actions.updateWeather({ showIcon: val });
+            }}
           />
           <Switch
             label={t('show weather text')}
             checked={state.weather.showText}
-            onChange={(val) => actions.updateWeather({ showText: val })}
+            onChange={(val) => {
+              actions.updateWeather({ showText: val });
+            }}
           />
           <Switch
             label={t('show city')}
             checked={state.weather.showCity ?? true}
-            onChange={(val) => actions.updateWeather({ showCity: val })}
+            onChange={(val) => {
+              actions.updateWeather({ showCity: val });
+            }}
           />
           <Switch
             label={t('show feels like')}
             checked={state.weather.showFeelsLike ?? false}
-            onChange={(val) => actions.updateWeather({ showFeelsLike: val })}
+            onChange={(val) => {
+              actions.updateWeather({ showFeelsLike: val });
+            }}
           />
           <Switch
             label={t('show min max')}
             checked={state.weather.showMinMax ?? false}
-            onChange={(val) => actions.updateWeather({ showMinMax: val })}
+            onChange={(val) => {
+              actions.updateWeather({ showMinMax: val });
+            }}
           />
           <Switch
             label={t('show humidity')}
             checked={state.weather.showHumidity ?? false}
-            onChange={(val) => actions.updateWeather({ showHumidity: val })}
+            onChange={(val) => {
+              actions.updateWeather({ showHumidity: val });
+            }}
           />
           <Switch
             label={t('show wind')}
             checked={state.weather.showWind ?? false}
-            onChange={(val) => actions.updateWeather({ showWind: val })}
+            onChange={(val) => {
+              actions.updateWeather({ showWind: val });
+            }}
           />
         </CategorySection>
       </Show>
@@ -225,17 +265,23 @@ export const WidgetsTab: Component<WidgetsTabProps> = (props) => {
             label={t('search engine')}
             value={state.search.engine}
             options={props.searchEngineOptions}
-            onChange={(val) => actions.updateSearch({ engine: val })}
+            onChange={(val) => {
+              actions.updateSearch({ engine: val });
+            }}
           />
           <Switch
             label={t('auto focus')}
             checked={state.search.focus}
-            onChange={(val) => actions.updateSearch({ focus: val })}
+            onChange={(val) => {
+              actions.updateSearch({ focus: val });
+            }}
           />
           <Switch
             label={t('new tab')}
             checked={state.search.newTab}
-            onChange={(val) => actions.updateSearch({ newTab: val })}
+            onChange={(val) => {
+              actions.updateSearch({ newTab: val });
+            }}
           />
         </CategorySection>
       </Show>
@@ -246,7 +292,9 @@ export const WidgetsTab: Component<WidgetsTabProps> = (props) => {
             label={t('style')}
             value={state.shortcutAppereance.style}
             options={props.shortcutStyleOptions}
-            onChange={(val) => actions.updateShortcutAppearance({ style: val as ShortcutStyle })}
+            onChange={(val) => {
+              actions.updateShortcutAppearance({ style: val as ShortcutStyle });
+            }}
           />
           <Slider
             label={t('columns')}
@@ -254,14 +302,16 @@ export const WidgetsTab: Component<WidgetsTabProps> = (props) => {
             max={10}
             showValue
             value={state.shortcutAppereance.elementsPerLine ?? state.shortcutAppereance.col ?? 4}
-            onChange={(elementsPerLine) =>
-              actions.updateShortcutAppearance({ elementsPerLine, col: elementsPerLine })
-            }
+            onChange={(elementsPerLine) => {
+              actions.updateShortcutAppearance({ col: elementsPerLine, elementsPerLine });
+            }}
           />
           <Switch
             label={t('icon only')}
             checked={state.shortcutAppereance.iconOnly}
-            onChange={(val) => actions.updateShortcutAppearance({ iconOnly: val })}
+            onChange={(val) => {
+              actions.updateShortcutAppearance({ iconOnly: val });
+            }}
           />
 
           <div class="pt-3 border-t border-slate-200 dark:border-zinc-800 flex flex-col gap-2">

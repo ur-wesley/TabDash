@@ -17,40 +17,36 @@ export interface DashboardLayoutActions {
 }
 
 export function useDashboardLayout(): DashboardLayoutActions {
-  const [state, actions] = useSettingsContext();
-
-  const handlePositionChange = (id: WidgetId, pos: WidgetCanvasPosition) => {
-    actions.updateLayout({
-      canvasPositions: withPosition(state.layout?.canvasPositions, id, pos),
-    });
-  };
-
-  const handleToggleMode = () => {
-    const nextMode: LayoutMode = (state.layout?.mode ?? 'canvas') === 'canvas' ? 'flow' : 'canvas';
-    actions.updateLayout({ mode: nextMode });
-  };
-
-  const handleToggleSnap = () => {
-    actions.updateLayout({ snapToGrid: !(state.layout?.snapToGrid ?? true) });
-  };
-
-  const handleReset = () => {
-    actions.updateLayout({
-      canvasPositions: defaultPositions(),
-      flowOrder: defaultFlowOrder(),
-    });
-  };
-
-  const handleMoveFlowOrder = (id: WidgetId, direction: FlowDirection) => {
-    const currentOrder = state.layout?.flowOrder ?? defaultFlowOrder();
-    actions.updateLayout({ flowOrder: moveFlowItem(currentOrder, id, direction) });
-  };
+  const [state, actions] = useSettingsContext(),
+    handlePositionChange = (id: WidgetId, pos: WidgetCanvasPosition) => {
+      actions.updateLayout({
+        canvasPositions: withPosition(state.layout?.canvasPositions, id, pos),
+      });
+    },
+    handleToggleMode = () => {
+      const nextMode: LayoutMode =
+        (state.layout?.mode ?? 'canvas') === 'canvas' ? 'flow' : 'canvas';
+      actions.updateLayout({ mode: nextMode });
+    },
+    handleToggleSnap = () => {
+      actions.updateLayout({ snapToGrid: !(state.layout?.snapToGrid ?? true) });
+    },
+    handleReset = () => {
+      actions.updateLayout({
+        canvasPositions: defaultPositions(),
+        flowOrder: defaultFlowOrder(),
+      });
+    },
+    handleMoveFlowOrder = (id: WidgetId, direction: FlowDirection) => {
+      const currentOrder = state.layout?.flowOrder ?? defaultFlowOrder();
+      actions.updateLayout({ flowOrder: moveFlowItem(currentOrder, id, direction) });
+    };
 
   return {
+    handleMoveFlowOrder,
     handlePositionChange,
+    handleReset,
     handleToggleMode,
     handleToggleSnap,
-    handleReset,
-    handleMoveFlowOrder,
   };
 }

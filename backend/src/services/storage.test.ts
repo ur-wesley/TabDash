@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test';
 import { createDatabase } from '../db/database.js';
-import { normalizeBrowser, StorageService } from './storage.js';
+import { StorageService, normalizeBrowser } from './storage.js';
 
 describe('StorageService', () => {
   it('normalizes browser case correctly', () => {
@@ -13,8 +13,8 @@ describe('StorageService', () => {
   });
 
   it('handles settings lifecycle with created and patched states', () => {
-    const db = createDatabase(':memory:');
-    const storage = new StorageService(db);
+    const db = createDatabase(':memory:'),
+      storage = new StorageService(db);
 
     expect(storage.getSetting('nonexistent')).toBeNull();
 
@@ -30,10 +30,9 @@ describe('StorageService', () => {
   });
 
   it('tracks installations and prevents duplicate installs with same ID', () => {
-    const db = createDatabase(':memory:');
-    const storage = new StorageService(db);
-
-    const first = storage.recordInstall('inst-123', 'Chrome');
+    const db = createDatabase(':memory:'),
+      storage = new StorageService(db),
+      first = storage.recordInstall('inst-123', 'Chrome');
     expect(first).toBe(true);
 
     // Duplicate install must be rejected
@@ -48,8 +47,8 @@ describe('StorageService', () => {
   });
 
   it('tracks deinstallations accurately', () => {
-    const db = createDatabase(':memory:');
-    const storage = new StorageService(db);
+    const db = createDatabase(':memory:'),
+      storage = new StorageService(db);
 
     storage.recordInstall('inst-1', 'Firefox');
 
@@ -69,14 +68,13 @@ describe('StorageService', () => {
   });
 
   it('aggregates statistics across all supported browsers', () => {
-    const db = createDatabase(':memory:');
-    const storage = new StorageService(db);
-
-    const initial = storage.getStatistics();
-    expect(initial.Chrome).toEqual({ installs: 0, deinstalls: 0 });
-    expect(initial.Firefox).toEqual({ installs: 0, deinstalls: 0 });
-    expect(initial.Edge).toEqual({ installs: 0, deinstalls: 0 });
-    expect(initial.Safari).toEqual({ installs: 0, deinstalls: 0 });
+    const db = createDatabase(':memory:'),
+      storage = new StorageService(db),
+      initial = storage.getStatistics();
+    expect(initial.Chrome).toEqual({ deinstalls: 0, installs: 0 });
+    expect(initial.Firefox).toEqual({ deinstalls: 0, installs: 0 });
+    expect(initial.Edge).toEqual({ deinstalls: 0, installs: 0 });
+    expect(initial.Safari).toEqual({ deinstalls: 0, installs: 0 });
 
     storage.recordInstall('c1', 'chrome');
     storage.recordInstall('c2', 'Chrome');
@@ -84,9 +82,9 @@ describe('StorageService', () => {
     storage.recordDeinstall('c1', 'chrome');
 
     const stats = storage.getStatistics();
-    expect(stats.Chrome).toEqual({ installs: 2, deinstalls: 1 });
-    expect(stats.Firefox).toEqual({ installs: 1, deinstalls: 0 });
-    expect(stats.Edge).toEqual({ installs: 0, deinstalls: 0 });
+    expect(stats.Chrome).toEqual({ deinstalls: 1, installs: 2 });
+    expect(stats.Firefox).toEqual({ deinstalls: 0, installs: 1 });
+    expect(stats.Edge).toEqual({ deinstalls: 0, installs: 0 });
 
     db.close();
   });

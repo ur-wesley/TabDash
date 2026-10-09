@@ -1,12 +1,13 @@
 import { useStore } from '@nanostores/solid';
-import { type Component, createEffect } from 'solid-js';
+import { createEffect } from 'solid-js';
+import type { Component } from 'solid-js';
 import { language } from '../helper/store.js';
 import useQuery from '../helper/useQuery.js';
 import { messages } from '../lang.js';
 
 const Goodbye: Component = () => {
-  const $lang = useStore(language);
-  const { id, browser } = useQuery(window.location.href);
+  const $lang = useStore(language),
+    { id, browser } = useQuery(window.location.href);
   createEffect(() => {
     void fetch(`${import.meta.env.PUBLIC_BACKEND_BASE}/deinstall?id=${id}&browser=${browser}`);
   });

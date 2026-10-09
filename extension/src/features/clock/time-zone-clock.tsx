@@ -1,4 +1,5 @@
-import { type Component, For, Show, createSignal, onCleanup } from 'solid-js';
+import { For, Show, createSignal, onCleanup } from 'solid-js';
+import type { Component } from 'solid-js';
 
 export interface TimeZoneClockProps {
   timeZones?: string[];
@@ -6,11 +7,10 @@ export interface TimeZoneClockProps {
 }
 
 export const TimeZoneClock: Component<TimeZoneClockProps> = (props) => {
-  const [now, setNow] = createSignal(new Date());
-
-  const timer = setInterval(() => {
-    setNow(new Date());
-  }, 1000);
+  const [now, setNow] = createSignal(new Date()),
+    timer = setInterval(() => {
+      setNow(new Date());
+    }, 1000);
 
   onCleanup(() => {
     clearInterval(timer);
@@ -19,9 +19,9 @@ export const TimeZoneClock: Component<TimeZoneClockProps> = (props) => {
   const formatTimeZone = (tz: string) => {
     try {
       return new Intl.DateTimeFormat(props.locale ?? 'en-US', {
-        timeZone: tz,
         hour: '2-digit',
         minute: '2-digit',
+        timeZone: tz,
       }).format(now());
     } catch {
       return '';

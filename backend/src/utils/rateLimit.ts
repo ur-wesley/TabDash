@@ -14,8 +14,8 @@ export class RateLimiter {
   }
 
   isAllowed(clientKey: string): boolean {
-    const now = Date.now();
-    const record = this.clients.get(clientKey);
+    const now = Date.now(),
+      record = this.clients.get(clientKey);
 
     if (!record || now >= record.resetAt) {
       this.clients.set(clientKey, {

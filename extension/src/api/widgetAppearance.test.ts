@@ -4,22 +4,24 @@ import widgetAppearance from './widgetAppearance.js';
 describe('widgetAppearance', () => {
   it('does not throw when passed undefined or empty object', () => {
     // Setup document mock if running outside full browser DOM
-    if (typeof globalThis.document === 'undefined') {
+    if (globalThis.document === undefined) {
       const styleMap = new Map<string, string>();
       globalThis.document = {
         documentElement: {
           style: {
-            setProperty: (key: string, val: string) => styleMap.set(key, val),
             getPropertyValue: (key: string) => styleMap.get(key) || '',
+            setProperty: (key: string, val: string) => styleMap.set(key, val),
           },
         },
       } as unknown as Document;
     }
 
-    expect(() => widgetAppearance(undefined)).not.toThrow();
-    expect(() =>
-      widgetAppearance({} as unknown as Parameters<typeof widgetAppearance>[0]),
-    ).not.toThrow();
+    expect(() => {
+      widgetAppearance();
+    }).not.toThrow();
+    expect(() => {
+      widgetAppearance({} as unknown as Parameters<typeof widgetAppearance>[0]);
+    }).not.toThrow();
   });
 
   it('sets CSS variables when valid widget appearance is provided', () => {
@@ -27,25 +29,25 @@ describe('widgetAppearance', () => {
     globalThis.document = {
       documentElement: {
         style: {
-          setProperty: (key: string, val: string) => styleMap.set(key, val),
           getPropertyValue: (key: string) => styleMap.get(key) || '',
+          setProperty: (key: string, val: string) => styleMap.set(key, val),
         },
       },
     } as unknown as Document;
 
     widgetAppearance({
-      textColor: '#ffffff',
-      textSize: '14px',
-      background: '#111111',
-      borderRadius: '8px',
-      shadow: 'none',
-      font: 'Arial',
-      weight: '600',
       backdrop: {
         blur: '10px',
-        saturate: '150%',
         brightness: '90%',
+        saturate: '150%',
       },
+      background: '#111111',
+      borderRadius: '8px',
+      font: 'Arial',
+      shadow: 'none',
+      textColor: '#ffffff',
+      textSize: '14px',
+      weight: '600',
     });
 
     expect(styleMap.get('--textColor')).toBe('#ffffff');
@@ -61,8 +63,8 @@ describe('widgetAppearance', () => {
     globalThis.document = {
       documentElement: {
         style: {
-          setProperty: (key: string, val: string) => styleMap.set(key, val),
           getPropertyValue: (key: string) => styleMap.get(key) || '',
+          setProperty: (key: string, val: string) => styleMap.set(key, val),
         },
       },
     } as unknown as Document;
@@ -70,8 +72,8 @@ describe('widgetAppearance', () => {
     // Dark background with dark text
     widgetAppearance(
       {
-        textColor: '#1a1a1a',
         background: '#111111',
+        textColor: '#1a1a1a',
       } as Parameters<typeof widgetAppearance>[0],
       { autoContrast: true },
     );

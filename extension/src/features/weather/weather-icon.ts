@@ -37,7 +37,9 @@ const OWM_TO_MDI: Record<string, string> = {
 export function owmIconToMdi(iconCode?: string | null): string {
   if (iconCode && OWM_TO_MDI[iconCode]) {
     const mapped = OWM_TO_MDI[iconCode];
-    if (mapped) return mapped;
+    if (mapped) {
+      return mapped;
+    }
   }
   return 'i-mdi-weather-cloudy';
 }

@@ -14,15 +14,15 @@ describe('createWeatherStore loading and cached data retention', () => {
   });
 
   it('preloads cached weather data so existing data is immediately available', async () => {
-    const storage = new StorageService(false);
-    const mockWeather = {
-      city: 'Dresden',
-      overview: { temp: 22, temp_min: 19, temp_max: 24, humidity: 50, pressure: 1013 },
-      wind: { speed: 3, deg: 180 },
-      weather: [{ main: 'Clear', description: 'sunny', icon: '01d' }],
-      clouds: { all: 0 },
-      additional: { country: 'DE', sunrise: 0, sunset: 0 },
-    };
+    const storage = new StorageService(false),
+      mockWeather = {
+        additional: { country: 'DE', sunrise: 0, sunset: 0 },
+        city: 'Dresden',
+        clouds: { all: 0 },
+        overview: { humidity: 50, pressure: 1013, temp: 22, temp_max: 24, temp_min: 19 },
+        weather: [{ main: 'Clear', description: 'sunny', icon: '01d' }],
+        wind: { deg: 180, speed: 3 },
+      };
 
     await storage.set({ weather: mockWeather });
 

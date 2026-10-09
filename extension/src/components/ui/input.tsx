@@ -1,4 +1,5 @@
-import { type ComponentProps, Show, createUniqueId, splitProps } from 'solid-js';
+import { Show, createUniqueId, splitProps } from 'solid-js';
+import type { ComponentProps } from 'solid-js';
 import { cn } from '../../lib/utils';
 
 export interface InputProps extends ComponentProps<'input'> {
@@ -10,23 +11,19 @@ export interface InputProps extends ComponentProps<'input'> {
 
 export function Input(props: InputProps) {
   const [local, others] = splitProps(props, [
-    'class',
-    'id',
-    'label',
-    'error',
-    'helperText',
-    'containerClass',
-  ]);
-
-  const id = () => local.id ?? `input-${createUniqueId()}`;
+      'class',
+      'id',
+      'label',
+      'error',
+      'helperText',
+      'containerClass',
+    ]),
+    id = () => local.id ?? `input-${createUniqueId()}`;
 
   return (
     <div class={cn('flex flex-col gap-1 w-full min-w-0 py-0.5', local.containerClass)}>
       <Show when={local.label}>
-        <label
-          for={id()}
-          class="text-xs sm:text-sm font-medium text-[var(--fg-label)] truncate"
-        >
+        <label for={id()} class="text-xs sm:text-sm font-medium text-[var(--fg-label)] truncate">
           {local.label}
         </label>
       </Show>
@@ -37,7 +34,7 @@ export function Input(props: InputProps) {
           local.error && 'border-[var(--border-error)] focus-visible:ring-[var(--ring-error)]',
           local.class,
         )}
-        aria-invalid={!!local.error}
+        aria-invalid={Boolean(local.error)}
         aria-describedby={local.error ? `${id()}-error` : undefined}
         {...others}
       />

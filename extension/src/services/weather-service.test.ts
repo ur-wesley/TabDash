@@ -6,9 +6,8 @@ describe('WeatherService caching', () => {
   it('returns null when no cached weather exists', async () => {
     const storage = new StorageService(false);
     await storage.remove('weather');
-    const service = new WeatherService('metric', 'en', storage);
-
-    const cached = await service.getCachedWeather();
+    const service = new WeatherService('metric', 'en', storage),
+      cached = await service.getCachedWeather();
     expect(cached.isOk()).toBe(true);
     if (cached.isOk()) {
       expect(cached.value).toBeNull();
@@ -16,20 +15,19 @@ describe('WeatherService caching', () => {
   });
 
   it('retrieves cached weather when available in storage', async () => {
-    const storage = new StorageService(false);
-    const mockWeather = {
-      city: 'Berlin',
-      overview: { temp: 20, temp_min: 16, temp_max: 22, humidity: 55, pressure: 1012 },
-      wind: { speed: 5, deg: 180 },
-      weather: [{ main: 'Clear', description: 'clear sky', icon: '01d' }],
-      clouds: { all: 10 },
-      additional: { country: 'DE', sunrise: 0, sunset: 0 },
-    };
+    const storage = new StorageService(false),
+      mockWeather = {
+        additional: { country: 'DE', sunrise: 0, sunset: 0 },
+        city: 'Berlin',
+        clouds: { all: 10 },
+        overview: { humidity: 55, pressure: 1012, temp: 20, temp_max: 22, temp_min: 16 },
+        weather: [{ main: 'Clear', description: 'clear sky', icon: '01d' }],
+        wind: { deg: 180, speed: 5 },
+      };
 
     await storage.set({ weather: mockWeather });
-    const service = new WeatherService('metric', 'en', storage);
-
-    const cached = await service.getCachedWeather();
+    const service = new WeatherService('metric', 'en', storage),
+      cached = await service.getCachedWeather();
     expect(cached.isOk()).toBe(true);
     if (cached.isOk()) {
       expect(cached.value?.city).toBe('Berlin');
@@ -45,19 +43,19 @@ describe('WeatherService language', () => {
     expect(normalizeWeatherLang('en-US')).toBe('en');
     expect(normalizeWeatherLang('')).toBe('en');
     expect(normalizeWeatherLang(null)).toBe('en');
-    expect(normalizeWeatherLang(undefined)).toBe('en');
+    expect(normalizeWeatherLang()).toBe('en');
   });
 
   it('normalizes lang in constructor', () => {
-    const storage = new StorageService(false);
-    const service = new WeatherService('metric', 'DE', storage);
+    const storage = new StorageService(false),
+      service = new WeatherService('metric', 'DE', storage);
     expect(service.lang).toBe('de');
   });
 
   it('builds OpenWeather URL with correct lang param', () => {
-    const storage = new StorageService(false);
-    const service = new WeatherService('metric', 'de', storage);
-    const url = service.buildUrl(50, 10);
+    const storage = new StorageService(false),
+      service = new WeatherService('metric', 'de', storage),
+      url = service.buildUrl(50, 10);
     expect(url).toContain('lang=de');
     expect(url).toContain('units=metric');
     expect(url).toContain('lat=50');
@@ -65,8 +63,8 @@ describe('WeatherService language', () => {
   });
 
   it('setParams returns false when unchanged and true when lang changes', () => {
-    const storage = new StorageService(false);
-    const service = new WeatherService('metric', 'en', storage);
+    const storage = new StorageService(false),
+      service = new WeatherService('metric', 'en', storage);
     expect(service.setParams('metric', 'en')).toBe(false);
     expect(service.setParams('metric', 'de')).toBe(true);
     expect(service.lang).toBe('de');

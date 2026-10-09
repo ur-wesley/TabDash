@@ -3,14 +3,14 @@ import {
   averageThumbRegion,
   coverSourceRect,
   resolveBackgroundSource,
-  type Thumb,
 } from './wallpaperSampler.js';
+import type { Thumb } from './wallpaperSampler.js';
 
 describe('wallpaperSampler - resolveBackgroundSource', () => {
   it('prefers the active image over static', () => {
     const src = resolveBackgroundSource({
       active: true,
-      image: { src: 'active.jpg', next: '', author: '', profile: '', origin: '' },
+      image: { author: '', next: '', origin: '', profile: '', src: 'active.jpg' },
       static: 'static.jpg',
     } as never);
     expect(src).toEqual({ kind: 'image', src: 'active.jpg' });
@@ -20,7 +20,7 @@ describe('wallpaperSampler - resolveBackgroundSource', () => {
     expect(
       resolveBackgroundSource({
         active: false,
-        image: { src: 'img.jpg', next: '', author: '', profile: '', origin: '' },
+        image: { author: '', next: '', origin: '', profile: '', src: 'img.jpg' },
         static: 'static.jpg',
       } as never),
     ).toEqual({ kind: 'image', src: 'static.jpg' });
@@ -28,26 +28,26 @@ describe('wallpaperSampler - resolveBackgroundSource', () => {
     expect(
       resolveBackgroundSource({
         active: false,
-        image: { src: 'img.jpg', next: '', author: '', profile: '', origin: '' },
+        image: { author: '', next: '', origin: '', profile: '', src: 'img.jpg' },
       } as never),
     ).toEqual({ kind: 'image', src: 'img.jpg' });
   });
 
   it('falls back to color and none', () => {
     expect(resolveBackgroundSource({ color: '#abc' } as never)).toEqual({
-      kind: 'color',
       color: '#abc',
+      kind: 'color',
     });
-    expect(resolveBackgroundSource(undefined)).toEqual({ kind: 'none' });
+    expect(resolveBackgroundSource()).toEqual({ kind: 'none' });
   });
 });
 
 describe('wallpaperSampler - coverSourceRect', () => {
   it('maps 1:1 when image and viewport match', () => {
     const r = coverSourceRect(
-      { w: 200, h: 100 },
-      { w: 200, h: 100 },
-      { x: 10, y: 20, w: 50, h: 30 },
+      { h: 100, w: 200 },
+      { h: 100, w: 200 },
+      { h: 30, w: 50, x: 10, y: 20 },
     );
     expect(r.sx).toBeCloseTo(10);
     expect(r.sy).toBeCloseTo(20);
@@ -57,11 +57,11 @@ describe('wallpaperSampler - coverSourceRect', () => {
 
   it('centers the crop when the image is scaled to cover', () => {
     // 100x100 image on a 200x100 viewport: scale 2, displayed 200x200,
-    // vertically centered with -50px offset. Full viewport maps to full image.
+    // Vertically centered with -50px offset. Full viewport maps to full image.
     const r = coverSourceRect(
-      { w: 100, h: 100 },
-      { w: 200, h: 100 },
-      { x: 0, y: 0, w: 200, h: 100 },
+      { h: 100, w: 100 },
+      { h: 100, w: 200 },
+      { h: 100, w: 200, x: 0, y: 0 },
     );
     expect(r.sx).toBeCloseTo(0);
     expect(r.sy).toBeCloseTo(25);
@@ -71,9 +71,9 @@ describe('wallpaperSampler - coverSourceRect', () => {
 
   it('clamps rects extending outside the viewport', () => {
     const r = coverSourceRect(
-      { w: 200, h: 200 },
-      { w: 200, h: 200 },
-      { x: -50, y: -50, w: 100, h: 100 },
+      { h: 200, w: 200 },
+      { h: 200, w: 200 },
+      { h: 100, w: 100, x: -50, y: -50 },
     );
     expect(r.sx).toBeCloseTo(0);
     expect(r.sy).toBeCloseTo(0);
@@ -95,16 +95,16 @@ describe('wallpaperSampler - averageThumbRegion', () => {
   };
 
   it('averages the full image', () => {
-    const avg = averageThumbRegion(thumb, { sx: 0, sy: 0, sw: 200, sh: 200 });
-    expect(avg).toEqual({ r: 128, g: 128, b: 128 });
+    const avg = averageThumbRegion(thumb, { sh: 200, sw: 200, sx: 0, sy: 0 });
+    expect(avg).toEqual({ b: 128, g: 128, r: 128 });
   });
 
   it('averages a sub-region (top-left quadrant = red)', () => {
-    const avg = averageThumbRegion(thumb, { sx: 0, sy: 0, sw: 100, sh: 100 });
-    expect(avg).toEqual({ r: 255, g: 0, b: 0 });
+    const avg = averageThumbRegion(thumb, { sh: 100, sw: 100, sx: 0, sy: 0 });
+    expect(avg).toEqual({ b: 0, g: 0, r: 255 });
   });
 
   it('returns null for empty regions', () => {
-    expect(averageThumbRegion(thumb, { sx: 0, sy: 0, sw: 0, sh: 100 })).toBeNull();
+    expect(averageThumbRegion(thumb, { sh: 100, sw: 0, sx: 0, sy: 0 })).toBeNull();
   });
 });

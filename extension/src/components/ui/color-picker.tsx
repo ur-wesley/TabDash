@@ -1,15 +1,10 @@
 import { ColorArea } from '@kobalte/core/color-area';
 import { ColorSlider } from '@kobalte/core/color-slider';
-import { type Color, parseColor } from '@kobalte/core/colors';
+import { parseColor } from '@kobalte/core/colors';
+import type { Color } from '@kobalte/core/colors';
 import { Popover } from '@kobalte/core/popover';
-import {
-  type Component,
-  createEffect,
-  createMemo,
-  createSignal,
-  createUniqueId,
-  splitProps,
-} from 'solid-js';
+import { createEffect, createMemo, createSignal, createUniqueId, splitProps } from 'solid-js';
+import type { Component } from 'solid-js';
 import { cn } from '../../lib/utils';
 
 export interface ColorPickerProps {
@@ -38,34 +33,36 @@ function emitString(color: Color): string {
   }
 }
 
-const HEX_RE = /^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
-
-const placementForSide = (side: ColorPickerProps['side']) => {
-  switch (side) {
-    case 'right':
-      return 'right-start' as const;
-    case 'top':
-      return 'top' as const;
-    case 'bottom':
-      return 'bottom' as const;
-    case 'left':
-    default:
-      return 'left-start' as const;
-  }
-};
+const HEX_RE = /^#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i,
+  placementForSide = (side: ColorPickerProps['side']) => {
+    switch (side) {
+      case 'right': {
+        return 'right-start' as const;
+      }
+      case 'top': {
+        return 'top' as const;
+      }
+      case 'bottom': {
+        return 'bottom' as const;
+      }
+      case 'left':
+      default: {
+        return 'left-start' as const;
+      }
+    }
+  };
 
 export const ColorPicker: Component<ColorPickerProps> = (props) => {
-  const [local, others] = splitProps(props, ['label', 'value', 'onChange', 'side', 'class', 'id']);
-  const fieldId = () => local.id ?? `color-${createUniqueId()}`;
-
-  const [color, setColor] = createSignal<Color>(safeParse(local.value));
-  const [hexDraft, setHexDraft] = createSignal(local.value);
-  const [hexTouched, setHexTouched] = createSignal(false);
+  const [local, others] = splitProps(props, ['label', 'value', 'onChange', 'side', 'class', 'id']),
+    fieldId = () => local.id ?? `color-${createUniqueId()}`,
+    [color, setColor] = createSignal<Color>(safeParse(local.value)),
+    [hexDraft, setHexDraft] = createSignal(local.value),
+    [hexTouched, setHexTouched] = createSignal(false);
 
   // Sync from parent (e.g. reset). Guard against echo loops.
   createEffect(() => {
-    const next = local.value;
-    const current = emitString(color());
+    const next = local.value,
+      current = emitString(color());
     if (next !== current && (!hexTouched() || next !== hexDraft())) {
       setColor(safeParse(next));
       setHexDraft(next);
@@ -74,55 +71,55 @@ export const ColorPicker: Component<ColorPickerProps> = (props) => {
   });
 
   const commit = (next: Color) => {
-    setColor(next);
-    const out = emitString(next);
-    setHexDraft(out);
-    setHexTouched(false);
-    if (out !== local.value) {
-      local.onChange(out);
-    }
-  };
-
-  const hue = createMemo(() => {
-    try {
-      return color().toFormat('hsb').getChannelValue('hue');
-    } catch {
-      return 0;
-    }
-  });
-
-  const swatchBackground = createMemo(() => {
-    try {
-      return color().toString('css');
-    } catch {
-      return local.value;
-    }
-  });
-
-  const hexError = createMemo(() => {
-    const v = hexDraft().trim();
-    if (!v) return 'Required';
-    return HEX_RE.test(v) ? undefined : 'Use #rgb or #rrggbb';
-  });
-
-  const commitHex = () => {
-    const v = hexDraft().trim();
-    if (!HEX_RE.test(v)) return;
-    // Expand #rgb / #rgba so Kobalte always sees a full value.
-    const digits = v.slice(1);
-    let full = v;
-    if (digits.length === 3 || digits.length === 4) {
-      full = `#${digits
-        .split('')
-        .map((digit) => digit + digit)
-        .join('')}`;
-    }
-    try {
-      commit(parseColor(full));
-    } catch {
-      // keep draft + error visible
-    }
-  };
+      setColor(next);
+      const out = emitString(next);
+      setHexDraft(out);
+      setHexTouched(false);
+      if (out !== local.value) {
+        local.onChange(out);
+      }
+    },
+    hue = createMemo(() => {
+      try {
+        return color().toFormat('hsb').getChannelValue('hue');
+      } catch {
+        return 0;
+      }
+    }),
+    swatchBackground = createMemo(() => {
+      try {
+        return color().toString('css');
+      } catch {
+        return local.value;
+      }
+    }),
+    hexError = createMemo(() => {
+      const v = hexDraft().trim();
+      if (!v) {
+        return 'Required';
+      }
+      return HEX_RE.test(v) ? undefined : 'Use #rgb or #rrggbb';
+    }),
+    commitHex = () => {
+      const v = hexDraft().trim();
+      if (!HEX_RE.test(v)) {
+        return;
+      }
+      // Expand #rgb / #rgba so Kobalte always sees a full value.
+      const digits = v.slice(1);
+      let full = v;
+      if (digits.length === 3 || digits.length === 4) {
+        full = `#${digits
+          .split('')
+          .map((digit) => digit + digit)
+          .join('')}`;
+      }
+      try {
+        commit(parseColor(full));
+      } catch {
+        // Keep draft + error visible
+      }
+    };
 
   return (
     <Popover
@@ -145,15 +142,15 @@ export const ColorPicker: Component<ColorPickerProps> = (props) => {
           aria-label={`${local.label}: ${local.value}`}
           {...others}
         >
-          {/* checker shows through when alpha < 1 */}
+          {/* Checker shows through when alpha < 1 */}
           <span
             aria-hidden="true"
             class="block w-full h-full"
             style={{
+              'background-color': swatchBackground(),
               'background-image':
                 'conic-gradient(var(--border-swatch) 25%, transparent 0 50%, var(--border-swatch) 0 75%, transparent 0)',
               'background-size': '8px 8px',
-              'background-color': swatchBackground(),
             }}
           />
         </Popover.Trigger>
@@ -177,7 +174,7 @@ export const ColorPicker: Component<ColorPickerProps> = (props) => {
               class="absolute inset-0 rounded-lg"
               style={{ background: `hsl(${hue()}, 100%, 50%)` }}
             >
-              {/* white (saturation) + black (brightness) overlays */}
+              {/* White (saturation) + black (brightness) overlays */}
               <span
                 aria-hidden="true"
                 class="absolute inset-0 rounded-lg pointer-events-none"
@@ -238,10 +235,10 @@ export const ColorPicker: Component<ColorPickerProps> = (props) => {
               aria-hidden="true"
               class="w-7 h-7 shrink-0 rounded-md border border-[var(--border-swatch)]"
               style={{
+                'background-color': swatchBackground(),
                 'background-image':
                   'conic-gradient(var(--border-swatch) 25%, transparent 0 50%, var(--border-swatch) 0 75%, transparent 0)',
                 'background-size': '8px 8px',
-                'background-color': swatchBackground(),
               }}
             />
             <div class="flex flex-col gap-0.5 min-w-0 flex-1">

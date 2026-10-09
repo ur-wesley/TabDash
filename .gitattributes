@@ -1,0 +1,5 @@
+# Enforce LF line endings in the repo and worktree on all platforms.
+# oxfmt writes LF and flags CRLF files as unformatted, so CRLF worktrees
+# (Windows autocrlf checkouts) fail `bun run check` on fresh clones and
+# show phantom modifications after every format run.
+* text=auto eol=lf

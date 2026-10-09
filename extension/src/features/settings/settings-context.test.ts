@@ -4,87 +4,87 @@ import type { Setting } from '../../../types/settings';
 import { createSettingsStore } from './settings-context';
 
 const mockDefaultSettings: Setting = {
-  id: 'test-id',
-  general: {
-    locale: 'en',
-    theme: 'dark',
-    sync: false,
-    username: 'User',
-    favicon: '',
-    title: 'TabDash',
-  },
   background: {
     active: true,
+    backdrop: { blur: '0px', brightness: '100%', saturate: '100%' },
     backdropActive: false,
-    color: '#000000',
-    backdrop: { blur: '0px', saturate: '100%', brightness: '100%' },
-    image: { src: '', next: '', author: '', profile: '', origin: '' },
     collections: [],
+    color: '#000000',
+    image: { author: '', next: '', origin: '', profile: '', src: '' },
   },
-  shortcutAppereance: {
-    style: 'large',
-    elementsPerLine: 5,
-    iconOnly: false,
-  },
-  shortcuts: [],
-  layout: {
-    showClock: true,
-    showDate: true,
-    showWeather: false,
-    showSearchbar: true,
-    showShortcuts: true,
-    showGreeting: true,
-    mode: 'canvas',
+  cache: {
+    images: [],
   },
   clock: {
     showSeconds: false,
   },
   date: {
-    weekday: 'long',
     date: '2-digit',
     month: 'long',
+    weekday: 'long',
   },
-  weather: {
-    unit: 'metric',
-    showIcon: true,
-    showText: false,
+  general: {
+    favicon: '',
+    locale: 'en',
+    sync: false,
+    theme: 'dark',
+    title: 'TabDash',
+    username: 'User',
+  },
+  id: 'test-id',
+  layout: {
+    mode: 'canvas',
+    showClock: true,
+    showDate: true,
+    showGreeting: true,
+    showSearchbar: true,
+    showShortcuts: true,
+    showWeather: false,
   },
   search: {
+    engine: 'google',
     focus: false,
     newTab: false,
-    engine: 'google',
   },
-  cache: {
-    images: [],
+  shortcutAppereance: {
+    elementsPerLine: 5,
+    iconOnly: false,
+    style: 'large',
+  },
+  shortcuts: [],
+  weather: {
+    showIcon: true,
+    showText: false,
+    unit: 'metric',
   },
   widgetSetting: {
-    light: {
-      textColor: '#000000',
-      textSize: '16px',
-      background: 'rgba(255, 255, 255, 0.4)',
-      borderRadius: '12px',
-      shadow: 'none',
-      font: 'Calibri',
-      weight: '400',
+    dark: {
       backdrop: {
         blur: '6px',
-        saturate: '120%',
         brightness: '160%',
+        saturate: '120%',
       },
-    },
-    dark: {
-      textColor: '#ffffff',
-      textSize: '16px',
       background: 'rgba(64, 64, 64, 0.4)',
       borderRadius: '12px',
-      shadow: 'none',
       font: 'Calibri',
+      shadow: 'none',
+      textColor: '#ffffff',
+      textSize: '16px',
       weight: '400',
+    },
+    light: {
       backdrop: {
         blur: '6px',
-        saturate: '120%',
         brightness: '160%',
+        saturate: '120%',
       },
+      background: 'rgba(255, 255, 255, 0.4)',
+      borderRadius: '12px',
+      font: 'Calibri',
+      shadow: 'none',
+      textColor: '#000000',
+      textSize: '16px',
+      weight: '400',
     },
   },
 };
@@ -99,12 +99,12 @@ describe('createSettingsStore', () => {
       expect(state.shortcuts.length).toBe(0);
 
       // Test adding shortcut
-      actions.addShortcut({ name: 'GitHub', link: 'https://github.com', icon: '' });
+      actions.addShortcut({ icon: '', link: 'https://github.com', name: 'GitHub' });
       expect(state.shortcuts.length).toBe(1);
       expect(state.shortcuts[0]?.name).toBe('GitHub');
 
       // Test editing shortcut
-      actions.editShortcut(0, { name: 'GitHub Updated', link: 'https://github.com', icon: '' });
+      actions.editShortcut(0, { icon: '', link: 'https://github.com', name: 'GitHub Updated' });
       expect(state.shortcuts[0]?.name).toBe('GitHub Updated');
 
       // Test updating general setting
@@ -112,7 +112,7 @@ describe('createSettingsStore', () => {
       expect(state.general.theme).toBe('light');
 
       // Test removing shortcut
-      actions.removeShortcut({ name: 'GitHub Updated', link: 'https://github.com', icon: '' });
+      actions.removeShortcut({ icon: '', link: 'https://github.com', name: 'GitHub Updated' });
       expect(state.shortcuts.length).toBe(0);
 
       // Test toggling searchbar visibility
@@ -129,8 +129,8 @@ describe('createSettingsStore', () => {
         mode: 'dark',
         patch: {
           font: 'Inter',
-          weight: '700',
           shadow: 'rgba(0,0,0,0.5) 1px 2px 6px',
+          weight: '700',
         },
       });
       expect(state.widgetSetting.dark.font).toBe('Inter');
@@ -138,7 +138,7 @@ describe('createSettingsStore', () => {
       expect(state.widgetSetting.dark.shadow).toBe('rgba(0,0,0,0.5) 1px 2px 6px');
 
       // Test updating date setting
-      actions.updateDate({ weekday: 'short', month: 'short' });
+      actions.updateDate({ month: 'short', weekday: 'short' });
       expect(state.date.weekday).toBe('short');
       expect(state.date.month).toBe('short');
 

@@ -3,38 +3,38 @@ import { isNightByWeather, resolveEffectiveTheme } from './theme-store';
 
 describe('resolveEffectiveTheme', () => {
   it('returns explicit light/dark themes untouched', () => {
-    expect(resolveEffectiveTheme('light', { systemDark: true, nightByWeather: true })).toBe(
+    expect(resolveEffectiveTheme('light', { nightByWeather: true, systemDark: true })).toBe(
       'light',
     );
-    expect(resolveEffectiveTheme('dark', { systemDark: false, nightByWeather: false })).toBe(
+    expect(resolveEffectiveTheme('dark', { nightByWeather: false, systemDark: false })).toBe(
       'dark',
     );
   });
 
   it('follows the OS preference for system theme', () => {
-    expect(resolveEffectiveTheme('system', { systemDark: true, nightByWeather: false })).toBe(
+    expect(resolveEffectiveTheme('system', { nightByWeather: false, systemDark: true })).toBe(
       'dark',
     );
-    expect(resolveEffectiveTheme('system', { systemDark: false, nightByWeather: true })).toBe(
+    expect(resolveEffectiveTheme('system', { nightByWeather: true, systemDark: false })).toBe(
       'light',
     );
   });
 
   it('follows night time for automatic theme', () => {
-    expect(resolveEffectiveTheme('automatic', { systemDark: false, nightByWeather: true })).toBe(
+    expect(resolveEffectiveTheme('automatic', { nightByWeather: true, systemDark: false })).toBe(
       'dark',
     );
-    expect(resolveEffectiveTheme('automatic', { systemDark: true, nightByWeather: false })).toBe(
+    expect(resolveEffectiveTheme('automatic', { nightByWeather: false, systemDark: true })).toBe(
       'light',
     );
   });
 });
 
 describe('isNightByWeather', () => {
-  const additional = { sunrise: 1_000, sunset: 2_000 };
+  const additional = { sunrise: 1000, sunset: 2000 };
 
   it('returns false without weather data', () => {
-    expect(isNightByWeather(undefined)).toBe(false);
+    expect(isNightByWeather()).toBe(false);
   });
 
   it('detects day between sunrise and sunset', () => {

@@ -1,4 +1,5 @@
-import { type Component, Show } from 'solid-js';
+import { Show } from 'solid-js';
+import type { Component } from 'solid-js';
 import type { WeatherSetting } from '../../../types/settings';
 import type { WeatherData } from '../../services/weather-service';
 import { useI18n } from '../../i18n';
@@ -12,20 +13,19 @@ export interface WeatherWidgetProps {
 }
 
 export const WeatherWidget: Component<WeatherWidgetProps> = (props) => {
-  const { t } = useI18n();
-  const weather = () => props.data?.weather?.[0];
-  const unitSymbol = () => (props.setting?.unit === 'imperial' ? '°F' : '°C');
-  const windUnit = () => (props.setting?.unit === 'imperial' ? 'mph' : 'm/s');
-
-  const hasExtraMetrics = () =>
-    Boolean(
-      (props.setting?.showFeelsLike && props.data?.overview?.feels_like != null) ||
-      (props.setting?.showMinMax &&
-        props.data?.overview?.temp_min != null &&
-        props.data?.overview?.temp_max != null) ||
-      (props.setting?.showHumidity && props.data?.overview?.humidity != null) ||
-      (props.setting?.showWind && props.data?.wind?.speed != null),
-    );
+  const { t } = useI18n(),
+    weather = () => props.data?.weather?.[0],
+    unitSymbol = () => (props.setting?.unit === 'imperial' ? '°F' : '°C'),
+    windUnit = () => (props.setting?.unit === 'imperial' ? 'mph' : 'm/s'),
+    hasExtraMetrics = () =>
+      Boolean(
+        (props.setting?.showFeelsLike && props.data?.overview?.feels_like != null) ||
+        (props.setting?.showMinMax &&
+          props.data?.overview?.temp_min != null &&
+          props.data?.overview?.temp_max != null) ||
+        (props.setting?.showHumidity && props.data?.overview?.humidity != null) ||
+        (props.setting?.showWind && props.data?.wind?.speed != null),
+      );
 
   return (
     <div class="relative flex flex-col items-center widget p-3 select-none">

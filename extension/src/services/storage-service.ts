@@ -4,7 +4,7 @@ import { ResultAsync } from '@ur-wesley/ts-prelude/result';
 const memoryStorage = new Map<string, string>();
 
 export class StorageService {
-  private sync: boolean;
+  private readonly sync: boolean;
 
   constructor(sync: boolean = false) {
     this.sync = sync;
@@ -13,7 +13,7 @@ export class StorageService {
   private isChromeStorage(): boolean {
     return (
       typeof chrome !== 'undefined' &&
-      typeof chrome.storage !== 'undefined' &&
+      chrome.storage !== undefined &&
       (import.meta.env?.VITE_IS_EXTENSION === 'true' || Boolean(chrome.storage.local))
     );
   }
@@ -39,8 +39,8 @@ export class StorageService {
             }
             try {
               resolve(JSON.parse(raw) as T);
-            } catch (e) {
-              reject(new Error(`Failed to parse localStorage JSON: ${String(e)}`));
+            } catch (error) {
+              reject(new Error(`Failed to parse localStorage JSON: ${String(error)}`));
             }
           } else {
             const raw = memoryStorage.get(key);
@@ -50,12 +50,12 @@ export class StorageService {
             }
             try {
               resolve(JSON.parse(raw) as T);
-            } catch (e) {
-              reject(new Error(`Failed to parse memory JSON: ${String(e)}`));
+            } catch (error) {
+              reject(new Error(`Failed to parse memory JSON: ${String(error)}`));
             }
           }
-        } catch (e) {
-          reject(e instanceof Error ? e : new Error(String(e)));
+        } catch (error) {
+          reject(error instanceof Error ? error : new Error(String(error)));
         }
       }),
       (e) => (e instanceof Error ? e : new Error(String(e))),
@@ -86,8 +86,8 @@ export class StorageService {
             }
             resolve();
           }
-        } catch (e) {
-          reject(e instanceof Error ? e : new Error(String(e)));
+        } catch (error) {
+          reject(error instanceof Error ? error : new Error(String(error)));
         }
       }),
       (e) => (e instanceof Error ? e : new Error(String(e))),
@@ -114,8 +114,8 @@ export class StorageService {
             memoryStorage.delete(key);
             resolve();
           }
-        } catch (e) {
-          reject(e instanceof Error ? e : new Error(String(e)));
+        } catch (error) {
+          reject(error instanceof Error ? error : new Error(String(error)));
         }
       }),
       (e) => (e instanceof Error ? e : new Error(String(e))),
@@ -142,8 +142,8 @@ export class StorageService {
             memoryStorage.clear();
             resolve();
           }
-        } catch (e) {
-          reject(e instanceof Error ? e : new Error(String(e)));
+        } catch (error) {
+          reject(error instanceof Error ? error : new Error(String(error)));
         }
       }),
       (e) => (e instanceof Error ? e : new Error(String(e))),

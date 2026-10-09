@@ -1,5 +1,5 @@
 import type { Component, JSX } from 'solid-js';
-import { createSignal, For, Show } from 'solid-js';
+import { For, Show, createSignal } from 'solid-js';
 import type { LayoutMode, WidgetCanvasPosition, WidgetId } from '../../../types/settings.js';
 import { CanvasItem } from './CanvasItem.jsx';
 import type { AlignmentGuide } from './canvasUtils.js';
@@ -24,29 +24,28 @@ export interface CanvasContainerProps {
 }
 
 export const CanvasContainer: Component<CanvasContainerProps> = (props) => {
-  const [activeGuides, setActiveGuides] = createSignal<readonly AlignmentGuide[]>([]);
+  const [activeGuides, setActiveGuides] = createSignal<readonly AlignmentGuide[]>([]),
+    // Ordered widgets for flow mode
+    orderedWidgets = () => {
+      const map = new Map(props.widgets.map((w) => [w.id, w])),
+        list: CanvasWidgetConfig[] = [];
 
-  // Ordered widgets for flow mode
-  const orderedWidgets = () => {
-    const map = new Map(props.widgets.map((w) => [w.id, w]));
-    const list: CanvasWidgetConfig[] = [];
-
-    // First add widgets in the configured flowOrder
-    for (const id of props.flowOrder) {
-      const w = map.get(id);
-      if (w) {
-        list.push(w);
-        map.delete(id);
+      // First add widgets in the configured flowOrder
+      for (const id of props.flowOrder) {
+        const w = map.get(id);
+        if (w) {
+          list.push(w);
+          map.delete(id);
+        }
       }
-    }
 
-    // Append any widgets not in flowOrder
-    for (const w of map.values()) {
-      list.push(w);
-    }
+      // Append any widgets not in flowOrder
+      for (const w of map.values()) {
+        list.push(w);
+      }
 
-    return list.filter((w) => w.visible);
-  };
+      return list.filter((w) => w.visible);
+    };
 
   return (
     <div

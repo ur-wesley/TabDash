@@ -13,8 +13,8 @@ export const UNSPLASH_REFERRAL_MEDIUM = 'referral';
  * Falls back to the Unsplash homepage when the given URL is empty.
  */
 export function withUnsplashAttribution(url?: string | null): string {
-  const base = url?.trim() ? url.trim() : UNSPLASH_BASE_URL;
-  const separator = base.includes('?') ? '&' : '?';
+  const base = url?.trim() ? url.trim() : UNSPLASH_BASE_URL,
+    separator = base.includes('?') ? '&' : '?';
   return `${base}${separator}utm_source=${UNSPLASH_REFERRAL_SOURCE}&utm_medium=${UNSPLASH_REFERRAL_MEDIUM}`;
 }
 

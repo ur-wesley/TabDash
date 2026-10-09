@@ -41,7 +41,7 @@ export interface WeatherDataParams {
   city?: string;
   overview: WeatherOverview;
   wind: Wind;
-  weather: Array<WeatherDetail>;
+  weather: WeatherDetail[];
   clouds: Clouds;
   additional: WeatherAdditional;
 }
@@ -50,7 +50,7 @@ export class WeatherData {
   public city?: string;
   public overview: WeatherOverview;
   public wind: Wind;
-  public weather: Array<WeatherDetail>;
+  public weather: WeatherDetail[];
   public clouds: Clouds;
   public additional: WeatherAdditional;
 
@@ -68,29 +68,31 @@ export class WeatherData {
       throw new Error('Invalid weather payload');
     }
     return new WeatherData({
-      city: typeof json.name === 'string' ? json.name : undefined,
-      overview: json.main as WeatherOverview,
-      wind: json.wind as Wind,
-      weather: json.weather as WeatherDetail[],
-      clouds: json.clouds as Clouds,
       additional: json.sys as WeatherAdditional,
+      city: typeof json.name === 'string' ? json.name : undefined,
+      clouds: json.clouds as Clouds,
+      overview: json.main as WeatherOverview,
+      weather: json.weather as WeatherDetail[],
+      wind: json.wind as Wind,
     });
   }
 }
 
-export function normalizeWeatherLang(lang: string | undefined | null): string {
-  if (!lang || typeof lang !== 'string') return 'en';
+export function normalizeWeatherLang(lang?: string | null): string {
+  if (!lang || typeof lang !== 'string') {
+    return 'en';
+  }
   const base = lang.trim().toLowerCase().split(/[-_]/)[0];
   return base || 'en';
 }
 
 export class WeatherService {
-  private basePath: string = 'https://api.openweathermap.org/data/2.5/weather';
-  private appID: string =
+  private readonly basePath: string = 'https://api.openweathermap.org/data/2.5/weather';
+  private readonly appID: string =
     import.meta.env?.VITE_OPENWEATHER_API_KEY || import.meta.env?.OPENWEATHER_API_KEY || '';
   public unit: WeatherUnit;
   public lang: string;
-  private storage: StorageService;
+  private readonly storage: StorageService;
 
   constructor(unit: WeatherUnit, lang: string, storage?: StorageService) {
     this.unit = unit;
@@ -100,7 +102,9 @@ export class WeatherService {
 
   public setParams(unit: WeatherUnit, lang: string): boolean {
     const normalizedLang = normalizeWeatherLang(lang);
-    if (this.unit === unit && this.lang === normalizedLang) return false;
+    if (this.unit === unit && this.lang === normalizedLang) {
+      return false;
+    }
     this.unit = unit;
     this.lang = normalizedLang;
     return true;
@@ -133,7 +137,7 @@ export class WeatherService {
           (error) => {
             reject(new Error(error.message || 'Geolocation error'));
           },
-          { timeout: 10000, maximumAge: 600000 },
+          { maximumAge: 600000, timeout: 10000 },
         );
       }),
       (e) => (e instanceof Error ? e : new Error(String(e))),
@@ -151,8 +155,8 @@ export class WeatherService {
     return this.getGeolocation().andThen(({ latitude, longitude }) =>
       ResultAsync.fromPromise(
         (async () => {
-          const url = this.buildUrl(latitude, longitude);
-          const response = await fetch(url);
+          const url = this.buildUrl(latitude, longitude),
+            response = await fetch(url);
           if (!response.ok) {
             if (response.status === 401) {
               throw new Error(
@@ -173,11 +177,13 @@ export class WeatherService {
     return this.storage
       .get<{ timestamp?: number }>('timestamp')
       .andThen((t) => {
-        const timestamp = t?.timestamp ? t.timestamp : 0;
-        const isFresh = Date.now() < timestamp + 1000 * 60 * 10;
+        const timestamp = t?.timestamp ? t.timestamp : 0,
+          isFresh = Date.now() < timestamp + 1000 * 60 * 10;
         if (isFresh) {
           return this.storage.get<{ weather?: WeatherData }>('weather').map((w) => {
-            if (!w?.weather) return null;
+            if (!w?.weather) {
+              return null;
+            }
             return w.weather;
           });
         }
@@ -193,7 +199,9 @@ export class WeatherService {
 
   public getCachedWeather(): ResultAsync<WeatherData | null, Error> {
     return this.storage.get<{ weather?: WeatherData }>('weather').map((w) => {
-      if (!w?.weather) return null;
+      if (!w?.weather) {
+        return null;
+      }
       try {
         return WeatherData.fromObject(w.weather as unknown as Record<string, unknown>);
       } catch {
@@ -206,7 +214,7 @@ export class WeatherService {
     return this.fetchWeather()
       .andThen((weather) =>
         this.storage
-          .set({ weather, timestamp: Date.now() })
+          .set({ timestamp: Date.now(), weather })
           .map(() => weather as WeatherData | null),
       )
       .orElse(() =>

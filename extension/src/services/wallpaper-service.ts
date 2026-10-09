@@ -1,12 +1,12 @@
 import { ResultAsync } from '@ur-wesley/ts-prelude/result';
 import type { BackgroundData } from '../../types/settings';
 import {
-  type CachedImage,
   clearBuffer,
   consumeNextImage,
   readBufferFromStorage,
   replenishBuffer,
 } from '../api/imageBuffer';
+import type { CachedImage } from '../api/imageBuffer';
 
 export class WallpaperService {
   public consumeNext(collections: string[] = []): ResultAsync<BackgroundData | null, Error> {

@@ -1,6 +1,7 @@
 import type { Dict } from './types.js';
 
 export const de: Dict = {
+  '2-digit': '2 Ziffern',
   add: 'Hinzufügen',
   appearance: 'Aussehen',
   'auto focus': 'Suche fokussieren',
@@ -15,7 +16,6 @@ export const de: Dict = {
   'border radius': 'Eckenrundung',
   brightness: 'Helligkeit',
   'browser sync': 'Browser Synchronisierung',
-  '2-digit': '2 Ziffern',
   'clear search': 'Suche leeren',
   clipboard: 'Zwischenablage',
   clock: 'Uhr',
@@ -81,9 +81,9 @@ export const de: Dict = {
   'layout mode': 'Layout-Modus',
   light: 'Hell',
   'light mode': 'Hellmodus',
+  loading: 'Wird geladen',
   local: 'Lokal',
   locale: 'Sprache',
-  loading: 'Wird geladen',
   long: 'Lang',
   management: 'Verwaltung',
   'manually setting input': 'manuelle Eingabe',

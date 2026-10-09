@@ -9,97 +9,90 @@ import { CategorySection } from './category-section';
 import { useSettingsContext } from './settings-context';
 
 export const ManagementTab: Component = () => {
-  const { t } = useI18n();
-  const [state, actions] = useSettingsContext();
-
-  const importFromClipboard = async () => {
-    const res = await syncService.readClipboard();
-    if (res.isOk()) {
+  const { t } = useI18n(),
+    [state, actions] = useSettingsContext(),
+    importFromClipboard = async () => {
+      const res = await syncService.readClipboard();
+      if (res.isOk()) {
+        try {
+          const parsed = JSON.parse(res.value) as Partial<Setting>;
+          actions.setSettings({
+            ...state,
+            ...parsed,
+          });
+          toast.success(t('import success clipboard'));
+        } catch {
+          toast.error(t('import fail'));
+        }
+      } else {
+        toast.error(t('import fail'));
+      }
+    },
+    exportToClipboard = async () => {
+      const payload = JSON.stringify({ ...state, cache: { images: [] } }, undefined, 2),
+        res = await syncService.writeClipboard(payload);
+      if (res.isOk()) {
+        toast.success(t('export success clipboard'));
+      } else {
+        toast.error(t('export fail'));
+      }
+    },
+    importFromCloud = async () => {
+      const pw = prompt(t('select export password')) ?? undefined,
+        res = await syncService.fetchFromCloud(state.id, pw);
+      if (res.isOk()) {
+        actions.setSettings(res.value);
+        toast.success(t('import success cloud'));
+      } else {
+        toast.error(t('import fail'));
+      }
+    },
+    exportToCloud = async () => {
+      const pw = prompt(t('select export password')) ?? undefined,
+        payload: Setting = {
+          ...state,
+          cache: { images: [] },
+        },
+        res = await syncService.saveToCloud(state.id, payload, pw);
+      if (res.isOk()) {
+        toast.success(t('export success cloud'));
+      } else {
+        toast.error(t('export fail'));
+      }
+    },
+    handleFileImport = (content: string) => {
       try {
-        const parsed = JSON.parse(res.value) as Partial<Setting>;
+        const parsed = JSON.parse(content) as Partial<Setting>;
         actions.setSettings({
           ...state,
           ...parsed,
         });
-        toast.success(t('import success clipboard'));
+        toast.success(t('import success file'));
       } catch {
         toast.error(t('import fail'));
       }
-    } else {
-      toast.error(t('import fail'));
-    }
-  };
-
-  const exportToClipboard = async () => {
-    const payload = JSON.stringify({ ...state, cache: { images: [] } }, undefined, 2);
-    const res = await syncService.writeClipboard(payload);
-    if (res.isOk()) {
-      toast.success(t('export success clipboard'));
-    } else {
-      toast.error(t('export fail'));
-    }
-  };
-
-  const importFromCloud = async () => {
-    const pw = prompt(t('select export password')) ?? undefined;
-    const res = await syncService.fetchFromCloud(state.id, pw);
-    if (res.isOk()) {
-      actions.setSettings(res.value);
-      toast.success(t('import success cloud'));
-    } else {
-      toast.error(t('import fail'));
-    }
-  };
-
-  const exportToCloud = async () => {
-    const pw = prompt(t('select export password')) ?? undefined;
-    const payload: Setting = {
-      ...state,
-      cache: { images: [] },
+    },
+    handleExportFile = () => {
+      try {
+        const payload = JSON.stringify({ ...state, cache: { images: [] } }, undefined, 2),
+          blob = new Blob([payload], { type: 'application/json' }),
+          url = URL.createObjectURL(blob),
+          a = document.createElement('a');
+        a.href = url;
+        a.download = `tabdash-settings-${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success(t('export success file'));
+      } catch {
+        toast.error(t('export fail'));
+      }
+    },
+    handleReset = async () => {
+      if (confirm('Are you sure you want to reset all settings to defaults?')) {
+        await actions.resetToDefault();
+        toast.success('Settings reset to defaults');
+      }
     };
-    const res = await syncService.saveToCloud(state.id, payload, pw);
-    if (res.isOk()) {
-      toast.success(t('export success cloud'));
-    } else {
-      toast.error(t('export fail'));
-    }
-  };
-
-  const handleFileImport = (content: string) => {
-    try {
-      const parsed = JSON.parse(content) as Partial<Setting>;
-      actions.setSettings({
-        ...state,
-        ...parsed,
-      });
-      toast.success(t('import success file'));
-    } catch {
-      toast.error(t('import fail'));
-    }
-  };
-
-  const handleExportFile = () => {
-    try {
-      const payload = JSON.stringify({ ...state, cache: { images: [] } }, undefined, 2);
-      const blob = new Blob([payload], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `tabdash-settings-${Date.now()}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-      toast.success(t('export success file'));
-    } catch {
-      toast.error(t('export fail'));
-    }
-  };
-
-  const handleReset = async () => {
-    if (confirm('Are you sure you want to reset all settings to defaults?')) {
-      await actions.resetToDefault();
-      toast.success('Settings reset to defaults');
-    }
-  };
 
   return (
     <div class="w-full min-w-0 flex flex-col gap-4">

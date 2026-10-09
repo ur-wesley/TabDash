@@ -37,11 +37,21 @@ function clampNumber(value: number, min: number, max: number): number {
  * active image -> static -> inactive image -> none.
  */
 export function resolveBackgroundSource(bg?: BackgroundSetting): BackgroundSource {
-  if (!bg) return { kind: 'none' };
-  if (bg.active && bg.image?.src) return { kind: 'image', src: bg.image.src };
-  if (bg.static) return { kind: 'image', src: bg.static };
-  if (bg.image?.src) return { kind: 'image', src: bg.image.src };
-  if (bg.color) return { kind: 'color', color: bg.color };
+  if (!bg) {
+    return { kind: 'none' };
+  }
+  if (bg.active && bg.image?.src) {
+    return { kind: 'image', src: bg.image.src };
+  }
+  if (bg.static) {
+    return { kind: 'image', src: bg.static };
+  }
+  if (bg.image?.src) {
+    return { kind: 'image', src: bg.image.src };
+  }
+  if (bg.color) {
+    return { kind: 'color', color: bg.color };
+  }
   return { kind: 'none' };
 }
 
@@ -59,25 +69,24 @@ export function coverSourceRect(
   view: ViewportSize,
   rect: ViewRect,
 ): SourceRect {
-  const naturalW = natural.w;
-  const naturalH = natural.h;
-  const viewW = view.w;
-  const viewH = view.h;
+  const naturalW = natural.w,
+    naturalH = natural.h,
+    viewW = view.w,
+    viewH = view.h;
   if (naturalW <= 0 || naturalH <= 0 || viewW <= 0 || viewH <= 0) {
-    return { sx: 0, sy: 0, sw: Math.max(naturalW, 0), sh: Math.max(naturalH, 0) };
+    return { sh: Math.max(naturalH, 0), sw: Math.max(naturalW, 0), sx: 0, sy: 0 };
   }
-  const scale = Math.max(viewW / naturalW, viewH / naturalH);
-  const displayedW = naturalW * scale;
-  const displayedH = naturalH * scale;
-  const offsetX = (viewW - displayedW) / 2;
-  const offsetY = (viewH - displayedH) / 2;
+  const scale = Math.max(viewW / naturalW, viewH / naturalH),
+    displayedW = naturalW * scale,
+    displayedH = naturalH * scale,
+    offsetX = (viewW - displayedW) / 2,
+    offsetY = (viewH - displayedH) / 2,
+    x0 = clampNumber((rect.x - offsetX) / scale, 0, naturalW),
+    y0 = clampNumber((rect.y - offsetY) / scale, 0, naturalH),
+    x1 = clampNumber((rect.x + rect.w - offsetX) / scale, 0, naturalW),
+    y1 = clampNumber((rect.y + rect.h - offsetY) / scale, 0, naturalH);
 
-  const x0 = clampNumber((rect.x - offsetX) / scale, 0, naturalW);
-  const y0 = clampNumber((rect.y - offsetY) / scale, 0, naturalH);
-  const x1 = clampNumber((rect.x + rect.w - offsetX) / scale, 0, naturalW);
-  const y1 = clampNumber((rect.y + rect.h - offsetY) / scale, 0, naturalH);
-
-  return { sx: x0, sy: y0, sw: Math.max(x1 - x0, 0), sh: Math.max(y1 - y0, 0) };
+  return { sh: Math.max(y1 - y0, 0), sw: Math.max(x1 - x0, 0), sx: x0, sy: y0 };
 }
 
 export interface Thumb {
@@ -88,18 +97,29 @@ export interface Thumb {
   naturalH: number;
 }
 
-const MAX_THUMB_SIDE = 64;
+const MAX_THUMB_SIDE = 64,
+  thumbCache = new Map<string, Promise<Thumb | null>>();
 
-const thumbCache = new Map<string, Promise<Thumb | null>>();
-
-function loadImage(src: string): Promise<HTMLImageElement> {
+async function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    img.addEventListener('load', () => resolve(img), { once: true });
-    img.addEventListener('error', () => reject(new Error(`Failed to load wallpaper image`)), {
-      once: true,
-    });
+    img.addEventListener(
+      'load',
+      () => {
+        resolve(img);
+      },
+      { once: true },
+    );
+    img.addEventListener(
+      'error',
+      () => {
+        reject(new Error(`Failed to load wallpaper image`));
+      },
+      {
+        once: true,
+      },
+    );
     img.src = src;
   });
 }
@@ -109,31 +129,38 @@ function loadImage(src: string): Promise<HTMLImageElement> {
  * region averages. Returns `null` when the image cannot be read
  * (network failure or canvas taint from missing CORS headers).
  */
-export function getWallpaperThumb(src: string): Promise<Thumb | null> {
-  if (!src) return Promise.resolve(null);
+export async function getWallpaperThumb(src: string): Promise<Thumb | null> {
+  if (!src) {
+    return Promise.resolve(null);
+  }
   const cached = thumbCache.get(src);
-  if (cached) return cached;
+  if (cached) {
+    return cached;
+  }
 
   const pending: Promise<Thumb | null> = (async () => {
     try {
-      const img = await loadImage(src);
-      const naturalW = img.naturalWidth || img.width;
-      const naturalH = img.naturalHeight || img.height;
-      if (!naturalW || !naturalH) return null;
+      const img = await loadImage(src),
+        naturalW = img.naturalWidth || img.width,
+        naturalH = img.naturalHeight || img.height;
+      if (!naturalW || !naturalH) {
+        return null;
+      }
 
-      const longest = Math.max(naturalW, naturalH);
-      const k = longest > MAX_THUMB_SIDE ? MAX_THUMB_SIDE / longest : 1;
-      const w = Math.max(Math.round(naturalW * k), 1);
-      const h = Math.max(Math.round(naturalH * k), 1);
-
-      const canvas = document.createElement('canvas');
+      const longest = Math.max(naturalW, naturalH),
+        k = longest > MAX_THUMB_SIDE ? MAX_THUMB_SIDE / longest : 1,
+        w = Math.max(Math.round(naturalW * k), 1),
+        h = Math.max(Math.round(naturalH * k), 1),
+        canvas = document.createElement('canvas');
       canvas.width = w;
       canvas.height = h;
       const ctx = canvas.getContext('2d', { willReadFrequently: true });
-      if (!ctx) return null;
+      if (!ctx) {
+        return null;
+      }
       ctx.drawImage(img, 0, 0, w, h);
       const pixels = ctx.getImageData(0, 0, w, h);
-      return { data: pixels.data, w, h, naturalW, naturalH };
+      return { data: pixels.data, h, naturalH, naturalW, w };
     } catch {
       return null;
     }
@@ -142,7 +169,9 @@ export function getWallpaperThumb(src: string): Promise<Thumb | null> {
   thumbCache.set(src, pending);
   // Drop failures from the cache so a retry can succeed later.
   void pending.then((thumb) => {
-    if (!thumb) thumbCache.delete(src);
+    if (!thumb) {
+      thumbCache.delete(src);
+    }
   });
   return pending;
 }
@@ -160,39 +189,46 @@ export function averageThumbRegion(
   thumb: Thumb,
   srcRect: SourceRect,
 ): { r: number; g: number; b: number } | null {
-  if (thumb.w <= 0 || thumb.h <= 0 || srcRect.sw <= 0 || srcRect.sh <= 0) return null;
+  if (thumb.w <= 0 || thumb.h <= 0 || srcRect.sw <= 0 || srcRect.sh <= 0) {
+    return null;
+  }
 
-  const kx0 = Math.floor((srcRect.sx / thumb.naturalW) * thumb.w);
-  const ky0 = Math.floor((srcRect.sy / thumb.naturalH) * thumb.h);
-  const kx1 = Math.ceil(((srcRect.sx + srcRect.sw) / thumb.naturalW) * thumb.w);
-  const ky1 = Math.ceil(((srcRect.sy + srcRect.sh) / thumb.naturalH) * thumb.h);
-
-  const x0 = Math.min(Math.max(kx0, 0), thumb.w);
-  const y0 = Math.min(Math.max(ky0, 0), thumb.h);
-  const x1 = Math.min(Math.max(kx1, 0), thumb.w);
-  const y1 = Math.min(Math.max(ky1, 0), thumb.h);
-  if (x1 <= x0 || y1 <= y0) return null;
+  const kx0 = Math.floor((srcRect.sx / thumb.naturalW) * thumb.w),
+    ky0 = Math.floor((srcRect.sy / thumb.naturalH) * thumb.h),
+    kx1 = Math.ceil(((srcRect.sx + srcRect.sw) / thumb.naturalW) * thumb.w),
+    ky1 = Math.ceil(((srcRect.sy + srcRect.sh) / thumb.naturalH) * thumb.h),
+    x0 = Math.min(Math.max(kx0, 0), thumb.w),
+    y0 = Math.min(Math.max(ky0, 0), thumb.h),
+    x1 = Math.min(Math.max(kx1, 0), thumb.w),
+    y1 = Math.min(Math.max(ky1, 0), thumb.h);
+  if (x1 <= x0 || y1 <= y0) {
+    return null;
+  }
 
   // Stride over large regions so averaging stays O(1)-ish.
   const stride = Math.max(Math.floor(Math.sqrt(((x1 - x0) * (y1 - y0)) / 256)), 1);
 
-  let r = 0;
-  let g = 0;
-  let b = 0;
-  let n = 0;
+  let r = 0,
+    g = 0,
+    b = 0,
+    n = 0;
   for (let y = y0; y < y1; y += stride) {
     for (let x = x0; x < x1; x += stride) {
-      const i = (y * thumb.w + x) * 4;
-      const d = thumb.data;
-      if (i + 2 >= d.length) continue;
+      const i = (y * thumb.w + x) * 4,
+        d = thumb.data;
+      if (i + 2 >= d.length) {
+        continue;
+      }
       r += d[i] ?? 0;
       g += d[i + 1] ?? 0;
       b += d[i + 2] ?? 0;
       n += 1;
     }
   }
-  if (n === 0) return null;
-  return { r: Math.round(r / n), g: Math.round(g / n), b: Math.round(b / n) };
+  if (n === 0) {
+    return null;
+  }
+  return { b: Math.round(b / n), g: Math.round(g / n), r: Math.round(r / n) };
 }
 
 /**
@@ -205,9 +241,13 @@ export async function sampleWallpaperRegion(
   rect: ViewRect,
   viewport: ViewportSize,
 ): Promise<{ r: number; g: number; b: number } | null> {
-  if (!src || rect.w <= 0 || rect.h <= 0) return null;
+  if (!src || rect.w <= 0 || rect.h <= 0) {
+    return null;
+  }
   const thumb = await getWallpaperThumb(src);
-  if (!thumb) return null;
-  const srcRect = coverSourceRect({ w: thumb.naturalW, h: thumb.naturalH }, viewport, rect);
+  if (!thumb) {
+    return null;
+  }
+  const srcRect = coverSourceRect({ h: thumb.naturalH, w: thumb.naturalW }, viewport, rect);
   return averageThumbRegion(thumb, srcRect);
 }

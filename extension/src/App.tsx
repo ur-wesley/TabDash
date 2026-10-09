@@ -1,5 +1,5 @@
 import type { Component, JSX } from 'solid-js';
-import { createSignal, Show } from 'solid-js';
+import { Show, createSignal } from 'solid-js';
 import type { AvailableLanguages } from './lang';
 import { CanvasContainer } from './components/canvas/CanvasContainer';
 import { CanvasToolbar } from './components/canvas/CanvasToolbar';
@@ -17,64 +17,61 @@ import { SettingsSheet } from './features/settings/settings-sheet';
 import { WeatherProvider } from './features/weather/weather-context';
 import { I18nProvider } from './i18n';
 
-const [currentLocale, setCurrentLocale] = createSignal<AvailableLanguages>('en');
+const [currentLocale, setCurrentLocale] = createSignal<AvailableLanguages>('en'),
+  Dashboard: Component = () => {
+    const [state] = useSettingsContext(),
+      [isEditingLayout, setIsEditingLayout] = createSignal(false);
 
-const Dashboard: Component = () => {
-  const [state] = useSettingsContext();
-  const [isEditingLayout, setIsEditingLayout] = createSignal(false);
+    useDashboardSync();
+    usePerWidgetAutoContrast();
+    const layout = useDashboardLayout(),
+      widgetsList = useDashboardWidgets(isEditingLayout);
 
-  useDashboardSync();
-  usePerWidgetAutoContrast();
-  const layout = useDashboardLayout();
-  const widgetsList = useDashboardWidgets(isEditingLayout);
+    return (
+      <div class="h-screen w-screen overflow-hidden relative">
+        <BackgroundLayer
+          background={state.background}
+          backdrop={state.background?.backdropActive ? state.background.backdrop : undefined}
+        />
 
-  return (
-    <div class="h-screen w-screen overflow-hidden relative">
-      <BackgroundLayer
-        background={state.background}
-        backdrop={state.background?.backdropActive ? state.background.backdrop : undefined}
-      />
+        <div
+          id="content"
+          class="h-full w-full overflow-hidden relative z-10 transition-transform duration-300"
+        >
+          <CanvasContainer
+            mode={state.layout?.mode ?? 'canvas'}
+            isEditing={isEditingLayout()}
+            snapToGrid={state.layout?.snapToGrid ?? true}
+            gridSize={state.layout?.gridSize ?? 5}
+            positions={state.layout?.canvasPositions ?? defaultPositions()}
+            flowOrder={state.layout?.flowOrder ?? defaultFlowOrder()}
+            widgets={widgetsList()}
+            onPositionChange={layout.handlePositionChange}
+            onMoveFlowOrder={layout.handleMoveFlowOrder}
+          />
+        </div>
 
-      <div
-        id="content"
-        class="h-full w-full overflow-hidden relative z-10 transition-transform duration-300"
-      >
-        <CanvasContainer
-          mode={state.layout?.mode ?? 'canvas'}
+        <CanvasToolbar
           isEditing={isEditingLayout()}
           snapToGrid={state.layout?.snapToGrid ?? true}
-          gridSize={state.layout?.gridSize ?? 5}
-          positions={state.layout?.canvasPositions ?? defaultPositions()}
-          flowOrder={state.layout?.flowOrder ?? defaultFlowOrder()}
-          widgets={widgetsList()}
-          onPositionChange={layout.handlePositionChange}
-          onMoveFlowOrder={layout.handleMoveFlowOrder}
+          mode={state.layout?.mode ?? 'canvas'}
+          onToggleEditing={() => setIsEditingLayout((prev) => !prev)}
+          onToggleSnap={layout.handleToggleSnap}
+          onToggleMode={layout.handleToggleMode}
+          onReset={layout.handleReset}
         />
+
+        <Show when={state.background?.active && state.background?.image?.author}>
+          <AuthorCredit information={state.background.image} />
+        </Show>
+
+        <SettingsSheet onCustomizeLayout={() => setIsEditingLayout(true)} />
+
+        <Toaster />
       </div>
-
-      <CanvasToolbar
-        isEditing={isEditingLayout()}
-        snapToGrid={state.layout?.snapToGrid ?? true}
-        mode={state.layout?.mode ?? 'canvas'}
-        onToggleEditing={() => setIsEditingLayout((prev) => !prev)}
-        onToggleSnap={layout.handleToggleSnap}
-        onToggleMode={layout.handleToggleMode}
-        onReset={layout.handleReset}
-      />
-
-      <Show when={state.background?.active && state.background?.image?.author}>
-        <AuthorCredit information={state.background.image} />
-      </Show>
-
-      <SettingsSheet onCustomizeLayout={() => setIsEditingLayout(true)} />
-
-      <Toaster />
-    </div>
-  );
-};
-
-const App: Component = () => {
-  return (
+    );
+  },
+  App: Component = () => (
     <I18nProvider locale={currentLocale()} onLocaleChange={setCurrentLocale}>
       <SettingsProvider>
         <WeatherRoot>
@@ -83,7 +80,6 @@ const App: Component = () => {
       </SettingsProvider>
     </I18nProvider>
   );
-};
 
 const WeatherRoot: Component<{ children: JSX.Element }> = (props) => {
   const [state] = useSettingsContext();

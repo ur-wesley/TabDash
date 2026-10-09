@@ -1,16 +1,8 @@
 import { describe, expect, it } from 'bun:test';
 import * as i18n from '@solid-primitives/i18n';
 import { createRoot, createSignal } from 'solid-js';
-import {
-  availableLanguages,
-  type AvailableLanguages,
-  de,
-  dictionaries,
-  en,
-  es,
-  fr,
-  messages,
-} from './i18n.jsx';
+import { availableLanguages, de, dictionaries, en, es, fr, messages } from './i18n.jsx';
+import type { AvailableLanguages } from './i18n.jsx';
 import type { MessageKey } from './locales/types.js';
 
 const templateDict = () => ({
@@ -31,10 +23,10 @@ describe('i18n individual language files and dictionaries', () => {
   });
 
   it('guarantees all language files have all identical keys matching en', () => {
-    const enKeys = Object.keys(en).toSorted();
-    const deKeys = Object.keys(de).toSorted();
-    const frKeys = Object.keys(fr).toSorted();
-    const esKeys = Object.keys(es).toSorted();
+    const enKeys = Object.keys(en).toSorted(),
+      deKeys = Object.keys(de).toSorted(),
+      frKeys = Object.keys(fr).toSorted(),
+      esKeys = Object.keys(es).toSorted();
 
     expect(deKeys).toEqual(enKeys);
     expect(frKeys).toEqual(enKeys);
@@ -59,8 +51,8 @@ describe('i18n individual language files and dictionaries', () => {
 
   it('translates reactive updates when locale changes', () => {
     createRoot((dispose) => {
-      const [locale, setLocale] = createSignal<AvailableLanguages>('en');
-      const t = i18n.translator(() => dictionaries[locale()], i18n.resolveTemplate);
+      const [locale, setLocale] = createSignal<AvailableLanguages>('en'),
+        t = i18n.translator(() => dictionaries[locale()], i18n.resolveTemplate);
 
       expect(t('settings')).toBe('Settings');
       expect(t('close')).toBe('Close');

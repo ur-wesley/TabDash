@@ -1,4 +1,5 @@
-import { type Component, createEffect, createSignal } from 'solid-js';
+import { createEffect, createSignal } from 'solid-js';
+import type { Component } from 'solid-js';
 import { useMenuContext } from '@kobalte/core/menu';
 import type { ShortcutSetting } from '../../../types/settings';
 import { Button } from '../../components/ui/button';
@@ -16,12 +17,12 @@ export interface ShortcutPopoverProps {
 }
 
 export const ShortcutPopover: Component<ShortcutPopoverProps> = (props) => {
-  const { t } = useI18n();
-  const menu = useMenuContext();
-  const [name, setName] = createSignal(props.shortcut.name);
-  const [link, setLink] = createSignal(props.shortcut.link);
-  const [icon, setIcon] = createSignal(props.shortcut.icon ?? '');
-  const [newTab, setNewTab] = createSignal(props.shortcut.newTab ?? false);
+  const { t } = useI18n(),
+    menu = useMenuContext(),
+    [name, setName] = createSignal(props.shortcut.name),
+    [link, setLink] = createSignal(props.shortcut.link),
+    [icon, setIcon] = createSignal(props.shortcut.icon ?? ''),
+    [newTab, setNewTab] = createSignal(props.shortcut.newTab ?? false);
 
   createEffect(() => {
     if (props.open) {
@@ -33,19 +34,18 @@ export const ShortcutPopover: Component<ShortcutPopoverProps> = (props) => {
   });
 
   const handleSave = () => {
-    props.onSave({
-      name: name(),
-      link: link(),
-      icon: icon(),
-      newTab: newTab(),
-    });
-    menu.close();
-  };
-
-  const handleDelete = () => {
-    props.onDelete();
-    menu.close();
-  };
+      props.onSave({
+        icon: icon(),
+        link: link(),
+        name: name(),
+        newTab: newTab(),
+      });
+      menu.close();
+    },
+    handleDelete = () => {
+      props.onDelete();
+      menu.close();
+    };
 
   return (
     <ContextMenu.Content>

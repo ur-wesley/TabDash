@@ -12,11 +12,11 @@ const Footer: Component = () => {
     <footer class="w-full flex gap-4 flex-col md:flex-row justify-around items-center bg-dark-100/50 text-center py-6">
       <div>
         <a href="/privacy">
-          <span>{messages['privacy'][$lang()]}</span>
+          <span>{messages.privacy[$lang()]}</span>
         </a>
       </div>
       <div>
-        <p> {messages['source'][$lang()]}:</p>
+        <p> {messages.source[$lang()]}:</p>
         <ul class="flex flex-col gap-2">
           <li>
             <a href={messages['documentation source'].link}>

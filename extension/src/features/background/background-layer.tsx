@@ -1,4 +1,5 @@
-import { type Component, Show } from 'solid-js';
+import { Show } from 'solid-js';
+import type { Component } from 'solid-js';
 import type { BackgroundSetting } from '../../../types/settings';
 
 export interface BackgroundLayerProps {
@@ -12,27 +13,30 @@ export interface BackgroundLayerProps {
 
 export const BackgroundLayer: Component<BackgroundLayerProps> = (props) => {
   const imageSrc = () => {
-    const bg = props.background;
-    if (!bg) return '';
-    if (bg.active && bg.image?.src) {
-      return bg.image.src;
-    }
-    if (bg.static) {
-      return bg.static;
-    }
-    if (bg.image?.src) {
-      return bg.image.src;
-    }
-    return '';
-  };
-
-  const hasImage = () => Boolean(imageSrc());
-  const bgColor = () => props.background?.color || 'var(--backdrop-surface)';
-  const nextSrc = () => {
-    const bg = props.background;
-    if (!bg?.active) return '';
-    return bg.image?.next ?? '';
-  };
+      const bg = props.background;
+      if (!bg) {
+        return '';
+      }
+      if (bg.active && bg.image?.src) {
+        return bg.image.src;
+      }
+      if (bg.static) {
+        return bg.static;
+      }
+      if (bg.image?.src) {
+        return bg.image.src;
+      }
+      return '';
+    },
+    hasImage = () => Boolean(imageSrc()),
+    bgColor = () => props.background?.color || 'var(--backdrop-surface)',
+    nextSrc = () => {
+      const bg = props.background;
+      if (!bg?.active) {
+        return '';
+      }
+      return bg.image?.next ?? '';
+    };
 
   return (
     <div class="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none select-none">

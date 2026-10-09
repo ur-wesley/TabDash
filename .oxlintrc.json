@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["typescript", "unicorn", "oxc", "import", "jsdoc", "vitest"],
+  "plugins": ["typescript", "unicorn", "oxc", "import", "jsdoc"],
   "options": {
     "typeAware": true,
     "typeCheck": true

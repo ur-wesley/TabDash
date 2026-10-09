@@ -10,11 +10,11 @@ describe('Storage Key utility', () => {
   it('rejects path traversal and illegal characters', () => {
     expect(sanitizeStorageKey('../secret')).toBeNull();
     expect(sanitizeStorageKey('foo/bar')).toBeNull();
-    expect(sanitizeStorageKey('foo\\bar')).toBeNull();
+    expect(sanitizeStorageKey(String.raw`foo\bar`)).toBeNull();
     expect(sanitizeStorageKey('foo bar')).toBeNull();
     expect(sanitizeStorageKey('')).toBeNull();
     expect(sanitizeStorageKey(null)).toBeNull();
-    expect(sanitizeStorageKey(undefined)).toBeNull();
+    expect(sanitizeStorageKey()).toBeNull();
   });
 
   it('rejects keys exceeding maximum length', () => {

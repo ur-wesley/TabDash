@@ -1,4 +1,5 @@
-import { type Component, Show, createEffect, createMemo, createSignal } from 'solid-js';
+import { Show, createEffect, createMemo, createSignal } from 'solid-js';
+import type { Component } from 'solid-js';
 import { buildIconCandidates, shouldRejectIcon } from '../../api/favicon.js';
 import { fetchSiteIcons } from '../../api/siteIcon.js';
 
@@ -19,51 +20,53 @@ export interface ShortcutIconProps {
  * discoveries never swap a working icon (no flicker).
  */
 export const ShortcutIcon: Component<ShortcutIconProps> = (props) => {
-  const staticCandidates = createMemo(() => buildIconCandidates(props.link, props.configuredIcon));
-  const [discovered, setDiscovered] = createSignal<string[]>([]);
-  const [frozen, setFrozen] = createSignal<string[] | undefined>(undefined);
-  const [index, setIndex] = createSignal(0);
-
-  const candidates = createMemo(() => frozen() ?? [...discovered(), ...staticCandidates()]);
+  const staticCandidates = createMemo(() => buildIconCandidates(props.link, props.configuredIcon)),
+    [discovered, setDiscovered] = createSignal<string[]>([]),
+    [frozen, setFrozen] = createSignal<string[] | undefined>(),
+    [index, setIndex] = createSignal(0),
+    candidates = createMemo(() => frozen() ?? [...discovered(), ...staticCandidates()]);
 
   createEffect(() => {
     // Reset the waterfall whenever the link or stored icon changes and
-    // resolve page-declared icons in parallel (cached per origin).
-    // staticCandidates() already tracks link + configuredIcon, so this
-    // re-runs whenever either changes.
-    const link = props.link;
+    // Resolve page-declared icons in parallel (cached per origin).
+    // StaticCandidates() already tracks link + configuredIcon, so this
+    // Re-runs whenever either changes.
+    const { link } = props;
     staticCandidates();
     setFrozen(undefined);
     setDiscovered([]);
     setIndex(0);
     void fetchSiteIcons(link).then((urls) => {
-      if (props.link !== link || urls.length === 0) return;
+      if (props.link !== link || urls.length === 0) {
+        return;
+      }
       setDiscovered(urls);
       // Restart the waterfall at the better source, unless an image already
-      // loaded (frozen list) – never swap a working icon.
-      if (!frozen()) setIndex(0);
+      // Loaded (frozen list) – never swap a working icon.
+      if (!frozen()) {
+        setIndex(0);
+      }
     });
   });
 
-  const src = () => candidates()[index()];
-  const exhausted = () => index() >= candidates().length;
-  const letter = () => (props.name.trim().charAt(0) || '?').toUpperCase();
-
-  // Deterministic tile color from the hostname, so self-hosted apps without
-  // any fetchable icon still get a distinct, intentional-looking tile.
-  const hue = () => {
-    let host = props.name;
-    try {
-      host = new URL(props.link).hostname || props.name;
-    } catch {
-      // keep name as hash input
-    }
-    let hash = 0;
-    for (let i = 0; i < host.length; i++) {
-      hash = (hash * 31 + host.charCodeAt(i)) % 360;
-    }
-    return hash;
-  };
+  const src = () => candidates()[index()],
+    exhausted = () => index() >= candidates().length,
+    letter = () => (props.name.trim().charAt(0) || '?').toUpperCase(),
+    // Deterministic tile color from the hostname, so self-hosted apps without
+    // any fetchable icon still get a distinct, intentional-looking tile.
+    hue = () => {
+      let host = props.name;
+      try {
+        host = new URL(props.link).hostname || props.name;
+      } catch {
+        // Keep name as hash input
+      }
+      let hash = 0;
+      for (let i = 0; i < host.length; i++) {
+        hash = (hash * 31 + host.charCodeAt(i)) % 360;
+      }
+      return hash;
+    };
 
   return (
     <Show
@@ -72,10 +75,10 @@ export const ShortcutIcon: Component<ShortcutIconProps> = (props) => {
         <div
           class="grid place-items-center text-white font-semibold select-none"
           style={{
-            width: `${props.size}px`,
-            height: `${props.size}px`,
-            'font-size': `${Math.round(props.size * 0.42)}px`,
             background: `linear-gradient(135deg, hsl(${hue()}, 65%, 48%), hsl(${(hue() + 40) % 360}, 65%, 38%))`,
+            'font-size': `${Math.round(props.size * 0.42)}px`,
+            height: `${props.size}px`,
+            width: `${props.size}px`,
           }}
           aria-hidden="true"
         >
@@ -89,12 +92,12 @@ export const ShortcutIcon: Component<ShortcutIconProps> = (props) => {
         height={props.size}
         alt={`${props.name} icon`}
         class="object-contain"
-        style={{ width: `${props.size}px`, height: `${props.size}px` }}
+        style={{ height: `${props.size}px`, width: `${props.size}px` }}
         loading="lazy"
         referrerpolicy="no-referrer"
         onLoad={(e) => {
-          const current = src();
-          const img = e.currentTarget;
+          const current = src(),
+            img = e.currentTarget;
           // Too small to display without blur → treat as a miss and move on.
           if (
             current === undefined ||

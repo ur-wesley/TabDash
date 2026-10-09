@@ -1,13 +1,14 @@
 import { useStore } from '@nanostores/solid';
-import { type Component, onCleanup, onMount } from 'solid-js';
+import { onCleanup, onMount } from 'solid-js';
+import type { Component } from 'solid-js';
 import { language } from '../helper/store.js';
 import type { AvailableLanguages } from '../lang.js';
 
 const Feature: Component<Props> = (props) => {
   const $lang = useStore(language);
-  let headline: HTMLHeadingElement | undefined;
-  let desc: HTMLElement | undefined;
-  let image: HTMLImageElement | undefined;
+  let headline: HTMLHeadingElement | undefined,
+    desc: HTMLElement | undefined,
+    image: HTMLImageElement | undefined;
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -38,9 +39,15 @@ const Feature: Component<Props> = (props) => {
   });
 
   onCleanup(() => {
-    if (headline) observer.unobserve(headline);
-    if (desc) observer.unobserve(desc);
-    if (image) observer.unobserve(image);
+    if (headline) {
+      observer.unobserve(headline);
+    }
+    if (desc) {
+      observer.unobserve(desc);
+    }
+    if (image) {
+      observer.unobserve(image);
+    }
   });
   return (
     <div class="flex flex-col lg:grid grid-cols-2 grid-rows-1 gap-4 max-w-full lg:max-w-screen-xl">
@@ -96,6 +103,4 @@ interface FeatureText {
   img: string;
 }
 
-type Content = {
-  [key in AvailableLanguages]: string;
-};
+type Content = Record<AvailableLanguages, string>;
