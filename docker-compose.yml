@@ -14,8 +14,6 @@ services:
       - VITE_COMPANION_BASE=https://tabdash.wesley.fyi
       - VITE_BACKEND_BASE=https://tabdash.wesley.fyi/api
       - VITE_IS_EXTENSION=false
-    ports:
-      - '3003:3003'
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.tabdashextension.rule=Host(`online.tabdash.wesley.fyi`)'
@@ -34,8 +32,6 @@ services:
         PUBLIC_BACKEND_BASE: ${PUBLIC_BACKEND_BASE:-https://tabdash.wesley.fyi/api}
     environment:
       - PUBLIC_BACKEND_BASE=https://tabdash.wesley.fyi/api
-    ports:
-      - '3000:3000'
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.tabdashcompanion.rule=Host(`tabdash.wesley.fyi`)'
@@ -56,8 +52,6 @@ services:
       - DB_PATH=/opt/TabDash-data
     volumes:
       - tabdash-backend-data:/opt/TabDash-data
-    ports:
-      - '3005:3005'
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.tabdashbackend.rule=(Host(`tabdash.wesley.fyi`) && PathPrefix(`/api`)) || Host(`tabdashbe.wesley.fyi`)'
