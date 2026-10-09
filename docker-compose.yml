@@ -30,8 +30,10 @@ services:
       dockerfile: ./Dockerfile
       args:
         PUBLIC_BACKEND_BASE: ${PUBLIC_BACKEND_BASE:-https://tabdash.wesley.fyi/api}
+        PUBLIC_ONLINE_BASE: ${PUBLIC_ONLINE_BASE:-https://online.tabdash.wesley.fyi}
     environment:
       - PUBLIC_BACKEND_BASE=https://tabdash.wesley.fyi/api
+      - PUBLIC_ONLINE_BASE=https://online.tabdash.wesley.fyi
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.tabdashcompanion.rule=Host(`tabdash.wesley.fyi`)'

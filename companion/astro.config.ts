@@ -5,4 +5,5 @@ import Unocss from 'unocss/astro';
 export default defineConfig({
   integrations: [solidJs(), Unocss()],
   output: 'static',
+  site: 'https://tabdash.wesley.fyi',
 });

@@ -3,9 +3,9 @@ import HelpMenu from "../components/HelpMenu.astro";
 import GeneralMenu from "../components/GeneralMenu";
 import "../components/styles/index.scss";
 
-const { frontmatter } = Astro.props,
- {url} = Astro;
-const onlineVersion = `${url.protocol}//online.${url.host}`,
+const { frontmatter } = Astro.props;
+const onlineVersion =
+  import.meta.env.PUBLIC_ONLINE_BASE ?? 'https://online.tabdash.wesley.fyi',
 
  urlParts = Astro.url.toString().split("/"),
  allSettings = await Astro.glob("../pages/docs/**/*.md"),
