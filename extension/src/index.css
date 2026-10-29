@@ -73,6 +73,23 @@ code {
   color: var(--textColor);
 }
 
+.app-main-shift {
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+@media (min-width: 640px) {
+  .app-main-shift--open {
+    transform: translateX(calc(-1 * min(25rem, 90vw)));
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-main-shift--open {
+    transform: translateX(-27rem);
+  }
+}
+
 /* Kobalte Dialog / Sidebar Primitives & Keyframe Animations */
 @keyframes sidebarOverlayShow {
   from {
@@ -229,6 +246,10 @@ code {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .app-main-shift {
+    transition-duration: 1ms;
+  }
+
   .sidebar-overlay[data-expanded],
   .sidebar-overlay[data-closed],
   .sidebar-content[data-expanded],

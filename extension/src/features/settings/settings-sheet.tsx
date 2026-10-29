@@ -40,6 +40,7 @@ const languageLabels: Record<AvailableLanguages, string> = {
 
 interface SettingsSheetProps {
   readonly onCustomizeLayout?: () => void;
+  readonly onOpenChange?: (open: boolean) => void;
 }
 
 const SettingsSheet: Component<SettingsSheetProps> = (props) => {
@@ -59,7 +60,13 @@ const SettingsSheet: Component<SettingsSheetProps> = (props) => {
     shortcutStyleOptions = createMemo<readonly SelectOption[]>(() => getShortcutStyleOptions(t));
 
   return (
-    <Sheet open={isOpen()} onOpenChange={setIsOpen}>
+    <Sheet
+      open={isOpen()}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        props.onOpenChange?.(open);
+      }}
+    >
       <Sheet.Trigger
         class="z-40 widget fixed right-3 bottom-3 p-2.5 rounded-xl border-none cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-blue-500 shadow-lg hover:scale-105 active:scale-95 transition-all bg-zinc-900/80 backdrop-blur-md text-zinc-200"
         aria-label={t('settings')}

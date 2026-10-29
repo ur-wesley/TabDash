@@ -22,6 +22,8 @@
     "bump:major": "bumpp --recursive major --yes",
     "sync-versions": "bun scripts/sync-versions.ts",
     "bundle:store": "bun scripts/bundle-store.ts",
+    "build:firefox": "bun scripts/build-firefox-addon.ts",
+    "package:amo-source": "bun scripts/package-amo-source.ts",
     "dev": "bun run --filter \"*\" dev",
     "dev:extension": "bun run --filter @ur-wesley/tabdash-extension dev",
     "dev:companion": "bun run --filter @ur-wesley/tabdash-companion dev",

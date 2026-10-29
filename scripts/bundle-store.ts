@@ -13,6 +13,7 @@ const run = (command: string, cwd: string): void => {
 };
 
 run('bun run --filter @ur-wesley/tabdash-extension build', rootDir);
+run('bun scripts/verify-extension-icon-css.ts', rootDir);
 
 await mkdir(bundleDir, { recursive: true });
 await rm(bundleDir, { recursive: true, force: true });

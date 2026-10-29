@@ -20,7 +20,8 @@ import { I18nProvider } from './i18n';
 const [currentLocale, setCurrentLocale] = createSignal<AvailableLanguages>('en'),
   Dashboard: Component = () => {
     const [state] = useSettingsContext(),
-      [isEditingLayout, setIsEditingLayout] = createSignal(false);
+      [isEditingLayout, setIsEditingLayout] = createSignal(false),
+      [settingsOpen, setSettingsOpen] = createSignal(false);
 
     useDashboardSync();
     usePerWidgetAutoContrast();
@@ -29,45 +30,50 @@ const [currentLocale, setCurrentLocale] = createSignal<AvailableLanguages>('en')
 
     return (
       <div class="h-screen w-screen overflow-hidden relative">
-        <BackgroundLayer
-          background={state.background}
-          backdrop={state.background?.backdropActive ? state.background.backdrop : undefined}
-        />
-
         <div
-          id="content"
-          class="h-full w-full overflow-hidden relative z-10 transition-transform duration-300"
+          class="app-main-shift h-full w-full relative"
+          classList={{ 'app-main-shift--open': settingsOpen() }}
         >
-          <CanvasContainer
-            mode={state.layout?.mode ?? 'canvas'}
+          <BackgroundLayer
+            background={state.background}
+            backdrop={state.background?.backdropActive ? state.background.backdrop : undefined}
+          />
+
+          <div id="content" class="h-full w-full overflow-hidden relative z-10">
+            <CanvasContainer
+              mode={state.layout?.mode ?? 'canvas'}
+              isEditing={isEditingLayout()}
+              snapToGrid={state.layout?.snapToGrid ?? true}
+              gridSize={state.layout?.gridSize ?? 5}
+              positions={state.layout?.canvasPositions ?? defaultPositions()}
+              flowOrder={state.layout?.flowOrder ?? defaultFlowOrder()}
+              widgets={widgetsList()}
+              onPositionChange={layout.handlePositionChange}
+              onMoveFlowOrder={layout.handleMoveFlowOrder}
+            />
+          </div>
+
+          <CanvasToolbar
             isEditing={isEditingLayout()}
             snapToGrid={state.layout?.snapToGrid ?? true}
-            gridSize={state.layout?.gridSize ?? 5}
-            positions={state.layout?.canvasPositions ?? defaultPositions()}
-            flowOrder={state.layout?.flowOrder ?? defaultFlowOrder()}
-            widgets={widgetsList()}
-            onPositionChange={layout.handlePositionChange}
-            onMoveFlowOrder={layout.handleMoveFlowOrder}
+            mode={state.layout?.mode ?? 'canvas'}
+            onToggleEditing={() => setIsEditingLayout((prev) => !prev)}
+            onToggleSnap={layout.handleToggleSnap}
+            onToggleMode={layout.handleToggleMode}
+            onReset={layout.handleReset}
           />
+
+          <Show when={state.background?.active && state.background?.image?.author}>
+            <AuthorCredit information={state.background.image} />
+          </Show>
+
+          <SettingsSheet
+            onCustomizeLayout={() => setIsEditingLayout(true)}
+            onOpenChange={setSettingsOpen}
+          />
+
+          <Toaster />
         </div>
-
-        <CanvasToolbar
-          isEditing={isEditingLayout()}
-          snapToGrid={state.layout?.snapToGrid ?? true}
-          mode={state.layout?.mode ?? 'canvas'}
-          onToggleEditing={() => setIsEditingLayout((prev) => !prev)}
-          onToggleSnap={layout.handleToggleSnap}
-          onToggleMode={layout.handleToggleMode}
-          onReset={layout.handleReset}
-        />
-
-        <Show when={state.background?.active && state.background?.image?.author}>
-          <AuthorCredit information={state.background.image} />
-        </Show>
-
-        <SettingsSheet onCustomizeLayout={() => setIsEditingLayout(true)} />
-
-        <Toaster />
       </div>
     );
   },

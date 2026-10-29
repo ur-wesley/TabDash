@@ -1,11 +1,11 @@
 import { copyFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
-import { presetIcons } from '@unocss/preset-icons';
 import { presetUno } from '@unocss/preset-uno';
 import Unocss from 'unocss/vite';
 import { defineConfig, loadEnv } from 'vite';
 import solidPlugin from 'vite-plugin-solid';
+import { presetMdiIconsSync } from './mdi-icons-preset';
 import pkg from './package.json';
 import manifest from './public/manifest.json';
 
@@ -92,16 +92,28 @@ const buildManifest = (): Promise<void> =>
     }),
   ).then(() => undefined);
 
-const syncBrowserManifestsToDist = (): Promise<void> =>
-  Promise.all(
-    STORE_BROWSERS.map((browser) =>
+const distManifestTarget = (): (typeof STORE_BROWSERS)[number] => {
+  const target = process.env.TABDASH_MANIFEST;
+  if (target === 'firefox' || target === 'edge') {
+    return target;
+  }
+  return 'chrome';
+};
+
+const syncBrowserManifestsToDist = (): Promise<void> => {
+  const active = distManifestTarget();
+  return Promise.all([
+    ...STORE_BROWSERS.map((browser) =>
       copyFile(`./public/manifest.${browser}.json`, `./dist/manifest.${browser}.json`),
     ),
-  ).then(() => undefined);
+    copyFile(`./public/manifest.${active}.json`, './dist/manifest.json'),
+  ]).then(() => undefined);
+};
 
 export default defineConfig(({ command, mode }) => {
   const isBuild = command === 'build';
   return {
+    base: './',
     build: {
       minify: false,
       target: 'esnext',
@@ -124,16 +136,7 @@ export default defineConfig(({ command, mode }) => {
         : []),
       solidPlugin(),
       Unocss({
-        presets: [
-          presetUno(),
-          presetIcons({
-            extraProperties: {
-              display: 'inline-block',
-              'vertical-align': 'middle',
-            },
-            prefix: 'i-',
-          }),
-        ],
+        presets: [presetUno(), presetMdiIconsSync()],
         safelist: [
           'i-mdi-weather-sunny',
           'i-mdi-weather-night',

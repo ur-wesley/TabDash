@@ -6,8 +6,9 @@
   "scripts": {
     "start": "vite --host",
     "dev": "vite --host",
-    "dev:ext": "vite build && web-ext run -s ./dist/",
-    "build": "vite build",
+    "dev:ext": "bun run build:firefox && web-ext run -s ./dist/",
+    "build": "bun ../scripts/run-extension-build.ts chrome",
+    "build:firefox": "bun ../scripts/run-extension-build.ts firefox",
     "serve": "vite preview --host",
     "bundle": "vite build && web-ext build -s ./dist/ -a ./bundle"
   },
