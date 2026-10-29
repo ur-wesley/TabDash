@@ -6,13 +6,12 @@ import { DEFAULT_WIDGET_BACKGROUND, ensureWidgetContrast } from '../../lib/color
 import { useSettingsContext } from '../settings/settings-context';
 import { AUTHOR_CREDIT_TEXT_SHADOW, withUnsplashAttribution } from './attribution';
 
-export const AUTHOR_CREDIT_CLASS =
-  'absolute bottom-0 left-0 px-2 py-0.5 widget text-[10px] md:text-[11px] leading-tight rounded-none rounded-tr-md z-20 flex items-center gap-1 select-none';
+const AUTHOR_CREDIT_CLASS =
+    'absolute bottom-0 left-0 px-2 py-0.5 widget text-[10px] md:text-[11px] leading-tight rounded-none rounded-tr-md z-20 flex items-center gap-1 select-none',
+  AUTHOR_CREDIT_LINK_CLASS =
+    'opacity-100 font-medium underline-offset-2 hover:underline transition-opacity';
 
-const AUTHOR_CREDIT_LINK_CLASS =
-  'opacity-100 font-medium underline-offset-2 hover:underline transition-opacity';
-
-export function getAuthorCreditContrast(
+function getAuthorCreditContrast(
   background?: string,
   preferredTextColor?: string,
 ): { color: string; background: string } {
@@ -27,7 +26,7 @@ export function getAuthorCreditContrast(
   };
 }
 
-export interface AuthorCreditProps {
+interface AuthorCreditProps {
   information?: BackgroundData;
   /**
    * Optional individual background color override.
@@ -53,7 +52,7 @@ function resolveThemeKey(activeTheme?: string): 'light' | 'dark' {
   return 'light';
 }
 
-export const AuthorCredit: Component<AuthorCreditProps> = (props) => {
+const AuthorCredit: Component<AuthorCreditProps> = (props) => {
   const { t } = useI18n();
 
   let contextSettings: Setting | undefined;
@@ -115,7 +114,7 @@ export const AuthorCredit: Component<AuthorCreditProps> = (props) => {
         target="_blank"
         rel="noopener noreferrer"
       >
-        {props.information?.author || t('unsplash')}
+        {props.information?.author ?? t('unsplash')}
       </a>
       <span class="opacity-100">{t('on unsplash')}</span>
       <a
@@ -129,3 +128,5 @@ export const AuthorCredit: Component<AuthorCreditProps> = (props) => {
     </span>
   );
 };
+
+export { AUTHOR_CREDIT_CLASS, AuthorCredit, getAuthorCreditContrast, type AuthorCreditProps };

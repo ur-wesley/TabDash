@@ -2,17 +2,22 @@ import { Database } from 'bun:sqlite';
 import { mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 
-export function createDatabase(dbPath?: string): Database {
+const BUSY_TIMEOUT_MS = 5000,
+  DEFAULT_DB_FILENAME = 'tabdash.sqlite',
+  LEGACY_DB_SUFFIX = '.db',
+  MEMORY_DB_PATH = ':memory:',
+  SQLITE_FILE_SUFFIX = '.sqlite';
+
+export const createDatabase = (dbPath?: string): Database => {
   const targetPath = dbPath ?? process.env.DB_PATH ?? './data/tabdash.sqlite';
 
   let db: Database;
-  if (targetPath === ':memory:') {
-    db = new Database(':memory:');
+  if (targetPath === MEMORY_DB_PATH) {
+    db = new Database(MEMORY_DB_PATH);
   } else {
-    // If targetPath points to a directory, append tabdash.sqlite
     let filePath = resolve(targetPath);
-    if (!filePath.endsWith('.sqlite') && !filePath.endsWith('.db')) {
-      filePath = resolve(filePath, 'tabdash.sqlite');
+    if (!filePath.endsWith(SQLITE_FILE_SUFFIX) && !filePath.endsWith(LEGACY_DB_SUFFIX)) {
+      filePath = resolve(filePath, DEFAULT_DB_FILENAME);
     }
     mkdirSync(dirname(filePath), { recursive: true });
     db = new Database(filePath);
@@ -22,7 +27,7 @@ export function createDatabase(dbPath?: string): Database {
     PRAGMA journal_mode = WAL;
     PRAGMA synchronous = NORMAL;
     PRAGMA foreign_keys = ON;
-    PRAGMA busy_timeout = 5000;
+    PRAGMA busy_timeout = ${String(BUSY_TIMEOUT_MS)};
     PRAGMA auto_vacuum = INCREMENTAL;
 
     CREATE TABLE IF NOT EXISTS settings (
@@ -43,4 +48,4 @@ export function createDatabase(dbPath?: string): Database {
   `);
 
   return db;
-}
+};

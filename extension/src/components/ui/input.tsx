@@ -2,14 +2,14 @@ import { Show, createUniqueId, splitProps } from 'solid-js';
 import type { ComponentProps } from 'solid-js';
 import { cn } from '../../lib/utils';
 
-export interface InputProps extends ComponentProps<'input'> {
+interface InputProps extends ComponentProps<'input'> {
   label?: string;
   error?: string;
   helperText?: string;
   containerClass?: string;
 }
 
-export function Input(props: InputProps) {
+function Input(props: InputProps) {
   const [local, others] = splitProps(props, [
       'class',
       'id',
@@ -49,3 +49,5 @@ export function Input(props: InputProps) {
     </div>
   );
 }
+
+export { Input, type InputProps };

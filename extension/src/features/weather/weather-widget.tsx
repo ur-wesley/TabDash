@@ -5,26 +5,26 @@ import type { WeatherData } from '../../services/weather-service';
 import { useI18n } from '../../i18n';
 import { owmIconToMdi } from './weather-icon';
 
-export interface WeatherWidgetProps {
+interface WeatherWidgetProps {
   setting?: WeatherSetting;
   data?: WeatherData | null;
   loading?: boolean;
   error?: string | null;
 }
 
-export const WeatherWidget: Component<WeatherWidgetProps> = (props) => {
+const WeatherWidget: Component<WeatherWidgetProps> = (props) => {
   const { t } = useI18n(),
     weather = () => props.data?.weather?.[0],
     unitSymbol = () => (props.setting?.unit === 'imperial' ? '°F' : '°C'),
     windUnit = () => (props.setting?.unit === 'imperial' ? 'mph' : 'm/s'),
     hasExtraMetrics = () =>
       Boolean(
-        (props.setting?.showFeelsLike && props.data?.overview?.feels_like != null) ||
+        (props.setting?.showFeelsLike && props.data?.overview?.feels_like !== undefined) ||
         (props.setting?.showMinMax &&
-          props.data?.overview?.temp_min != null &&
-          props.data?.overview?.temp_max != null) ||
-        (props.setting?.showHumidity && props.data?.overview?.humidity != null) ||
-        (props.setting?.showWind && props.data?.wind?.speed != null),
+          props.data?.overview?.temp_min !== undefined &&
+          props.data?.overview?.temp_max !== undefined) ||
+        (props.setting?.showHumidity && props.data?.overview?.humidity !== undefined) ||
+        (props.setting?.showWind && props.data?.wind?.speed !== undefined),
       );
 
   return (
@@ -95,7 +95,9 @@ export const WeatherWidget: Component<WeatherWidgetProps> = (props) => {
             class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 mt-2 text-xs opacity-80"
             style={{ 'font-weight': 'var(--weight)' }}
           >
-            <Show when={props.setting?.showFeelsLike && props.data?.overview?.feels_like != null}>
+            <Show
+              when={props.setting?.showFeelsLike && props.data?.overview?.feels_like !== undefined}
+            >
               <span class="flex items-center gap-1">
                 <span class="opacity-75">{t('feels')}</span>
                 <span>{Math.round(props.data?.overview?.feels_like ?? 0)}°</span>
@@ -105,8 +107,8 @@ export const WeatherWidget: Component<WeatherWidgetProps> = (props) => {
             <Show
               when={
                 props.setting?.showMinMax &&
-                props.data?.overview?.temp_min != null &&
-                props.data?.overview?.temp_max != null
+                props.data?.overview?.temp_min !== undefined &&
+                props.data?.overview?.temp_max !== undefined
               }
             >
               <span class="flex items-center gap-1">
@@ -115,14 +117,16 @@ export const WeatherWidget: Component<WeatherWidgetProps> = (props) => {
               </span>
             </Show>
 
-            <Show when={props.setting?.showHumidity && props.data?.overview?.humidity != null}>
+            <Show
+              when={props.setting?.showHumidity && props.data?.overview?.humidity !== undefined}
+            >
               <span class="flex items-center gap-1">
                 <span class="i-mdi-water-percent text-sm" aria-hidden="true" />
                 <span>{props.data?.overview?.humidity}%</span>
               </span>
             </Show>
 
-            <Show when={props.setting?.showWind && props.data?.wind?.speed != null}>
+            <Show when={props.setting?.showWind && props.data?.wind?.speed !== undefined}>
               <span class="flex items-center gap-1">
                 <span class="i-mdi-weather-windy text-sm" aria-hidden="true" />
                 <span>
@@ -136,3 +140,5 @@ export const WeatherWidget: Component<WeatherWidgetProps> = (props) => {
     </div>
   );
 };
+
+export { type WeatherWidgetProps, WeatherWidget };

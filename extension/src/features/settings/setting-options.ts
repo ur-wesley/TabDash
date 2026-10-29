@@ -1,9 +1,9 @@
 import type { SelectOption } from '../../components/ui/select';
 import type { MessageKey } from '../../lang';
 
-export type Translate = (key: MessageKey) => string;
+type Translate = (key: MessageKey) => string;
 
-export const SEARCH_ENGINE_OPTIONS: readonly SelectOption[] = [
+const SEARCH_ENGINE_OPTIONS: readonly SelectOption[] = [
   { name: 'Google', value: 'google' },
   { name: 'Bing', value: 'bing' },
   { name: 'DuckDuckGo', value: 'duckduckgo' },
@@ -12,14 +12,14 @@ export const SEARCH_ENGINE_OPTIONS: readonly SelectOption[] = [
   { name: 'Yahoo', value: 'yahoo' },
 ];
 
-export function weatherUnitOptions(t: Translate): readonly SelectOption[] {
+function weatherUnitOptions(t: Translate): readonly SelectOption[] {
   return [
     { name: `${t('metric')} (°C)`, value: 'metric' },
     { name: `${t('imperial')} (°F)`, value: 'imperial' },
   ];
 }
 
-export function shortcutStyleOptions(t: Translate): readonly SelectOption[] {
+function shortcutStyleOptions(t: Translate): readonly SelectOption[] {
   return [
     { name: t('small'), value: 'small' },
     { name: t('medium'), value: 'medium' },
@@ -27,3 +27,5 @@ export function shortcutStyleOptions(t: Translate): readonly SelectOption[] {
     { name: t('text only'), value: 'text' },
   ];
 }
+
+export { SEARCH_ENGINE_OPTIONS, shortcutStyleOptions, type Translate, weatherUnitOptions };

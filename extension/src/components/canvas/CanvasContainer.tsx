@@ -1,17 +1,17 @@
-import type { Component, JSX } from 'solid-js';
 import { For, Show, createSignal } from 'solid-js';
+import type { Component, JSX } from 'solid-js';
 import type { LayoutMode, WidgetCanvasPosition, WidgetId } from '../../../types/settings.js';
 import { CanvasItem } from './CanvasItem.jsx';
 import type { AlignmentGuide } from './canvasUtils.js';
 
-export interface CanvasWidgetConfig {
+interface CanvasWidgetConfig {
   id: WidgetId;
   label: string;
   visible: boolean;
   content: JSX.Element;
 }
 
-export interface CanvasContainerProps {
+interface CanvasContainerProps {
   readonly mode: LayoutMode;
   readonly isEditing: boolean;
   readonly snapToGrid: boolean;
@@ -23,7 +23,7 @@ export interface CanvasContainerProps {
   readonly onMoveFlowOrder?: (id: WidgetId, direction: 'up' | 'down') => void;
 }
 
-export const CanvasContainer: Component<CanvasContainerProps> = (props) => {
+const CanvasContainer: Component<CanvasContainerProps> = (props) => {
   const [activeGuides, setActiveGuides] = createSignal<readonly AlignmentGuide[]>([]),
     // Ordered widgets for flow mode
     orderedWidgets = () => {
@@ -141,3 +141,5 @@ export const CanvasContainer: Component<CanvasContainerProps> = (props) => {
     </div>
   );
 };
+
+export { CanvasContainer, type CanvasContainerProps, type CanvasWidgetConfig };

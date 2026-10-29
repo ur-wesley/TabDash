@@ -8,7 +8,7 @@ import {
 } from '../layout/layout-defaults';
 import type { FlowDirection } from '../layout/layout-defaults';
 
-export interface DashboardLayoutActions {
+interface DashboardLayoutActions {
   readonly handlePositionChange: (id: WidgetId, pos: WidgetCanvasPosition) => void;
   readonly handleToggleMode: () => void;
   readonly handleToggleSnap: () => void;
@@ -16,7 +16,7 @@ export interface DashboardLayoutActions {
   readonly handleMoveFlowOrder: (id: WidgetId, direction: FlowDirection) => void;
 }
 
-export function useDashboardLayout(): DashboardLayoutActions {
+function useDashboardLayout(): DashboardLayoutActions {
   const [state, actions] = useSettingsContext(),
     handlePositionChange = (id: WidgetId, pos: WidgetCanvasPosition) => {
       actions.updateLayout({
@@ -50,3 +50,5 @@ export function useDashboardLayout(): DashboardLayoutActions {
     handleToggleSnap,
   };
 }
+
+export { type DashboardLayoutActions, useDashboardLayout };

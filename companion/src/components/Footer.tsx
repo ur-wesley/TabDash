@@ -1,8 +1,8 @@
-import type { Component } from 'solid-js';
-import { messages } from '../lang.js';
-import { language } from '../helper/store.js';
 import { useStore } from '@nanostores/solid';
+import type { Component } from 'solid-js';
 import { version } from '../../package.json';
+import { language } from '../helper/store.js';
+import { messages } from '../lang.js';
 
 import './styles/footer.scss';
 

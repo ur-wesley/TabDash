@@ -1,8 +1,9 @@
 import { ResultAsync, ok } from '@ur-wesley/ts-prelude/result';
 import type { WeatherUnit } from '../../types/settings';
+import { isPlainObject, readFiniteNumber, readString } from '../lib/type-guards';
 import { StorageService } from './storage-service';
 
-export interface WeatherOverview {
+interface WeatherOverview {
   humidity: number;
   pressure: number;
   temp: number;
@@ -11,33 +12,33 @@ export interface WeatherOverview {
   feels_like?: number;
 }
 
-export interface Wind {
+interface Wind {
   speed: number;
   deg: number;
 }
 
-export interface WeatherDetail {
+interface WeatherDetail {
   main: string;
   description: string;
   icon: string;
 }
 
-export interface Clouds {
+interface Clouds {
   all: number;
 }
 
-export interface WeatherAdditional {
+interface WeatherAdditional {
   country: string;
   sunrise: number;
   sunset: number;
 }
 
-export interface Location {
+interface Location {
   latitude: number;
   longitude: number;
 }
 
-export interface WeatherDataParams {
+interface WeatherDataParams {
   city?: string;
   overview: WeatherOverview;
   wind: Wind;
@@ -46,7 +47,107 @@ export interface WeatherDataParams {
   additional: WeatherAdditional;
 }
 
-export class WeatherData {
+const CACHE_MINUTES = 10,
+  HTTP_UNAUTHORIZED = 401,
+  MS_PER_SECOND = 1000,
+  SECONDS_PER_MINUTE = 60,
+  CACHE_TTL_MS = MS_PER_SECOND * SECONDS_PER_MINUTE * CACHE_MINUTES,
+  GEOLOCATION_MAX_AGE_MS = 600_000,
+  GEOLOCATION_TIMEOUT_MS = 10_000,
+  parseWeatherOverview = (value: unknown): WeatherOverview => {
+    if (!isPlainObject(value)) {
+      throw new Error('Invalid weather main');
+    }
+    const temp = readFiniteNumber(value.temp),
+      humidity = readFiniteNumber(value.humidity),
+      pressure = readFiniteNumber(value.pressure),
+      tempMax = readFiniteNumber(value.temp_max),
+      tempMin = readFiniteNumber(value.temp_min);
+    if (
+      temp === undefined ||
+      humidity === undefined ||
+      pressure === undefined ||
+      tempMax === undefined ||
+      tempMin === undefined
+    ) {
+      throw new Error('Invalid weather main');
+    }
+    const feelsLike = readFiniteNumber(value.feels_like);
+    if (feelsLike === undefined) {
+      return { humidity, pressure, temp, temp_max: tempMax, temp_min: tempMin };
+    }
+    return {
+      feels_like: feelsLike,
+      humidity,
+      pressure,
+      temp,
+      temp_max: tempMax,
+      temp_min: tempMin,
+    };
+  },
+  parseWind = (value: unknown): Wind => {
+    if (!isPlainObject(value)) {
+      throw new Error('Invalid weather wind');
+    }
+    const speed = readFiniteNumber(value.speed),
+      deg = readFiniteNumber(value.deg);
+    if (speed === undefined || deg === undefined) {
+      throw new Error('Invalid weather wind');
+    }
+    return { deg, speed };
+  },
+  parseClouds = (value: unknown): Clouds => {
+    if (!isPlainObject(value)) {
+      throw new Error('Invalid weather clouds');
+    }
+    const all = readFiniteNumber(value.all);
+    if (all === undefined) {
+      throw new Error('Invalid weather clouds');
+    }
+    return { all };
+  },
+  parseWeatherAdditional = (value: unknown): WeatherAdditional => {
+    if (!isPlainObject(value)) {
+      throw new Error('Invalid weather sys');
+    }
+    const country = readString(value.country),
+      sunrise = readFiniteNumber(value.sunrise),
+      sunset = readFiniteNumber(value.sunset);
+    if (country === undefined || sunrise === undefined || sunset === undefined) {
+      throw new Error('Invalid weather sys');
+    }
+    return { country, sunrise, sunset };
+  },
+  parseWeatherDetail = (value: unknown): WeatherDetail | null => {
+    if (!isPlainObject(value)) {
+      return null;
+    }
+    const main = readString(value.main),
+      description = readString(value.description),
+      icon = readString(value.icon);
+    if (main === undefined || description === undefined || icon === undefined) {
+      return null;
+    }
+    return { description, icon, main };
+  },
+  parseWeatherDetails = (value: unknown): WeatherDetail[] => {
+    if (!Array.isArray(value)) {
+      throw new TypeError('Invalid weather array');
+    }
+    const details: WeatherDetail[] = [];
+    for (const entry of value) {
+      const detail = parseWeatherDetail(entry);
+      if (detail !== null) {
+        details.push(detail);
+      }
+    }
+    if (details.length === 0) {
+      throw new Error('Invalid weather array');
+    }
+    return details;
+  };
+
+class WeatherData {
   public city?: string;
   public overview: WeatherOverview;
   public wind: Wind;
@@ -54,7 +155,7 @@ export class WeatherData {
   public clouds: Clouds;
   public additional: WeatherAdditional;
 
-  constructor(params: WeatherDataParams) {
+  public constructor(params: WeatherDataParams) {
     this.city = params.city;
     this.overview = params.overview;
     this.wind = params.wind;
@@ -64,37 +165,66 @@ export class WeatherData {
   }
 
   public static fromObject(json: Record<string, unknown>): WeatherData {
-    if (!json || typeof json !== 'object' || !json.main || !json.weather) {
+    if (!isPlainObject(json.main) || !Array.isArray(json.weather)) {
       throw new Error('Invalid weather payload');
     }
+    const city = readString(json.name);
     return new WeatherData({
-      additional: json.sys as WeatherAdditional,
-      city: typeof json.name === 'string' ? json.name : undefined,
-      clouds: json.clouds as Clouds,
-      overview: json.main as WeatherOverview,
-      weather: json.weather as WeatherDetail[],
-      wind: json.wind as Wind,
+      additional: parseWeatherAdditional(json.sys),
+      city,
+      clouds: parseClouds(json.clouds),
+      overview: parseWeatherOverview(json.main),
+      weather: parseWeatherDetails(json.weather),
+      wind: parseWind(json.wind),
     });
+  }
+
+  public static fromStored(value: Record<string, unknown>): WeatherData | null {
+    if (isPlainObject(value.main) && Array.isArray(value.weather)) {
+      try {
+        return WeatherData.fromObject(value);
+      } catch {
+        return null;
+      }
+    }
+    if (!isPlainObject(value.overview) || !Array.isArray(value.weather)) {
+      return null;
+    }
+    try {
+      return new WeatherData({
+        additional: parseWeatherAdditional(value.additional),
+        city: readString(value.city),
+        clouds: parseClouds(value.clouds),
+        overview: parseWeatherOverview(value.overview),
+        weather: parseWeatherDetails(value.weather),
+        wind: parseWind(value.wind),
+      });
+    } catch {
+      return null;
+    }
   }
 }
 
-export function normalizeWeatherLang(lang?: string | null): string {
-  if (!lang || typeof lang !== 'string') {
+const normalizeWeatherLang = (lang?: string | null): string => {
+  if (lang === null || lang === undefined || typeof lang !== 'string' || lang.trim() === '') {
     return 'en';
   }
   const base = lang.trim().toLowerCase().split(/[-_]/)[0];
-  return base || 'en';
-}
+  if (base === undefined || base === '') {
+    return 'en';
+  }
+  return base;
+};
 
-export class WeatherService {
-  private readonly basePath: string = 'https://api.openweathermap.org/data/2.5/weather';
-  private readonly appID: string =
-    import.meta.env?.VITE_OPENWEATHER_API_KEY || import.meta.env?.OPENWEATHER_API_KEY || '';
+class WeatherService {
+  private readonly basePath = 'https://api.openweathermap.org/data/2.5/weather';
+  private readonly appID =
+    import.meta.env.VITE_OPENWEATHER_API_KEY ?? import.meta.env.OPENWEATHER_API_KEY ?? '';
   public unit: WeatherUnit;
   public lang: string;
   private readonly storage: StorageService;
 
-  constructor(unit: WeatherUnit, lang: string, storage?: StorageService) {
+  public constructor(unit: WeatherUnit, lang: string, storage?: StorageService) {
     this.unit = unit;
     this.lang = normalizeWeatherLang(lang);
     this.storage = storage ?? new StorageService(false);
@@ -115,15 +245,14 @@ export class WeatherService {
   }
 
   public hasApiKey(): boolean {
-    return Boolean(
-      this.appID && this.appID.trim() !== '' && this.appID !== 'VITE_OPENWEATHER_API_KEY',
-    );
+    const trimmed = this.appID.trim();
+    return trimmed !== '' && trimmed !== 'VITE_OPENWEATHER_API_KEY';
   }
 
   public getGeolocation(): ResultAsync<Location, Error> {
     return ResultAsync.fromPromise(
       new Promise<Location>((resolve, reject) => {
-        if (typeof navigator === 'undefined' || !navigator.geolocation) {
+        if (typeof navigator === 'undefined' || navigator.geolocation === undefined) {
           reject(new Error('Geolocation is not supported'));
           return;
         }
@@ -135,12 +264,12 @@ export class WeatherService {
             });
           },
           (error) => {
-            reject(new Error(error.message || 'Geolocation error'));
+            reject(new Error(error.message === '' ? 'Geolocation error' : error.message));
           },
-          { maximumAge: 600000, timeout: 10000 },
+          { maximumAge: GEOLOCATION_MAX_AGE_MS, timeout: GEOLOCATION_TIMEOUT_MS },
         );
       }),
-      (e) => (e instanceof Error ? e : new Error(String(e))),
+      (error) => (error instanceof Error ? error : new Error(String(error))),
     );
   }
 
@@ -148,7 +277,7 @@ export class WeatherService {
     if (!this.hasApiKey()) {
       return ResultAsync.fromPromise(
         Promise.reject(new Error('Weather API key is not configured')),
-        (e) => (e instanceof Error ? e : new Error(String(e))),
+        (error) => (error instanceof Error ? error : new Error(String(error))),
       );
     }
 
@@ -158,17 +287,20 @@ export class WeatherService {
           const url = this.buildUrl(latitude, longitude),
             response = await fetch(url);
           if (!response.ok) {
-            if (response.status === 401) {
+            if (response.status === HTTP_UNAUTHORIZED) {
               throw new Error(
                 'Weather fetch failed: 401 Unauthorized (Invalid or unactivated OpenWeather API key)',
               );
             }
             throw new Error(`Weather fetch failed: ${response.status} ${response.statusText}`);
           }
-          const data = await response.json();
+          const data: unknown = await response.json();
+          if (!isPlainObject(data)) {
+            throw new Error('Invalid weather response');
+          }
           return WeatherData.fromObject(data);
         })(),
-        (e) => (e instanceof Error ? e : new Error(String(e))),
+        (error) => (error instanceof Error ? error : new Error(String(error))),
       ),
     );
   }
@@ -176,21 +308,24 @@ export class WeatherService {
   public getWeather(): ResultAsync<WeatherData | null, Error> {
     return this.storage
       .get<{ timestamp?: number }>('timestamp')
-      .andThen((t) => {
-        const timestamp = t?.timestamp ? t.timestamp : 0,
-          isFresh = Date.now() < timestamp + 1000 * 60 * 10;
+      .andThen((timestampRow) => {
+        const timestamp =
+            timestampRow !== null && timestampRow.timestamp !== undefined
+              ? timestampRow.timestamp
+              : 0,
+          isFresh = Date.now() < timestamp + CACHE_TTL_MS;
         if (isFresh) {
-          return this.storage.get<{ weather?: WeatherData }>('weather').map((w) => {
-            if (!w?.weather) {
+          return this.storage.get<{ weather?: WeatherData }>('weather').map((weatherRow) => {
+            if (weatherRow === null || weatherRow.weather === undefined) {
               return null;
             }
-            return w.weather;
+            return weatherRow.weather;
           });
         }
         return ok(null);
       })
       .andThen((cached) => {
-        if (cached) {
+        if (cached !== null) {
           return ok(cached);
         }
         return this.refreshWeather();
@@ -198,28 +333,46 @@ export class WeatherService {
   }
 
   public getCachedWeather(): ResultAsync<WeatherData | null, Error> {
-    return this.storage.get<{ weather?: WeatherData }>('weather').map((w) => {
-      if (!w?.weather) {
+    return this.storage
+      .get<{ weather?: WeatherData | Record<string, unknown> }>('weather')
+      .map((weatherRow) => {
+        if (weatherRow === null || weatherRow.weather === undefined) {
+          return null;
+        }
+        const stored = weatherRow.weather;
+        if (stored instanceof WeatherData) {
+          return stored;
+        }
+        if (isPlainObject(stored)) {
+          return WeatherData.fromStored(stored);
+        }
         return null;
-      }
-      try {
-        return WeatherData.fromObject(w.weather as unknown as Record<string, unknown>);
-      } catch {
-        return w.weather;
-      }
-    });
+      });
   }
 
   public refreshWeather(): ResultAsync<WeatherData | null, Error> {
     return this.fetchWeather()
-      .andThen((weather) =>
-        this.storage
-          .set({ timestamp: Date.now(), weather })
-          .map(() => weather as WeatherData | null),
-      )
+      .andThen((weather) => this.storage.set({ timestamp: Date.now(), weather }).map(() => weather))
       .orElse(() =>
-        // On error, try returning cached weather if present
-        this.storage.get<{ weather?: WeatherData }>('weather').map((w) => w?.weather ?? null),
+        this.storage.get<{ weather?: WeatherData }>('weather').map((weatherRow) => {
+          if (weatherRow === null || weatherRow.weather === undefined) {
+            return null;
+          }
+          return weatherRow.weather;
+        }),
       );
   }
 }
+
+export {
+  WeatherData,
+  WeatherService,
+  normalizeWeatherLang,
+  type Clouds,
+  type Location,
+  type WeatherAdditional,
+  type WeatherDataParams,
+  type WeatherDetail,
+  type WeatherOverview,
+  type Wind,
+};

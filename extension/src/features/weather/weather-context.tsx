@@ -4,22 +4,22 @@ import type { WeatherUnit } from '../../../types/settings';
 import { WeatherService, normalizeWeatherLang } from '../../services/weather-service';
 import type { WeatherData } from '../../services/weather-service';
 
-export interface WeatherState {
+interface WeatherState {
   data: WeatherData | null;
   status: 'idle' | 'loading' | 'success' | 'error';
   error: string | null;
 }
 
-export interface WeatherActions {
+interface WeatherActions {
   refreshWeather: () => Promise<WeatherData | null>;
   updateParams: (unit: WeatherUnit, lang: string) => boolean;
 }
 
-export type WeatherContextValue = readonly [state: () => WeatherState, actions: WeatherActions];
+type WeatherContextValue = readonly [state: () => WeatherState, actions: WeatherActions];
 
 const WeatherContext = createContext<WeatherContextValue>();
 
-export function createWeatherStore(
+function createWeatherStore(
   unit: WeatherUnit,
   lang: string,
   storage?: ConstructorParameters<typeof WeatherService>[2],
@@ -55,8 +55,8 @@ export function createWeatherStore(
       const errMsg = res.error?.message ?? 'Failed to fetch weather';
       setState((prev) => ({
         ...prev,
-        status: 'error',
         error: errMsg,
+        status: 'error',
       }));
       return null;
     },
@@ -66,7 +66,7 @@ export function createWeatherStore(
   return [state, { refreshWeather, updateParams }] as const;
 }
 
-export function WeatherProvider(props: {
+function WeatherProvider(props: {
   unit?: WeatherUnit;
   lang?: string;
   autoFetch?: boolean;
@@ -99,10 +99,19 @@ export function WeatherProvider(props: {
   return <WeatherContext.Provider value={store}>{props.children}</WeatherContext.Provider>;
 }
 
-export function useWeatherContext(): WeatherContextValue {
+function useWeatherContext(): WeatherContextValue {
   const ctx = useContext(WeatherContext);
   if (!ctx) {
     throw new Error('useWeatherContext must be used within a WeatherProvider');
   }
   return ctx;
 }
+
+export {
+  createWeatherStore,
+  type WeatherActions,
+  type WeatherContextValue,
+  type WeatherState,
+  useWeatherContext,
+  WeatherProvider,
+};

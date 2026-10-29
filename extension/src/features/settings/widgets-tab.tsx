@@ -1,6 +1,5 @@
 import { Show, createSignal } from 'solid-js';
 import type { Component } from 'solid-js';
-import type { DateFormat, LayoutMode, ShortcutStyle } from '../../../types/settings';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import type { SelectOption } from '../../components/ui/select';
@@ -12,8 +11,9 @@ import { helpLinks } from '../../lang';
 import { CategorySection } from './category-section';
 import { useSettingsContext } from './settings-context';
 import { IconUpload } from '../shortcuts/icon-upload';
+import { toDateFormat, toLayoutMode, toShortcutStyle, toWeatherUnit } from '../../lib/type-guards';
 
-export interface WidgetsTabProps {
+interface WidgetsTabProps {
   searchEngineOptions: readonly SelectOption[];
   weatherUnitOptions: readonly SelectOption[];
   shortcutStyleOptions: readonly SelectOption[];
@@ -21,7 +21,7 @@ export interface WidgetsTabProps {
   onCloseSheet?: () => void;
 }
 
-export const WidgetsTab: Component<WidgetsTabProps> = (props) => {
+const WidgetsTab: Component<WidgetsTabProps> = (props) => {
   const { t, locale } = useI18n(),
     [state, actions] = useSettingsContext(),
     [newShortcutName, setNewShortcutName] = createSignal(''),
@@ -64,7 +64,7 @@ export const WidgetsTab: Component<WidgetsTabProps> = (props) => {
             { name: t('flow order'), value: 'flow' },
           ]}
           onChange={(val) => {
-            actions.updateLayout({ mode: val as LayoutMode });
+            actions.updateLayout({ mode: toLayoutMode(val, 'canvas') });
           }}
         />
 
@@ -167,7 +167,7 @@ export const WidgetsTab: Component<WidgetsTabProps> = (props) => {
               { name: t('narrow'), value: 'narrow' },
             ]}
             onChange={(val) => {
-              actions.updateDate({ weekday: val as DateFormat });
+              actions.updateDate({ weekday: toDateFormat(val, 'long') });
             }}
           />
           <Select
@@ -178,7 +178,7 @@ export const WidgetsTab: Component<WidgetsTabProps> = (props) => {
               { name: t('numeric'), value: 'numeric' },
             ]}
             onChange={(val) => {
-              actions.updateDate({ date: val as DateFormat });
+              actions.updateDate({ date: toDateFormat(val, '2-digit') });
             }}
           />
           <Select
@@ -191,7 +191,7 @@ export const WidgetsTab: Component<WidgetsTabProps> = (props) => {
               { name: t('numeric'), value: 'numeric' },
             ]}
             onChange={(val) => {
-              actions.updateDate({ month: val as DateFormat });
+              actions.updateDate({ month: toDateFormat(val, 'long') });
             }}
           />
         </CategorySection>
@@ -204,7 +204,7 @@ export const WidgetsTab: Component<WidgetsTabProps> = (props) => {
             value={state.weather.unit}
             options={props.weatherUnitOptions}
             onChange={(val) => {
-              actions.updateWeather({ unit: val as 'metric' | 'imperial' });
+              actions.updateWeather({ unit: toWeatherUnit(val, 'metric') });
             }}
           />
           <Switch
@@ -293,7 +293,7 @@ export const WidgetsTab: Component<WidgetsTabProps> = (props) => {
             value={state.shortcutAppereance.style}
             options={props.shortcutStyleOptions}
             onChange={(val) => {
-              actions.updateShortcutAppearance({ style: val as ShortcutStyle });
+              actions.updateShortcutAppearance({ style: toShortcutStyle(val, 'medium') });
             }}
           />
           <Slider
@@ -355,3 +355,5 @@ export const WidgetsTab: Component<WidgetsTabProps> = (props) => {
     </div>
   );
 };
+
+export { type WidgetsTabProps, WidgetsTab };

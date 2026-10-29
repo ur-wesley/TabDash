@@ -1,6 +1,7 @@
+import { createRoot, createSignal } from 'solid-js';
 import { describe, expect, it } from 'bun:test';
 import * as i18n from '@solid-primitives/i18n';
-import { createRoot, createSignal } from 'solid-js';
+
 import { availableLanguages, de, dictionaries, en, es, fr, messages } from './i18n.jsx';
 import type { AvailableLanguages } from './i18n.jsx';
 import type { MessageKey } from './locales/types.js';

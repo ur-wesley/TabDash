@@ -1,10 +1,10 @@
-import type { Component, JSX } from 'solid-js';
 import { Show, createSignal } from 'solid-js';
+import type { Component, JSX } from 'solid-js';
 import type { WidgetCanvasPosition, WidgetId } from '../../../types/settings.js';
 import { calculateSmartSnap } from './canvasUtils.js';
 import type { AlignmentGuide, ContainerBounds, ElementRect } from './canvasUtils.js';
 
-export interface CanvasItemProps {
+interface CanvasItemProps {
   readonly id: WidgetId;
   readonly label: string;
   readonly position: WidgetCanvasPosition;
@@ -16,7 +16,7 @@ export interface CanvasItemProps {
   readonly children: JSX.Element;
 }
 
-export const CanvasItem: Component<CanvasItemProps> = (props) => {
+const CanvasItem: Component<CanvasItemProps> = (props) => {
   const [isDragging, setIsDragging] = createSignal(false),
     [currentPos, setCurrentPos] = createSignal<WidgetCanvasPosition>({
       x: props.position?.x ?? 50,
@@ -113,7 +113,7 @@ export const CanvasItem: Component<CanvasItemProps> = (props) => {
               width: itemRect.width,
             });
 
-          setCurrentPos({ x: snapResult.x, y: snapResult.y });
+          setCurrentPos({ x: snapResult.percentX, y: snapResult.percentY });
           props.onGuidesChange?.(snapResult.guides);
         },
         onPointerUp = () => {
@@ -169,3 +169,5 @@ export const CanvasItem: Component<CanvasItemProps> = (props) => {
     </div>
   );
 };
+
+export { CanvasItem, type CanvasItemProps };

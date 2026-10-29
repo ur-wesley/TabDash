@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "__MSG_extensionName__",
   "short_name": "TabDash",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "__MSG_extensionDesc__",
   "author": "Wesley Urban",
   "homepage_url": "https://tabdash.wesley.fyi",
@@ -33,5 +33,11 @@
   ],
   "host_permissions": [
     "<all_urls>"
-  ]
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{494a0d1f-1baf-4f28-95bc-77d20a3f25a0}",
+      "strict_min_version": "115.0"
+    }
+  }
 }

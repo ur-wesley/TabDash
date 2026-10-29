@@ -1,12 +1,13 @@
 import { ResultAsync } from '@ur-wesley/ts-prelude/result';
+import { isPlainObject, isStorageRecord } from '../lib/type-guards';
 
-// In-memory store fallback for test and non-browser environments
-const memoryStorage = new Map<string, string>();
+const memoryStorage = new Map<string, string>(),
+  parseJsonValue = (raw: string): unknown => JSON.parse(raw);
 
 export class StorageService {
   private readonly sync: boolean;
 
-  constructor(sync: boolean = false) {
+  public constructor(sync = false) {
     this.sync = sync;
   }
 
@@ -14,42 +15,64 @@ export class StorageService {
     return (
       typeof chrome !== 'undefined' &&
       chrome.storage !== undefined &&
-      (import.meta.env?.VITE_IS_EXTENSION === 'true' || Boolean(chrome.storage.local))
+      (import.meta.env.VITE_IS_EXTENSION === 'true' || Boolean(chrome.storage.local))
     );
   }
 
-  public get<T = Record<string, unknown>>(key: string): ResultAsync<T | null, Error> {
+  public get<T extends Record<string, unknown> = Record<string, unknown>>(
+    key: string,
+  ): ResultAsync<T | null, Error> {
     return ResultAsync.fromPromise(
       new Promise<T | null>((resolve, reject) => {
         try {
           if (this.isChromeStorage()) {
             const area = this.sync ? chrome.storage.sync : chrome.storage.local;
             area.get(key, (items) => {
-              if (chrome.runtime?.lastError) {
+              if (chrome.runtime !== undefined && chrome.runtime.lastError) {
                 reject(new Error(chrome.runtime.lastError.message));
                 return;
               }
-              resolve((items as T) ?? null);
+              const bag = isPlainObject(items) ? items : {},
+                value = bag[key];
+              if (value === undefined) {
+                resolve(null);
+                return;
+              }
+              if (isStorageRecord(value)) {
+                resolve(value as T);
+                return;
+              }
+              reject(new Error('Stored value is not a valid object payload'));
             });
-          } else if (typeof window !== 'undefined' && window.localStorage) {
-            const raw = window.localStorage.getItem(key);
-            if (!raw) {
+          } else if (globalThis.window !== undefined && globalThis.localStorage) {
+            const raw = globalThis.localStorage.getItem(key);
+            if (raw === null || raw === '') {
               resolve(null);
               return;
             }
             try {
-              resolve(JSON.parse(raw) as T);
+              const parsed: unknown = parseJsonValue(raw);
+              if (isStorageRecord(parsed)) {
+                resolve(parsed as T);
+                return;
+              }
+              reject(new Error('Stored JSON is not a valid object payload'));
             } catch (error) {
               reject(new Error(`Failed to parse localStorage JSON: ${String(error)}`));
             }
           } else {
             const raw = memoryStorage.get(key);
-            if (!raw) {
+            if (raw === undefined || raw === '') {
               resolve(null);
               return;
             }
             try {
-              resolve(JSON.parse(raw) as T);
+              const parsed: unknown = parseJsonValue(raw);
+              if (isStorageRecord(parsed)) {
+                resolve(parsed as T);
+                return;
+              }
+              reject(new Error('Stored JSON is not a valid object payload'));
             } catch (error) {
               reject(new Error(`Failed to parse memory JSON: ${String(error)}`));
             }
@@ -58,7 +81,7 @@ export class StorageService {
           reject(error instanceof Error ? error : new Error(String(error)));
         }
       }),
-      (e) => (e instanceof Error ? e : new Error(String(e))),
+      (error) => (error instanceof Error ? error : new Error(String(error))),
     );
   }
 
@@ -69,20 +92,20 @@ export class StorageService {
           if (this.isChromeStorage()) {
             const area = this.sync ? chrome.storage.sync : chrome.storage.local;
             area.set(items, () => {
-              if (chrome.runtime?.lastError) {
+              if (chrome.runtime !== undefined && chrome.runtime.lastError) {
                 reject(new Error(chrome.runtime.lastError.message));
                 return;
               }
               resolve();
             });
-          } else if (typeof window !== 'undefined' && window.localStorage) {
-            for (const [k, v] of Object.entries(items)) {
-              window.localStorage.setItem(k, JSON.stringify({ [k]: v }));
+          } else if (globalThis.window !== undefined && globalThis.localStorage) {
+            for (const [entryKey, entryValue] of Object.entries(items)) {
+              globalThis.localStorage.setItem(entryKey, JSON.stringify({ [entryKey]: entryValue }));
             }
             resolve();
           } else {
-            for (const [k, v] of Object.entries(items)) {
-              memoryStorage.set(k, JSON.stringify({ [k]: v }));
+            for (const [entryKey, entryValue] of Object.entries(items)) {
+              memoryStorage.set(entryKey, JSON.stringify({ [entryKey]: entryValue }));
             }
             resolve();
           }
@@ -90,7 +113,7 @@ export class StorageService {
           reject(error instanceof Error ? error : new Error(String(error)));
         }
       }),
-      (e) => (e instanceof Error ? e : new Error(String(e))),
+      (error) => (error instanceof Error ? error : new Error(String(error))),
     );
   }
 
@@ -101,14 +124,14 @@ export class StorageService {
           if (this.isChromeStorage()) {
             const area = this.sync ? chrome.storage.sync : chrome.storage.local;
             area.remove(key, () => {
-              if (chrome.runtime?.lastError) {
+              if (chrome.runtime !== undefined && chrome.runtime.lastError) {
                 reject(new Error(chrome.runtime.lastError.message));
                 return;
               }
               resolve();
             });
-          } else if (typeof window !== 'undefined' && window.localStorage) {
-            window.localStorage.removeItem(key);
+          } else if (globalThis.window !== undefined && globalThis.localStorage) {
+            globalThis.localStorage.removeItem(key);
             resolve();
           } else {
             memoryStorage.delete(key);
@@ -118,7 +141,7 @@ export class StorageService {
           reject(error instanceof Error ? error : new Error(String(error)));
         }
       }),
-      (e) => (e instanceof Error ? e : new Error(String(e))),
+      (error) => (error instanceof Error ? error : new Error(String(error))),
     );
   }
 
@@ -129,14 +152,14 @@ export class StorageService {
           if (this.isChromeStorage()) {
             const area = this.sync ? chrome.storage.sync : chrome.storage.local;
             area.clear(() => {
-              if (chrome.runtime?.lastError) {
+              if (chrome.runtime !== undefined && chrome.runtime.lastError) {
                 reject(new Error(chrome.runtime.lastError.message));
                 return;
               }
               resolve();
             });
-          } else if (typeof window !== 'undefined' && window.localStorage) {
-            window.localStorage.clear();
+          } else if (globalThis.window !== undefined && globalThis.localStorage) {
+            globalThis.localStorage.clear();
             resolve();
           } else {
             memoryStorage.clear();
@@ -146,7 +169,7 @@ export class StorageService {
           reject(error instanceof Error ? error : new Error(String(error)));
         }
       }),
-      (e) => (e instanceof Error ? e : new Error(String(e))),
+      (error) => (error instanceof Error ? error : new Error(String(error))),
     );
   }
 }

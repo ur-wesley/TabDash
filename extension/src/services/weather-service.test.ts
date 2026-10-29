@@ -21,7 +21,7 @@ describe('WeatherService caching', () => {
         city: 'Berlin',
         clouds: { all: 10 },
         overview: { humidity: 55, pressure: 1012, temp: 20, temp_max: 22, temp_min: 16 },
-        weather: [{ main: 'Clear', description: 'clear sky', icon: '01d' }],
+        weather: [{ description: 'clear sky', icon: '01d', main: 'Clear' }],
         wind: { deg: 180, speed: 5 },
       };
 

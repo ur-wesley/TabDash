@@ -37,8 +37,8 @@ describe('canvas layout coordinate math', () => {
         snap: true,
         step: 5,
       });
-    expect(snapped.x).toBe(25);
-    expect(snapped.y).toBe(50);
+    expect(snapped.percentX).toBe(25);
+    expect(snapped.percentY).toBe(50);
 
     // Unsnapped
     const unsnapped = calculatePercentage({
@@ -48,8 +48,8 @@ describe('canvas layout coordinate math', () => {
       snap: false,
       step: 5,
     });
-    expect(unsnapped.x).toBe(23.4);
-    expect(unsnapped.y).toBe(48.2);
+    expect(unsnapped.percentX).toBe(23.4);
+    expect(unsnapped.percentY).toBe(48.2);
 
     // Out of bounds (< 5% or > 95%)
     const clampedEdge = calculatePercentage({
@@ -59,8 +59,8 @@ describe('canvas layout coordinate math', () => {
       snap: true,
       step: 5,
     });
-    expect(clampedEdge.x).toBe(5);
-    expect(clampedEdge.y).toBe(95);
+    expect(clampedEdge.percentX).toBe(5);
+    expect(clampedEdge.percentY).toBe(95);
   });
 
   it('handles zero or negative container bounds gracefully', () => {
@@ -72,7 +72,7 @@ describe('canvas layout coordinate math', () => {
         snap: true,
         step: 5,
       });
-    expect(result).toEqual({ x: 50, y: 50 });
+    expect(result).toEqual({ percentX: 50, percentY: 50 });
   });
 });
 
@@ -107,10 +107,10 @@ describe('calculateSmartSnap relative magnetic snapping', () => {
     // Snapped center Y must be other.top + height / 2 = 150 + 30 = 180
     // Snapped top must be 180 - 30 = 150 (same top border!)
     // As percentage of 1000: 180 / 1000 * 100 = 18%
-    expect(result.y).toBe(18);
+    expect(result.percentY).toBe(18);
 
     // Should include a horizontal alignment guide at other.top
-    const topGuide = result.guides.find((g) => g.type === 'horizontal');
+    const topGuide = result.guides.find((guide) => guide.type === 'horizontal');
     expect(topGuide).toBeDefined();
     expect(topGuide?.positionPx).toBe(150);
     expect(topGuide?.positionPercent).toBe(15);
@@ -133,9 +133,9 @@ describe('calculateSmartSnap relative magnetic snapping', () => {
     // Snapped center Y must be other.bottom - height / 2 = 230 - 30 = 200
     // Snapped bottom must be 200 + 30 = 230
     // As percentage: 200 / 1000 * 100 = 20%
-    expect(result.y).toBe(20);
+    expect(result.percentY).toBe(20);
 
-    const bottomGuide = result.guides.find((g) => g.type === 'horizontal');
+    const bottomGuide = result.guides.find((guide) => guide.type === 'horizontal');
     expect(bottomGuide).toBeDefined();
     expect(bottomGuide?.positionPx).toBe(230);
     expect(bottomGuide?.positionPercent).toBe(23);
@@ -158,9 +158,9 @@ describe('calculateSmartSnap relative magnetic snapping', () => {
     // Snapped center X must be other.left + width / 2 = 200 + 40 = 240
     // Snapped left is 200
     // As percentage: 240 / 1000 * 100 = 24%
-    expect(result.x).toBe(24);
+    expect(result.percentX).toBe(24);
 
-    const leftGuide = result.guides.find((g) => g.type === 'vertical');
+    const leftGuide = result.guides.find((guide) => guide.type === 'vertical');
     expect(leftGuide).toBeDefined();
     expect(leftGuide?.positionPx).toBe(200);
     expect(leftGuide?.positionPercent).toBe(20);
@@ -179,8 +179,8 @@ describe('calculateSmartSnap relative magnetic snapping', () => {
       width: 100,
     });
 
-    expect(result.x).toBe(30); // 300 / 1000 * 100
-    expect(result.y).toBe(19); // 190 / 1000 * 100
+    expect(result.percentX).toBe(30);
+    expect(result.percentY).toBe(19);
     expect(result.guides.length).toBe(2);
   });
 
@@ -197,9 +197,9 @@ describe('calculateSmartSnap relative magnetic snapping', () => {
       width: 100,
     });
 
-    expect(result.x).toBe(50);
-    expect(result.y).toBe(50);
-    expect(result.guides.some((g) => g.positionPx === 500)).toBe(true);
+    expect(result.percentX).toBe(50);
+    expect(result.percentY).toBe(50);
+    expect(result.guides.some((guide) => guide.positionPx === 500)).toBe(true);
   });
 
   it('allows smooth continuous movement when snapEnabled is false', () => {
@@ -213,8 +213,8 @@ describe('calculateSmartSnap relative magnetic snapping', () => {
       width: 120,
     });
 
-    expect(result.x).toBe(24.3);
-    expect(result.y).toBe(18.4);
+    expect(result.percentX).toBe(24.3);
+    expect(result.percentY).toBe(18.4);
     expect(result.guides).toEqual([]);
   });
 });

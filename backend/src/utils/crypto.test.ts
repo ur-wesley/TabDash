@@ -3,8 +3,8 @@ import Crypto from './crypto.js';
 
 describe('Crypto utility', () => {
   it('encrypts and decrypts clear text successfully', () => {
-    const secret = 'test-secret-value',
-      password = 'super-safe-password',
+    const password = 'super-safe-password',
+      secret = 'test-secret-value',
       encrypted = Crypto.encrypt(secret, password);
     expect(encrypted).not.toBe(secret);
 
@@ -13,8 +13,8 @@ describe('Crypto utility', () => {
   });
 
   it('fails gracefully with invalid password', () => {
-    const secret = 'another-secret',
-      password = 'correct-password',
+    const password = 'correct-password',
+      secret = 'another-secret',
       encrypted = Crypto.encrypt(secret, password),
       decrypted = Crypto.decrypt(encrypted, 'wrong-password');
     expect(decrypted).toBeFalsy();

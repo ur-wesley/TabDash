@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'bun:test';
 import { createRoot } from 'solid-js';
+import { describe, expect, it } from 'bun:test';
+
 import type { Setting } from '../../../types/settings';
 import { createSettingsStore } from './settings-context';
 

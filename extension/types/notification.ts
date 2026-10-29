@@ -1,19 +1,21 @@
 import { toast } from 'solid-sonner';
 
-export interface Notification {
+const DEFAULT_TOAST_DURATION_MS = 5000;
+
+interface Notification {
   id: string;
   msg: string;
   duration?: number;
   type: NotificationType;
 }
 
-export type NotificationType = 'success' | 'error' | 'info';
+type NotificationType = 'success' | 'error' | 'info';
 
-export const sendToast = (
+const sendToast = (
   msg: string,
   type: NotificationType = 'info',
-  duration: number = 5000,
-) => {
+  duration: number = DEFAULT_TOAST_DURATION_MS,
+): void => {
   if (type === 'success') {
     toast.success(msg, { duration });
   } else if (type === 'error') {
@@ -22,3 +24,6 @@ export const sendToast = (
     toast.info(msg, { duration });
   }
 };
+
+export type { Notification, NotificationType };
+export { sendToast };

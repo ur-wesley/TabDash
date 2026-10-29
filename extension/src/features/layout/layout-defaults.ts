@@ -1,6 +1,6 @@
 import type { WidgetCanvasPosition, WidgetId } from '../../../types/settings';
 
-export function defaultPositions(): Record<WidgetId, WidgetCanvasPosition> {
+function defaultPositions(): Record<WidgetId, WidgetCanvasPosition> {
   return {
     clock: { x: 50, y: 25 },
     greeting: { x: 50, y: 42 },
@@ -10,13 +10,13 @@ export function defaultPositions(): Record<WidgetId, WidgetCanvasPosition> {
   };
 }
 
-export function defaultFlowOrder(): WidgetId[] {
+function defaultFlowOrder(): WidgetId[] {
   return ['clock', 'greeting', 'weather', 'searchbar', 'shortcuts'];
 }
 
-export type FlowDirection = 'up' | 'down';
+type FlowDirection = 'up' | 'down';
 
-export function withPosition(
+function withPosition(
   positions: Partial<Record<WidgetId, WidgetCanvasPosition>> | undefined,
   id: WidgetId,
   pos: WidgetCanvasPosition,
@@ -33,7 +33,7 @@ export function withPosition(
   return next;
 }
 
-export function moveFlowItem(
+function moveFlowItem(
   order: readonly WidgetId[],
   id: WidgetId,
   direction: FlowDirection,
@@ -54,3 +54,5 @@ export function moveFlowItem(
   next.splice(targetIndex, 0, removed);
   return next;
 }
+
+export { defaultFlowOrder, defaultPositions, moveFlowItem, type FlowDirection, withPosition };

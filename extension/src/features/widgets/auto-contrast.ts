@@ -1,80 +1,82 @@
 import { compositeColors, getContrastRatio, parseColor } from '../../lib/colorContrast.js';
 import type { RGBA } from '../../lib/colorContrast.js';
 
-export interface AutoTextOptions {
+interface AutoTextOptions {
   preferredTextColor?: string;
   lightTextColor?: string;
   darkTextColor?: string;
 }
 
-export interface AutoTextResult {
+interface AutoTextResult {
   color: string;
   ratio: number;
 }
 
-/**
- * Parses a CSS brightness percent (e.g. "160%") into a multiplier.
- * Returns 1 for missing/invalid input.
- */
-export function parseBrightnessFactor(brightness?: string): number {
+interface RgbTriplet {
+  red: number;
+  green: number;
+  blue: number;
+}
+
+const BRIGHTNESS_MAX_FACTOR = 3;
+const CHANNEL_MAX = 255;
+const DEFAULT_GRAY = 128;
+const DEFAULT_WIDGET_BG = 'rgba(64, 64, 64, 0.4)';
+const PERCENT_DIVISOR = 100;
+const UNIT_BRIGHTNESS = 1;
+
+function parseBrightnessFactor(brightness?: string): number {
   if (!brightness) {
-    return 1;
+    return UNIT_BRIGHTNESS;
   }
-  const v = Number.parseFloat(brightness.replace('%', ''));
-  if (!Number.isFinite(v)) {
-    return 1;
+  const parsed = Number.parseFloat(brightness.replace('%', ''));
+  if (!Number.isFinite(parsed)) {
+    return UNIT_BRIGHTNESS;
   }
-  return Math.min(Math.max(v / 100, 0), 3);
+  return Math.min(Math.max(parsed / PERCENT_DIVISOR, 0), BRIGHTNESS_MAX_FACTOR);
 }
 
 function clampChannel(value: number): number {
-  return Math.min(Math.max(Math.round(value), 0), 255);
+  return Math.min(Math.max(Math.round(value), 0), CHANNEL_MAX);
 }
 
-function applyBrightness(rgb: { r: number; g: number; b: number }, factor: number): RGBA {
-  if (factor === 1) {
-    return { r: rgb.r, g: rgb.g, b: rgb.b, a: 1 };
+function applyBrightness(rgb: RgbTriplet, factor: number): RGBA {
+  if (factor === UNIT_BRIGHTNESS) {
+    return { alpha: 1, blue: rgb.blue, green: rgb.green, red: rgb.red };
   }
   return {
-    a: 1,
-    b: clampChannel(rgb.b * factor),
-    g: clampChannel(rgb.g * factor),
-    r: clampChannel(rgb.r * factor),
+    alpha: 1,
+    blue: clampChannel(rgb.blue * factor),
+    green: clampChannel(rgb.green * factor),
+    red: clampChannel(rgb.red * factor),
   };
 }
 
-/**
- * Computes the effective opaque surface of a (possibly translucent) widget
- * background composited over the sampled wallpaper color behind the widget.
- * The widget backdrop brightness filter brightens what shows through, so the
- * sampled color is scaled by it before compositing.
- */
-export function effectiveWidgetSurface(
+function effectiveWidgetSurface(
   widgetBackground: string | undefined,
-  wallpaperAvg: { r: number; g: number; b: number } | string | undefined,
+  wallpaperAvg: RgbTriplet | string | undefined,
   backdropBrightness?: string,
 ): RGBA {
   let wallpaper: RGBA;
   if (typeof wallpaperAvg === 'string') {
-    wallpaper = { ...parseColor(wallpaperAvg), a: 1 };
+    wallpaper = { ...parseColor(wallpaperAvg), alpha: 1 };
   } else if (wallpaperAvg) {
-    wallpaper = { a: 1, b: wallpaperAvg.b, g: wallpaperAvg.g, r: wallpaperAvg.r };
+    wallpaper = {
+      alpha: 1,
+      blue: wallpaperAvg.blue,
+      green: wallpaperAvg.green,
+      red: wallpaperAvg.red,
+    };
   } else {
-    wallpaper = { a: 1, b: 128, g: 128, r: 128 };
+    wallpaper = { alpha: 1, blue: DEFAULT_GRAY, green: DEFAULT_GRAY, red: DEFAULT_GRAY };
   }
 
   const brightened = applyBrightness(wallpaper, parseBrightnessFactor(backdropBrightness)),
-    fg = parseColor(widgetBackground ?? 'rgba(64, 64, 64, 0.4)');
+    fg = parseColor(widgetBackground ?? DEFAULT_WIDGET_BG);
   return compositeColors(fg, brightened);
 }
 
-/**
- * Picks the highest-contrast text color for an effective surface.
- * The preferred (user-configured) color is kept when it already wins or
- * ties — otherwise the better of light/dark is returned. This always yields
- * the best contrast instead of merely a passing one.
- */
-export function pickBestTextColor(
+function pickBestTextColor(
   effectiveSurface: string | RGBA,
   options?: AutoTextOptions,
 ): AutoTextResult {
@@ -96,13 +98,9 @@ export function pickBestTextColor(
   return { color: best, ratio: bestRatio };
 }
 
-/**
- * One-step helper: from widget background + wallpaper sample to the best
- * readable text color.
- */
-export function autoWidgetTextColor(
+function autoWidgetTextColor(
   widgetBackground: string | undefined,
-  wallpaperAvg: { r: number; g: number; b: number } | string | undefined,
+  wallpaperAvg: RgbTriplet | string | undefined,
   options?: AutoTextOptions & { backdropBrightness?: string },
 ): AutoTextResult {
   const surface = effectiveWidgetSurface(
@@ -112,3 +110,12 @@ export function autoWidgetTextColor(
   );
   return pickBestTextColor(surface, options);
 }
+
+export {
+  autoWidgetTextColor,
+  effectiveWidgetSurface,
+  parseBrightnessFactor,
+  pickBestTextColor,
+  type AutoTextOptions,
+  type AutoTextResult,
+};

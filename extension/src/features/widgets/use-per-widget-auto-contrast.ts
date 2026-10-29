@@ -61,12 +61,12 @@ export function usePerWidgetAutoContrast(): void {
   const [state] = useSettingsContext(),
     // Subscribe to the resolved theme so appearance lookups follow it.
     // `resolvedTheme` is read inside the effect below via theme class; the
-    // hook only needs the context to exist — keep a reference for reactivity.
+    // Hook only needs the context to exist — keep a reference for reactivity.
     theme = useTheme();
 
-  let timer: ReturnType<typeof setTimeout> | undefined,
+  let disposed = false,
     runId = 0,
-    disposed = false;
+    timer: ReturnType<typeof setTimeout> | undefined;
 
   const applyAll = async (): Promise<void> => {
       const myRun = ++runId;
@@ -84,7 +84,7 @@ export function usePerWidgetAutoContrast(): void {
 
       const source = resolveBackgroundSource(background),
         fallback = fallbackUnderlying(background),
-        viewport = { h: window.innerHeight, w: window.innerWidth };
+        viewport = { height: window.innerHeight, width: window.innerWidth };
 
       await Promise.all(
         elements.map(async (el) => {
@@ -94,11 +94,16 @@ export function usePerWidgetAutoContrast(): void {
               return;
             }
 
-            let wallpaper: { r: number; g: number; b: number } | string = fallback;
+            let wallpaper: { red: number; green: number; blue: number } | string = fallback;
             if (source.kind === 'image') {
               const sampled = await sampleWallpaperRegion(
                 source.src,
-                { h: rect.height, w: rect.width, x: rect.left, y: rect.top },
+                {
+                  height: rect.height,
+                  left: rect.left,
+                  top: rect.top,
+                  width: rect.width,
+                },
                 viewport,
               );
               if (sampled) {

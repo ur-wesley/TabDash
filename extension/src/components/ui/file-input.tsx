@@ -2,7 +2,7 @@ import { createSignal, splitProps } from 'solid-js';
 import type { Component } from 'solid-js';
 import { cn } from '../../lib/utils';
 
-export interface FileInputProps {
+interface FileInputProps {
   label: string;
   accept?: string;
   onFileRead: (content: string) => void;
@@ -10,7 +10,7 @@ export interface FileInputProps {
   disabled?: boolean;
 }
 
-export const FileInput: Component<FileInputProps> = (props) => {
+const FileInput: Component<FileInputProps> = (props) => {
   const [local, others] = splitProps(props, ['label', 'accept', 'onFileRead', 'class', 'disabled']),
     [dragOver, setDragOver] = createSignal(false);
   let fileInputRef: HTMLInputElement | undefined;
@@ -90,3 +90,5 @@ export const FileInput: Component<FileInputProps> = (props) => {
     </div>
   );
 };
+
+export { FileInput, type FileInputProps };

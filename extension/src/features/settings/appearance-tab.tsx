@@ -1,4 +1,4 @@
-import { createMemo, createSignal, Show } from 'solid-js';
+import { Show, createMemo, createSignal } from 'solid-js';
 import type { Component } from 'solid-js';
 import type { WidgetAppereance } from '../../../types/settings';
 import widgetAppearance from '../../api/widgetAppearance';

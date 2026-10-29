@@ -5,7 +5,7 @@ import { ContextMenu } from '../../components/ui/context-menu';
 import { ShortcutIcon } from './shortcut-icon';
 import { ShortcutPopover } from './shortcut-popover';
 
-export interface ShortcutItemProps {
+interface ShortcutItemProps {
   shortcut: ShortcutSetting;
   appearance: ShortcutAppereance;
   colPercent: number;
@@ -13,7 +13,7 @@ export interface ShortcutItemProps {
   onRemove: () => void;
 }
 
-export const ShortcutItem: Component<ShortcutItemProps> = (props) => {
+const ShortcutItem: Component<ShortcutItemProps> = (props) => {
   const [open, setOpen] = createSignal(false),
     size = (): number => {
       switch (props.appearance?.style) {
@@ -67,8 +67,8 @@ export const ShortcutItem: Component<ShortcutItemProps> = (props) => {
     },
     // Tile is wider than the base icon size (size * 1.2) when the label shows.
     // Render the icon at full tile width so full-bleed icons (e.g. apple-touch
-    // icons with their own background color) touch the tile edges instead of
-    // leaving tile-background gutters left and right.
+    // Icons with their own background color) touch the tile edges instead of
+    // Leaving tile-background gutters left and right.
     iconSize = () => {
       if (props.appearance?.style === 'text') {
         return 0;
@@ -122,3 +122,5 @@ export const ShortcutItem: Component<ShortcutItemProps> = (props) => {
     </ContextMenu>
   );
 };
+
+export { ShortcutItem, type ShortcutItemProps };

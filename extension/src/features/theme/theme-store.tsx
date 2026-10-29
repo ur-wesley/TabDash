@@ -12,9 +12,9 @@ import type { Theme } from '../../../types/settings';
 import { useSettingsContext } from '../settings/settings-context';
 import { useWeatherContext } from '../weather/weather-context';
 
-export type ResolvedTheme = 'light' | 'dark';
+type ResolvedTheme = 'light' | 'dark';
 
-export interface ThemeEnv {
+interface ThemeEnv {
   readonly systemDark: boolean;
   readonly nightByWeather: boolean;
 }
@@ -25,7 +25,7 @@ export interface ThemeEnv {
  * `system` follows the OS, `automatic` follows local night time when
  * weather data is available, otherwise it stays light.
  */
-export function resolveEffectiveTheme(theme: Theme, env: ThemeEnv): ResolvedTheme {
+function resolveEffectiveTheme(theme: Theme, env: ThemeEnv): ResolvedTheme {
   switch (theme) {
     case 'dark': {
       return 'dark';
@@ -43,7 +43,7 @@ export function resolveEffectiveTheme(theme: Theme, env: ThemeEnv): ResolvedThem
   }
 }
 
-export function isNightByWeather(
+function isNightByWeather(
   additional?: { sunrise: number; sunset: number },
   now: number = Date.now(),
 ): boolean {
@@ -53,7 +53,7 @@ export function isNightByWeather(
   return now > additional.sunset * 1000 || now < additional.sunrise * 1000;
 }
 
-export interface ThemeContextValue {
+interface ThemeContextValue {
   /** The configured theme (`light` | `dark` | `system` | `automatic`). */
   readonly theme: Accessor<Theme>;
   /** The effective color mode after resolving `system` / `automatic`. */
@@ -91,7 +91,7 @@ function useSystemDark(): Accessor<boolean> {
  * `.light` class on `documentElement`, which also drives the UnoCSS `dark:`
  * variants and the `--tab-*` token overrides.
  */
-export const ThemeProvider: Component<{ children: JSX.Element }> = (props) => {
+const ThemeProvider: Component<{ children: JSX.Element }> = (props) => {
   const [settings, settingsActions] = useSettingsContext(),
     [weatherState] = useWeatherContext(),
     systemDark = useSystemDark(),
@@ -125,10 +125,20 @@ export const ThemeProvider: Component<{ children: JSX.Element }> = (props) => {
   return <ThemeContext.Provider value={value}>{props.children}</ThemeContext.Provider>;
 };
 
-export function useTheme(): ThemeContextValue {
+function useTheme(): ThemeContextValue {
   const ctx = useContext(ThemeContext);
   if (!ctx) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
   return ctx;
 }
+
+export {
+  isNightByWeather,
+  resolveEffectiveTheme,
+  ThemeProvider,
+  type ResolvedTheme,
+  type ThemeContextValue,
+  type ThemeEnv,
+  useTheme,
+};

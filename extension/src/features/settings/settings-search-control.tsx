@@ -1,7 +1,5 @@
 import { Show } from 'solid-js';
 import type { Component } from 'solid-js';
-import type { AvailableLanguages } from '../../lang';
-import type { ShortcutStyle } from '../../../types/settings';
 import { Button } from '../../components/ui/button';
 import { ColorPicker } from '../../components/ui/color-picker';
 import { Input } from '../../components/ui/input';
@@ -11,8 +9,16 @@ import { Slider } from '../../components/ui/slider';
 import { Switch } from '../../components/ui/switch';
 import { useI18n } from '../../i18n';
 import { useSettingsContext } from './settings-context';
+import {
+  toAvailableLanguage,
+  toShortcutStyle,
+  toTheme,
+  toWeatherUnit,
+} from '../../lib/type-guards';
+import { availableLanguages } from '../../lang';
+import type { GeneralSetting } from '../../../types/settings';
 
-export interface SettingsSearchControlProps {
+interface SettingsSearchControlProps {
   id: string;
   name: string;
   category: 'general' | 'widgets' | 'appearance' | 'management';
@@ -25,7 +31,7 @@ export interface SettingsSearchControlProps {
   shortcutStyleOptions: readonly SelectOption[];
 }
 
-export const SettingsSearchControl: Component<SettingsSearchControlProps> = (props) => {
+const SettingsSearchControl: Component<SettingsSearchControlProps> = (props) => {
   const { t, setLocale } = useI18n(),
     [state, actions] = useSettingsContext();
 
@@ -37,8 +43,13 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
           value={state.general.locale}
           options={props.languageOptions}
           onChange={(val) => {
-            actions.updateGeneral({ locale: val as AvailableLanguages });
-            setLocale(val as AvailableLanguages);
+            const locale = toAvailableLanguage(
+              val,
+              availableLanguages,
+              'en',
+            ) as GeneralSetting['locale'];
+            actions.updateGeneral({ locale });
+            setLocale(locale);
           }}
         />
       </Show>
@@ -50,7 +61,7 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
           options={props.themeOptions}
           onChange={(val) => {
             actions.updateGeneral({
-              theme: val as 'automatic' | 'light' | 'dark',
+              theme: toTheme(val, 'automatic'),
             });
           }}
         />
@@ -183,7 +194,7 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
           value={state.weather.unit}
           options={props.weatherUnitOptions}
           onChange={(val) => {
-            actions.updateWeather({ unit: val as 'metric' | 'imperial' });
+            actions.updateWeather({ unit: toWeatherUnit(val, 'metric') });
           }}
         />
       </Show>
@@ -305,7 +316,7 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
           value={state.shortcutAppereance.style}
           options={props.shortcutStyleOptions}
           onChange={(val) => {
-            actions.updateShortcutAppearance({ style: val as ShortcutStyle });
+            actions.updateShortcutAppearance({ style: toShortcutStyle(val, 'medium') });
           }}
         />
       </Show>
@@ -361,3 +372,5 @@ export const SettingsSearchControl: Component<SettingsSearchControlProps> = (pro
     </div>
   );
 };
+
+export { SettingsSearchControl, type SettingsSearchControlProps };

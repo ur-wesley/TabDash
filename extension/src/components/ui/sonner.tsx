@@ -1,7 +1,7 @@
 import { Toaster as SonnerToaster, toast, useSonner } from 'solid-sonner';
 import type { ToasterProps } from 'solid-sonner';
 
-export function Toaster(props: ToasterProps) {
+function Toaster(props: ToasterProps) {
   return (
     <SonnerToaster
       theme="dark"
@@ -26,4 +26,4 @@ export function Toaster(props: ToasterProps) {
   );
 }
 
-export { toast, useSonner };
+export { Toaster, toast, useSonner };

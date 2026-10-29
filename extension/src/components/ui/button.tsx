@@ -1,10 +1,11 @@
-import { cva } from 'class-variance-authority';
-import type { VariantProps } from 'class-variance-authority';
 import { splitProps } from 'solid-js';
 import type { ComponentProps } from 'solid-js';
+import { cva } from 'class-variance-authority';
+import type { VariantProps } from 'class-variance-authority';
+
 import { cn } from '../../lib/utils';
 
-export const buttonVariants = cva(
+const buttonVariants = cva(
   'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 select-none cursor-pointer active:scale-[0.98]',
   {
     defaultVariants: {
@@ -35,9 +36,9 @@ export const buttonVariants = cva(
   },
 );
 
-export type ButtonProps = ComponentProps<'button'> & VariantProps<typeof buttonVariants>;
+type ButtonProps = ComponentProps<'button'> & VariantProps<typeof buttonVariants>;
 
-export function Button(props: ButtonProps) {
+function Button(props: ButtonProps) {
   const [local, others] = splitProps(props, ['class', 'variant', 'size', 'type']);
 
   return (
@@ -48,3 +49,5 @@ export function Button(props: ButtonProps) {
     />
   );
 }
+
+export { Button, buttonVariants, type ButtonProps };

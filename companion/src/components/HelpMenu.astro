@@ -1,33 +1,35 @@
 ---
 import type { MarkdownInstance } from 'astro';
 
-export interface Props {
+const FILE_NAME_SEGMENT_OFFSET = 1,
+ URL_TITLE_SEGMENT_OFFSET = 1;
+
+interface Props {
   settings: MarkdownInstance<Record<string, unknown>>[];
 }
+
 const { settings } = Astro.props,
  urlParts = Astro.url.toString().split('/'),
- title = urlParts.at(-1);
+ title = urlParts.at(-URL_TITLE_SEGMENT_OFFSET);
 ---
 
 <aside>
   <ul>
     {
       settings
-        .sort((a, b) => a.frontmatter.title - b.frontmatter.title)
-        .map((p) => {
-          if (!p.frontmatter.title) return;
-          const f = p.url!.split('/');
-          const file = f[f.length - 1];
+        .sort((left, right) => left.frontmatter.title - right.frontmatter.title)
+        .map((page) => {
+          if (!page.frontmatter.title) return;
+          const urlSegments = page.url?.split('/') ?? [];
+          const file = urlSegments.at(-FILE_NAME_SEGMENT_OFFSET) ?? '';
+          let itemClass = '';
+          if (file.replace('.md', '').toLowerCase() === title?.toLowerCase()) {
+            itemClass = 'active';
+          }
           return (
-            <a href={p.url}>
-              <li
-                class={`${
-                  file.replace('.md', '').toLowerCase() == title.toLowerCase()
-                    ? 'active'
-                    : ''
-                }`}
-              >
-                {p.frontmatter.title}
+            <a href={page.url}>
+              <li class={itemClass}>
+                {page.frontmatter.title}
               </li>
             </a>
           );
@@ -79,3 +81,5 @@ const { settings } = Astro.props,
     color: white;
   }
 </style>
+
+export type { Props };

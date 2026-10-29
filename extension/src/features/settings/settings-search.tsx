@@ -6,7 +6,7 @@ import type { SelectOption } from '../../components/ui/select';
 import { useI18n } from '../../i18n';
 import { SettingsSearchControl } from './settings-search-control';
 
-export interface SettingsSearchProps {
+interface SettingsSearchProps {
   query: string;
   onClear: () => void;
   onSelectTab: (tab: string) => void;
@@ -25,7 +25,7 @@ interface SearchItem {
   keywords: string[];
 }
 
-export const SettingsSearch: Component<SettingsSearchProps> = (props) => {
+const SettingsSearch: Component<SettingsSearchProps> = (props) => {
   const { t } = useI18n(),
     searchItems = createMemo<SearchItem[]>(() => [
       {
@@ -322,3 +322,5 @@ export const SettingsSearch: Component<SettingsSearchProps> = (props) => {
     </div>
   );
 };
+
+export { SettingsSearch, type SettingsSearchProps };

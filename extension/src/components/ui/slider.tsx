@@ -1,8 +1,9 @@
-import { Slider as KobalteSlider } from '@kobalte/core/slider';
 import { Show, splitProps } from 'solid-js';
+import { Slider as KobalteSlider } from '@kobalte/core/slider';
+
 import { cn } from '../../lib/utils';
 
-export interface SliderProps {
+interface SliderProps {
   id?: string;
   label?: string;
   min?: number;
@@ -15,7 +16,7 @@ export interface SliderProps {
   class?: string;
 }
 
-export function Slider(props: SliderProps) {
+function Slider(props: SliderProps) {
   const [local, others] = splitProps(props, [
     'id',
     'label',
@@ -66,3 +67,5 @@ export function Slider(props: SliderProps) {
     </KobalteSlider>
   );
 }
+
+export { Slider, type SliderProps };

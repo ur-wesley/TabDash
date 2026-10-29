@@ -21,6 +21,7 @@
     "bump:minor": "bumpp --recursive minor --yes",
     "bump:major": "bumpp --recursive major --yes",
     "sync-versions": "bun scripts/sync-versions.ts",
+    "bundle:store": "bun scripts/bundle-store.ts",
     "dev": "bun run --filter \"*\" dev",
     "dev:extension": "bun run --filter @ur-wesley/tabdash-extension dev",
     "dev:companion": "bun run --filter @ur-wesley/tabdash-companion dev",

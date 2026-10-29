@@ -3,7 +3,7 @@ import type { Component } from 'solid-js';
 import { buildIconCandidates, shouldRejectIcon } from '../../api/favicon.js';
 import { fetchSiteIcons } from '../../api/siteIcon.js';
 
-export interface ShortcutIconProps {
+interface ShortcutIconProps {
   link: string;
   name: string;
   configuredIcon?: string;
@@ -19,7 +19,7 @@ export interface ShortcutIconProps {
  * The candidate list freezes once an image loads, so late-arriving
  * discoveries never swap a working icon (no flicker).
  */
-export const ShortcutIcon: Component<ShortcutIconProps> = (props) => {
+const ShortcutIcon: Component<ShortcutIconProps> = (props) => {
   const staticCandidates = createMemo(() => buildIconCandidates(props.link, props.configuredIcon)),
     [discovered, setDiscovered] = createSignal<string[]>([]),
     [frozen, setFrozen] = createSignal<string[] | undefined>(),
@@ -53,7 +53,7 @@ export const ShortcutIcon: Component<ShortcutIconProps> = (props) => {
     exhausted = () => index() >= candidates().length,
     letter = () => (props.name.trim().charAt(0) || '?').toUpperCase(),
     // Deterministic tile color from the hostname, so self-hosted apps without
-    // any fetchable icon still get a distinct, intentional-looking tile.
+    // Any fetchable icon still get a distinct, intentional-looking tile.
     hue = () => {
       let host = props.name;
       try {
@@ -113,3 +113,5 @@ export const ShortcutIcon: Component<ShortcutIconProps> = (props) => {
     </Show>
   );
 };
+
+export { ShortcutIcon, type ShortcutIconProps };

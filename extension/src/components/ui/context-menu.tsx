@@ -1,29 +1,33 @@
-import { ContextMenu as KobalteContextMenu } from '@kobalte/core/context-menu';
-import { useMenuContext } from '@kobalte/core/menu';
 import { splitProps } from 'solid-js';
 import type { Component, JSX, ValidComponent } from 'solid-js';
+import { ContextMenu as KobalteContextMenu } from '@kobalte/core/context-menu';
+import { useMenuContext } from '@kobalte/core/menu';
+
 import { cn } from '../../lib/utils';
 
-export interface ContextMenuProps {
+interface ContextMenuProps {
   onOpenChange?: (open: boolean) => void;
   children: JSX.Element;
   id?: string;
   modal?: boolean;
 }
 
-export interface ContextMenuContentProps {
+interface ContextMenuContentProps {
   class?: string;
   children: JSX.Element;
   style?: JSX.CSSProperties | string;
 }
 
 const ContextMenuRoot: Component<ContextMenuProps> = (props) => (
-  <KobalteContextMenu onOpenChange={props.onOpenChange} id={props.id} modal={props.modal ?? false}>
-    {props.children}
-  </KobalteContextMenu>
-);
-
-const ContextMenuTrigger: Component<
+    <KobalteContextMenu
+      onOpenChange={props.onOpenChange}
+      id={props.id}
+      modal={props.modal ?? false}
+    >
+      {props.children}
+    </KobalteContextMenu>
+  ),
+  ContextMenuTrigger: Component<
     JSX.HTMLAttributes<HTMLElement> & {
       class?: string;
       children: JSX.Element;
@@ -77,36 +81,36 @@ const ContextMenuTrigger: Component<
       </h2>
       <ContextMenuCloseButton aria-label={props.closeLabel} />
     </header>
-  );
+  ),
+  ContextMenuCloseButton: Component<{
+    class?: string;
+    children?: JSX.Element;
+    'aria-label'?: string;
+  }> = (props) => {
+    const menu = useMenuContext();
+    return (
+      <button
+        type="button"
+        onClick={() => {
+          menu.close();
+        }}
+        class={cn(
+          'text-[var(--fg-faint)] hover:text-[var(--fg-default)] p-1 rounded cursor-pointer bg-transparent border-none outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
+          props.class,
+        )}
+        aria-label={props['aria-label'] ?? 'Close'}
+      >
+        {props.children ?? <span class="i-mdi-close text-base block" aria-hidden="true" />}
+      </button>
+    );
+  },
+  ContextMenu = Object.assign(ContextMenuRoot, {
+    CloseButton: ContextMenuCloseButton,
+    Content: ContextMenuContent,
+    Header: ContextMenuHeader,
+    Portal: KobalteContextMenu.Portal,
+    Root: ContextMenuRoot,
+    Trigger: ContextMenuTrigger,
+  });
 
-const ContextMenuCloseButton: Component<{
-  class?: string;
-  children?: JSX.Element;
-  'aria-label'?: string;
-}> = (props) => {
-  const menu = useMenuContext();
-  return (
-    <button
-      type="button"
-      onClick={() => {
-        menu.close();
-      }}
-      class={cn(
-        'text-[var(--fg-faint)] hover:text-[var(--fg-default)] p-1 rounded cursor-pointer bg-transparent border-none outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]',
-        props.class,
-      )}
-      aria-label={props['aria-label'] ?? 'Close'}
-    >
-      {props.children ?? <span class="i-mdi-close text-base block" aria-hidden="true" />}
-    </button>
-  );
-};
-
-export const ContextMenu = Object.assign(ContextMenuRoot, {
-  CloseButton: ContextMenuCloseButton,
-  Content: ContextMenuContent,
-  Header: ContextMenuHeader,
-  Portal: KobalteContextMenu.Portal,
-  Root: ContextMenuRoot,
-  Trigger: ContextMenuTrigger,
-});
+export { ContextMenu, type ContextMenuContentProps, type ContextMenuProps };

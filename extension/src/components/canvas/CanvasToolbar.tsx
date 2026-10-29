@@ -1,10 +1,10 @@
-import type { Component } from 'solid-js';
 import { Show } from 'solid-js';
+import type { Component } from 'solid-js';
 import type { LayoutMode } from '../../../types/settings.js';
 import { useI18n } from '../../i18n.jsx';
 import { cn } from '../../lib/utils.js';
 
-export interface CanvasToolbarProps {
+interface CanvasToolbarProps {
   readonly isEditing: boolean;
   readonly snapToGrid: boolean;
   readonly mode: LayoutMode;
@@ -14,7 +14,7 @@ export interface CanvasToolbarProps {
   readonly onReset: () => void;
 }
 
-export const CanvasToolbar: Component<CanvasToolbarProps> = (props) => {
+const CanvasToolbar: Component<CanvasToolbarProps> = (props) => {
   const { t } = useI18n();
 
   return (
@@ -85,3 +85,5 @@ export const CanvasToolbar: Component<CanvasToolbarProps> = (props) => {
     </Show>
   );
 };
+
+export { CanvasToolbar, type CanvasToolbarProps };

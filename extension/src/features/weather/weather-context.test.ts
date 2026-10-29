@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'bun:test';
 import { createRoot } from 'solid-js';
+import { describe, expect, it } from 'bun:test';
+
 import { createWeatherStore } from './weather-context';
 import { StorageService } from '../../services/storage-service';
 
@@ -20,7 +21,7 @@ describe('createWeatherStore loading and cached data retention', () => {
         city: 'Dresden',
         clouds: { all: 0 },
         overview: { humidity: 50, pressure: 1013, temp: 22, temp_max: 24, temp_min: 19 },
-        weather: [{ main: 'Clear', description: 'sunny', icon: '01d' }],
+        weather: [{ description: 'sunny', icon: '01d', main: 'Clear' }],
         wind: { deg: 180, speed: 3 },
       };
 

@@ -1,23 +1,26 @@
 import { createDatabase } from './db/database.js';
 import { createApp } from './server.js';
 
-const port = Number(process.env.PORT || 3005),
-  hostname = process.env.HOST || '0.0.0.0',
+const DEFAULT_HOST = '0.0.0.0',
+  DEFAULT_PORT = 3005,
+  KILOBYTE = 1024,
+  MAX_REQUEST_BODY_KB = 512,
+  port = Number(process.env.PORT ?? DEFAULT_PORT),
+  hostname = process.env.HOST ?? DEFAULT_HOST,
   db = createDatabase(),
   app = createApp(db),
   server = Bun.serve({
     fetch: app.fetch,
     hostname,
-    maxRequestBodySize: 1024 * 512, // 512KB
+    maxRequestBodySize: KILOBYTE * MAX_REQUEST_BODY_KB,
     port,
   });
 
-// Clean, informative startup message
 // eslint-disable-next-line no-console
 console.log(`[TabDash Backend] Serving at http://${hostname}:${port}`);
 
 let isShuttingDown = false;
-const shutdown = () => {
+const shutdown = (): void => {
   if (isShuttingDown) {
     return;
   }

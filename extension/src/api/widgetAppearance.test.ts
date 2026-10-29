@@ -9,7 +9,7 @@ describe('widgetAppearance', () => {
       globalThis.document = {
         documentElement: {
           style: {
-            getPropertyValue: (key: string) => styleMap.get(key) || '',
+            getPropertyValue: (key: string) => styleMap.get(key) ?? '',
             setProperty: (key: string, val: string) => styleMap.set(key, val),
           },
         },
@@ -29,7 +29,7 @@ describe('widgetAppearance', () => {
     globalThis.document = {
       documentElement: {
         style: {
-          getPropertyValue: (key: string) => styleMap.get(key) || '',
+          getPropertyValue: (key: string) => styleMap.get(key) ?? '',
           setProperty: (key: string, val: string) => styleMap.set(key, val),
         },
       },
@@ -63,7 +63,7 @@ describe('widgetAppearance', () => {
     globalThis.document = {
       documentElement: {
         style: {
-          getPropertyValue: (key: string) => styleMap.get(key) || '',
+          getPropertyValue: (key: string) => styleMap.get(key) ?? '',
           setProperty: (key: string, val: string) => styleMap.set(key, val),
         },
       },

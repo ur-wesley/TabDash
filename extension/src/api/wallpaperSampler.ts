@@ -1,42 +1,49 @@
 import type { BackgroundSetting } from '../../types/settings.js';
 
-export interface ViewportSize {
-  w: number;
-  h: number;
+interface ViewportSize {
+  width: number;
+  height: number;
 }
 
-export interface ViewRect {
-  /** Left edge in viewport CSS pixels. */
-  x: number;
-  /** Top edge in viewport CSS pixels. */
-  y: number;
-  /** Width in CSS pixels. */
-  w: number;
-  /** Height in CSS pixels. */
-  h: number;
+interface ViewRect {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
 }
 
-export interface SourceRect {
-  sx: number;
-  sy: number;
-  sw: number;
-  sh: number;
+interface SourceRect {
+  sourceX: number;
+  sourceY: number;
+  sourceWidth: number;
+  sourceHeight: number;
 }
 
-export type BackgroundSource =
+interface RgbAverage {
+  red: number;
+  green: number;
+  blue: number;
+}
+
+type BackgroundSource =
   | { kind: 'image'; src: string }
   | { kind: 'color'; color: string }
   | { kind: 'none' };
+
+const BLUE_CHANNEL_OFFSET = 2;
+const GREEN_CHANNEL_OFFSET = 1;
+const HALF_DIVISOR = 2;
+const MAX_THUMB_SIDE = 64;
+const MIN_THUMB_SIDE = 1;
+const ORIGIN = 0;
+const REGION_SAMPLE_TARGET = 256;
+const RGBA_STRIDE = 4;
 
 function clampNumber(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
 
-/**
- * Mirrors the source priority of `BackgroundLayer.imageSrc()`:
- * active image -> static -> inactive image -> none.
- */
-export function resolveBackgroundSource(bg?: BackgroundSetting): BackgroundSource {
+function resolveBackgroundSource(bg?: BackgroundSetting): BackgroundSource {
   if (!bg) {
     return { kind: 'none' };
   }
@@ -50,55 +57,55 @@ export function resolveBackgroundSource(bg?: BackgroundSetting): BackgroundSourc
     return { kind: 'image', src: bg.image.src };
   }
   if (bg.color) {
-    return { kind: 'color', color: bg.color };
+    return { color: bg.color, kind: 'color' };
   }
   return { kind: 'none' };
 }
 
-export function resolveBackgroundColor(bg?: BackgroundSetting): string | undefined {
+function resolveBackgroundColor(bg?: BackgroundSetting): string | undefined {
   return bg?.color;
 }
 
-/**
- * Maps a viewport-space rect onto the natural image pixel space,
- * replicating CSS `object-fit: cover` (centered, no offset anchor).
- * Pure and unit-tested.
- */
-export function coverSourceRect(
-  natural: ViewportSize,
-  view: ViewportSize,
-  rect: ViewRect,
-): SourceRect {
-  const naturalW = natural.w,
-    naturalH = natural.h,
-    viewW = view.w,
-    viewH = view.h;
-  if (naturalW <= 0 || naturalH <= 0 || viewW <= 0 || viewH <= 0) {
-    return { sh: Math.max(naturalH, 0), sw: Math.max(naturalW, 0), sx: 0, sy: 0 };
+function coverSourceRect(natural: ViewportSize, view: ViewportSize, rect: ViewRect): SourceRect {
+  const naturalWidth = natural.width,
+    naturalHeight = natural.height,
+    viewWidth = view.width,
+    viewHeight = view.height;
+  if (naturalWidth <= 0 || naturalHeight <= 0 || viewWidth <= 0 || viewHeight <= 0) {
+    return {
+      sourceHeight: Math.max(naturalHeight, ORIGIN),
+      sourceWidth: Math.max(naturalWidth, ORIGIN),
+      sourceX: ORIGIN,
+      sourceY: ORIGIN,
+    };
   }
-  const scale = Math.max(viewW / naturalW, viewH / naturalH),
-    displayedW = naturalW * scale,
-    displayedH = naturalH * scale,
-    offsetX = (viewW - displayedW) / 2,
-    offsetY = (viewH - displayedH) / 2,
-    x0 = clampNumber((rect.x - offsetX) / scale, 0, naturalW),
-    y0 = clampNumber((rect.y - offsetY) / scale, 0, naturalH),
-    x1 = clampNumber((rect.x + rect.w - offsetX) / scale, 0, naturalW),
-    y1 = clampNumber((rect.y + rect.h - offsetY) / scale, 0, naturalH);
+  const scale = Math.max(viewWidth / naturalWidth, viewHeight / naturalHeight),
+    displayedWidth = naturalWidth * scale,
+    displayedHeight = naturalHeight * scale,
+    offsetX = (viewWidth - displayedWidth) / HALF_DIVISOR,
+    offsetY = (viewHeight - displayedHeight) / HALF_DIVISOR,
+    cornerX0 = clampNumber((rect.left - offsetX) / scale, ORIGIN, naturalWidth),
+    cornerY0 = clampNumber((rect.top - offsetY) / scale, ORIGIN, naturalHeight),
+    cornerX1 = clampNumber((rect.left + rect.width - offsetX) / scale, ORIGIN, naturalWidth),
+    cornerY1 = clampNumber((rect.top + rect.height - offsetY) / scale, ORIGIN, naturalHeight);
 
-  return { sh: Math.max(y1 - y0, 0), sw: Math.max(x1 - x0, 0), sx: x0, sy: y0 };
+  return {
+    sourceHeight: Math.max(cornerY1 - cornerY0, ORIGIN),
+    sourceWidth: Math.max(cornerX1 - cornerX0, ORIGIN),
+    sourceX: cornerX0,
+    sourceY: cornerY0,
+  };
 }
 
-export interface Thumb {
+interface Thumb {
   data: Uint8ClampedArray;
-  w: number;
-  h: number;
-  naturalW: number;
-  naturalH: number;
+  thumbWidth: number;
+  thumbHeight: number;
+  naturalWidth: number;
+  naturalHeight: number;
 }
 
-const MAX_THUMB_SIDE = 64,
-  thumbCache = new Map<string, Promise<Thumb | null>>();
+const thumbCache = new Map<string, Promise<Thumb | null>>();
 
 async function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -124,14 +131,9 @@ async function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
-/**
- * Decodes `src` once and keeps a small pixel buffer for cheap per-widget
- * region averages. Returns `null` when the image cannot be read
- * (network failure or canvas taint from missing CORS headers).
- */
-export async function getWallpaperThumb(src: string): Promise<Thumb | null> {
+async function getWallpaperThumb(src: string): Promise<Thumb | null> {
   if (!src) {
-    return Promise.resolve(null);
+    return null;
   }
   const cached = thumbCache.get(src);
   if (cached) {
@@ -141,33 +143,38 @@ export async function getWallpaperThumb(src: string): Promise<Thumb | null> {
   const pending: Promise<Thumb | null> = (async () => {
     try {
       const img = await loadImage(src),
-        naturalW = img.naturalWidth || img.width,
-        naturalH = img.naturalHeight || img.height;
-      if (!naturalW || !naturalH) {
+        naturalWidth = img.naturalWidth || img.width,
+        naturalHeight = img.naturalHeight || img.height;
+      if (!naturalWidth || !naturalHeight) {
         return null;
       }
 
-      const longest = Math.max(naturalW, naturalH),
-        k = longest > MAX_THUMB_SIDE ? MAX_THUMB_SIDE / longest : 1,
-        w = Math.max(Math.round(naturalW * k), 1),
-        h = Math.max(Math.round(naturalH * k), 1),
+      const longest = Math.max(naturalWidth, naturalHeight),
+        thumbScale = longest > MAX_THUMB_SIDE ? MAX_THUMB_SIDE / longest : 1,
+        thumbWidth = Math.max(Math.round(naturalWidth * thumbScale), MIN_THUMB_SIDE),
+        thumbHeight = Math.max(Math.round(naturalHeight * thumbScale), MIN_THUMB_SIDE),
         canvas = document.createElement('canvas');
-      canvas.width = w;
-      canvas.height = h;
+      canvas.width = thumbWidth;
+      canvas.height = thumbHeight;
       const ctx = canvas.getContext('2d', { willReadFrequently: true });
       if (!ctx) {
         return null;
       }
-      ctx.drawImage(img, 0, 0, w, h);
-      const pixels = ctx.getImageData(0, 0, w, h);
-      return { data: pixels.data, h, naturalH, naturalW, w };
+      ctx.drawImage(img, ORIGIN, ORIGIN, thumbWidth, thumbHeight);
+      const pixels = ctx.getImageData(ORIGIN, ORIGIN, thumbWidth, thumbHeight);
+      return {
+        data: pixels.data,
+        naturalHeight,
+        naturalWidth,
+        thumbHeight,
+        thumbWidth,
+      };
     } catch {
       return null;
     }
   })();
 
   thumbCache.set(src, pending);
-  // Drop failures from the cache so a retry can succeed later.
   void pending.then((thumb) => {
     if (!thumb) {
       thumbCache.delete(src);
@@ -176,78 +183,100 @@ export async function getWallpaperThumb(src: string): Promise<Thumb | null> {
   return pending;
 }
 
-/** Clears the in-memory thumbnail cache (used by tests). */
-export function clearWallpaperThumbCache(): void {
+function clearWallpaperThumbCache(): void {
   thumbCache.clear();
 }
 
-/**
- * Averages the thumb pixels covered by `srcRect` (natural image coords).
- * Pure and unit-tested.
- */
-export function averageThumbRegion(
-  thumb: Thumb,
-  srcRect: SourceRect,
-): { r: number; g: number; b: number } | null {
-  if (thumb.w <= 0 || thumb.h <= 0 || srcRect.sw <= 0 || srcRect.sh <= 0) {
+function averageThumbRegion(thumb: Thumb, srcRect: SourceRect): RgbAverage | null {
+  if (
+    thumb.thumbWidth <= 0 ||
+    thumb.thumbHeight <= 0 ||
+    srcRect.sourceWidth <= 0 ||
+    srcRect.sourceHeight <= 0
+  ) {
     return null;
   }
 
-  const kx0 = Math.floor((srcRect.sx / thumb.naturalW) * thumb.w),
-    ky0 = Math.floor((srcRect.sy / thumb.naturalH) * thumb.h),
-    kx1 = Math.ceil(((srcRect.sx + srcRect.sw) / thumb.naturalW) * thumb.w),
-    ky1 = Math.ceil(((srcRect.sy + srcRect.sh) / thumb.naturalH) * thumb.h),
-    x0 = Math.min(Math.max(kx0, 0), thumb.w),
-    y0 = Math.min(Math.max(ky0, 0), thumb.h),
-    x1 = Math.min(Math.max(kx1, 0), thumb.w),
-    y1 = Math.min(Math.max(ky1, 0), thumb.h);
-  if (x1 <= x0 || y1 <= y0) {
+  const keyX0 = Math.floor((srcRect.sourceX / thumb.naturalWidth) * thumb.thumbWidth),
+    keyY0 = Math.floor((srcRect.sourceY / thumb.naturalHeight) * thumb.thumbHeight),
+    keyX1 = Math.ceil(
+      ((srcRect.sourceX + srcRect.sourceWidth) / thumb.naturalWidth) * thumb.thumbWidth,
+    ),
+    keyY1 = Math.ceil(
+      ((srcRect.sourceY + srcRect.sourceHeight) / thumb.naturalHeight) * thumb.thumbHeight,
+    ),
+    sampleX0 = Math.min(Math.max(keyX0, ORIGIN), thumb.thumbWidth),
+    sampleY0 = Math.min(Math.max(keyY0, ORIGIN), thumb.thumbHeight),
+    sampleX1 = Math.min(Math.max(keyX1, ORIGIN), thumb.thumbWidth),
+    sampleY1 = Math.min(Math.max(keyY1, ORIGIN), thumb.thumbHeight);
+  if (sampleX1 <= sampleX0 || sampleY1 <= sampleY0) {
     return null;
   }
 
-  // Stride over large regions so averaging stays O(1)-ish.
-  const stride = Math.max(Math.floor(Math.sqrt(((x1 - x0) * (y1 - y0)) / 256)), 1);
+  const stride = Math.max(
+    Math.floor(Math.sqrt(((sampleX1 - sampleX0) * (sampleY1 - sampleY0)) / REGION_SAMPLE_TARGET)),
+    MIN_THUMB_SIDE,
+  );
 
-  let r = 0,
-    g = 0,
-    b = 0,
-    n = 0;
-  for (let y = y0; y < y1; y += stride) {
-    for (let x = x0; x < x1; x += stride) {
-      const i = (y * thumb.w + x) * 4,
-        d = thumb.data;
-      if (i + 2 >= d.length) {
+  let blueSum = 0,
+    greenSum = 0,
+    redSum = 0,
+    sampleCount = 0;
+  for (let row = sampleY0; row < sampleY1; row += stride) {
+    for (let col = sampleX0; col < sampleX1; col += stride) {
+      const index = (row * thumb.thumbWidth + col) * RGBA_STRIDE,
+        pixelData = thumb.data;
+      if (index + BLUE_CHANNEL_OFFSET >= pixelData.length) {
         continue;
       }
-      r += d[i] ?? 0;
-      g += d[i + 1] ?? 0;
-      b += d[i + 2] ?? 0;
-      n += 1;
+      redSum += pixelData[index] ?? ORIGIN;
+      greenSum += pixelData[index + GREEN_CHANNEL_OFFSET] ?? ORIGIN;
+      blueSum += pixelData[index + BLUE_CHANNEL_OFFSET] ?? ORIGIN;
+      sampleCount += 1;
     }
   }
-  if (n === 0) {
+  if (sampleCount === 0) {
     return null;
   }
-  return { b: Math.round(b / n), g: Math.round(g / n), r: Math.round(r / n) };
+  return {
+    blue: Math.round(blueSum / sampleCount),
+    green: Math.round(greenSum / sampleCount),
+    red: Math.round(redSum / sampleCount),
+  };
 }
 
-/**
- * Samples the average wallpaper color behind `rect`.
- * Returns `null` when there is no image or it cannot be read;
- * callers fall back to `background.color`.
- */
-export async function sampleWallpaperRegion(
+async function sampleWallpaperRegion(
   src: string,
   rect: ViewRect,
   viewport: ViewportSize,
-): Promise<{ r: number; g: number; b: number } | null> {
-  if (!src || rect.w <= 0 || rect.h <= 0) {
+): Promise<RgbAverage | null> {
+  if (!src || rect.width <= 0 || rect.height <= 0) {
     return null;
   }
   const thumb = await getWallpaperThumb(src);
   if (!thumb) {
     return null;
   }
-  const srcRect = coverSourceRect({ h: thumb.naturalH, w: thumb.naturalW }, viewport, rect);
+  const srcRect = coverSourceRect(
+    { height: thumb.naturalHeight, width: thumb.naturalWidth },
+    viewport,
+    rect,
+  );
   return averageThumbRegion(thumb, srcRect);
 }
+
+export {
+  averageThumbRegion,
+  clearWallpaperThumbCache,
+  coverSourceRect,
+  getWallpaperThumb,
+  resolveBackgroundColor,
+  resolveBackgroundSource,
+  sampleWallpaperRegion,
+  type BackgroundSource,
+  type RgbAverage,
+  type SourceRect,
+  type Thumb,
+  type ViewportSize,
+  type ViewRect,
+};

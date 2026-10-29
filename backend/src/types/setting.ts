@@ -1,8 +1,10 @@
-export type Setting = Record<string, string>;
+type Setting = Record<string, string>;
 
-export interface StoredSetting {
-  key: string;
-  data: string;
+interface StoredSetting {
   created_at: number;
+  data: string;
+  key: string;
   updated_at: number;
 }
+
+export type { Setting, StoredSetting };

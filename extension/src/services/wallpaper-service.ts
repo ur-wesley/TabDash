@@ -8,7 +8,7 @@ import {
 } from '../api/imageBuffer';
 import type { CachedImage } from '../api/imageBuffer';
 
-export class WallpaperService {
+class WallpaperService {
   public consumeNext(collections: string[] = []): ResultAsync<BackgroundData | null, Error> {
     return ResultAsync.fromPromise(consumeNextImage(collections), (e) =>
       e instanceof Error ? e : new Error(String(e)),
@@ -34,4 +34,6 @@ export class WallpaperService {
   }
 }
 
-export const wallpaperService = new WallpaperService();
+const wallpaperService = new WallpaperService();
+
+export { WallpaperService, wallpaperService };

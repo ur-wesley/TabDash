@@ -2,7 +2,7 @@ import { Show } from 'solid-js';
 import type { Component } from 'solid-js';
 import type { BackgroundSetting } from '../../../types/settings';
 
-export interface BackgroundLayerProps {
+interface BackgroundLayerProps {
   background?: BackgroundSetting;
   backdrop?: {
     blur?: string;
@@ -11,7 +11,7 @@ export interface BackgroundLayerProps {
   };
 }
 
-export const BackgroundLayer: Component<BackgroundLayerProps> = (props) => {
+const BackgroundLayer: Component<BackgroundLayerProps> = (props) => {
   const imageSrc = () => {
       const bg = props.background;
       if (!bg) {
@@ -29,7 +29,7 @@ export const BackgroundLayer: Component<BackgroundLayerProps> = (props) => {
       return '';
     },
     hasImage = () => Boolean(imageSrc()),
-    bgColor = () => props.background?.color || 'var(--backdrop-surface)',
+    bgColor = () => props.background?.color ?? 'var(--backdrop-surface)',
     nextSrc = () => {
       const bg = props.background;
       if (!bg?.active) {
@@ -69,3 +69,5 @@ export const BackgroundLayer: Component<BackgroundLayerProps> = (props) => {
     </div>
   );
 };
+
+export { BackgroundLayer, type BackgroundLayerProps };

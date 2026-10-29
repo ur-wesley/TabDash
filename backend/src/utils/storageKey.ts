@@ -1,14 +1,20 @@
-export function sanitizeStorageKey(rawKey?: string | null): string | null {
-  if (!rawKey) {
+const MAX_STORAGE_KEY_LENGTH = 128,
+  STORAGE_KEY_PATTERN = /^[a-zA-Z0-9_-]+$/u;
+
+export const sanitizeStorageKey = (rawKey?: string | null): string | null => {
+  if (rawKey === null || rawKey === undefined || rawKey === '') {
     return null;
   }
   const trimmed = rawKey.trim();
-  if (!trimmed || trimmed.length > 128 || !/^[a-zA-Z0-9_-]+$/.test(trimmed)) {
+  if (
+    trimmed === '' ||
+    trimmed.length > MAX_STORAGE_KEY_LENGTH ||
+    !STORAGE_KEY_PATTERN.test(trimmed)
+  ) {
     return null;
   }
   return trimmed;
-}
+};
 
-export function getStoragePartitionKey(sanitizedKey: string): string {
-  return `db:settings:${sanitizedKey}.json`;
-}
+export const getStoragePartitionKey = (sanitizedKey: string): string =>
+  `db:settings:${sanitizedKey}.json`;

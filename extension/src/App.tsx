@@ -1,5 +1,5 @@
-import type { Component, JSX } from 'solid-js';
 import { Show, createSignal } from 'solid-js';
+import type { Component, JSX } from 'solid-js';
 import type { AvailableLanguages } from './lang';
 import { CanvasContainer } from './components/canvas/CanvasContainer';
 import { CanvasToolbar } from './components/canvas/CanvasToolbar';
@@ -79,19 +79,18 @@ const [currentLocale, setCurrentLocale] = createSignal<AvailableLanguages>('en')
         </WeatherRoot>
       </SettingsProvider>
     </I18nProvider>
-  );
-
-const WeatherRoot: Component<{ children: JSX.Element }> = (props) => {
-  const [state] = useSettingsContext();
-  return (
-    <WeatherProvider
-      unit={state.weather?.unit ?? 'metric'}
-      lang={state.general?.locale ?? 'en'}
-      autoFetch
-    >
-      <ThemeProvider>{props.children}</ThemeProvider>
-    </WeatherProvider>
-  );
-};
+  ),
+  WeatherRoot: Component<{ children: JSX.Element }> = (props) => {
+    const [state] = useSettingsContext();
+    return (
+      <WeatherProvider
+        unit={state.weather?.unit ?? 'metric'}
+        lang={state.general?.locale ?? 'en'}
+        autoFetch
+      >
+        <ThemeProvider>{props.children}</ThemeProvider>
+      </WeatherProvider>
+    );
+  };
 
 export default App;

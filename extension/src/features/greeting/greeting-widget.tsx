@@ -1,11 +1,11 @@
 import type { Component } from 'solid-js';
 import { useI18n } from '../../i18n';
 
-export interface GreetingWidgetProps {
+interface GreetingWidgetProps {
   name?: string;
 }
 
-export const GreetingWidget: Component<GreetingWidgetProps> = (props) => {
+const GreetingWidget: Component<GreetingWidgetProps> = (props) => {
   const { t } = useI18n();
 
   return (
@@ -19,3 +19,5 @@ export const GreetingWidget: Component<GreetingWidgetProps> = (props) => {
     </div>
   );
 };
+
+export { GreetingWidget, type GreetingWidgetProps };

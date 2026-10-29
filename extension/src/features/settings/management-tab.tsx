@@ -7,6 +7,7 @@ import { useI18n } from '../../i18n';
 import { syncService } from '../../services/sync-service';
 import { CategorySection } from './category-section';
 import { useSettingsContext } from './settings-context';
+import { isPartialSetting } from '../../lib/type-guards';
 
 export const ManagementTab: Component = () => {
   const { t } = useI18n(),
@@ -15,7 +16,11 @@ export const ManagementTab: Component = () => {
       const res = await syncService.readClipboard();
       if (res.isOk()) {
         try {
-          const parsed = JSON.parse(res.value) as Partial<Setting>;
+          const parsed: unknown = JSON.parse(res.value);
+          if (!isPartialSetting(parsed)) {
+            toast.error(t('import fail'));
+            return;
+          }
           actions.setSettings({
             ...state,
             ...parsed,
@@ -62,7 +67,11 @@ export const ManagementTab: Component = () => {
     },
     handleFileImport = (content: string) => {
       try {
-        const parsed = JSON.parse(content) as Partial<Setting>;
+        const parsed: unknown = JSON.parse(content);
+        if (!isPartialSetting(parsed)) {
+          toast.error(t('import fail'));
+          return;
+        }
         actions.setSettings({
           ...state,
           ...parsed,

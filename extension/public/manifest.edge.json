@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "__MSG_extensionName__",
   "short_name": "TabDash",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "__MSG_extensionDesc__",
   "author": "Wesley Urban",
   "homepage_url": "https://tabdash.wesley.fyi",
@@ -21,8 +21,7 @@
   },
   "background": {
     "service_worker": "background.js",
-    "type": "module",
-    "offline_enabled": true
+    "type": "module"
   },
   "permissions": [
     "storage",
@@ -33,5 +32,6 @@
   ],
   "host_permissions": [
     "<all_urls>"
-  ]
+  ],
+  "offline_enabled": true
 }

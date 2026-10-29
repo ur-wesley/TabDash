@@ -3,12 +3,12 @@ import { fileToIconDataUrl } from '../../api/iconUpload.js';
 import { useI18n } from '../../i18n';
 import { Button } from '../../components/ui/button';
 
-export interface IconUploadProps {
+interface IconUploadProps {
   onIcon: (dataUrl: string) => void;
 }
 
 /** Upload button that turns an image file into a small icon data URL. */
-export const IconUpload: Component<IconUploadProps> = (props) => {
+const IconUpload: Component<IconUploadProps> = (props) => {
   const { t } = useI18n(),
     pickFile = () => {
       const input = document.createElement('input');
@@ -37,3 +37,5 @@ export const IconUpload: Component<IconUploadProps> = (props) => {
     </Button>
   );
 };
+
+export { IconUpload, type IconUploadProps };

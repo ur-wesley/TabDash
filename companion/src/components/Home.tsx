@@ -10,30 +10,38 @@ import Footer from './Footer.jsx';
 
 import './styles/animations.scss';
 
-const animateImage = (e: MouseEvent, element: HTMLElement) => {
-    const width = window.screen.width / 2,
-      height = window.screen.height / 2,
-      centerX = e.clientX - width,
-      centerY = e.clientY - height,
-      degX = centerX * 0.005,
-      degY = centerY * 0.01;
-    element.style.transform = `perspective(1000px) rotateX(${degX}deg) rotateY(${degY}deg)`;
+const EVEN_INDEX_MODULO = 0,
+  PERSPECTIVE_PX = 1000,
+  SCREEN_HALF_DIVISOR = 2,
+  TILT_X_FACTOR = 0.005,
+  TILT_Y_FACTOR = 0.01,
+  animateImage = (mouseEvent: MouseEvent, element: HTMLElement): void => {
+    const width = globalThis.screen.width / SCREEN_HALF_DIVISOR,
+      height = globalThis.screen.height / SCREEN_HALF_DIVISOR,
+      centerX = mouseEvent.clientX - width,
+      centerY = mouseEvent.clientY - height,
+      degX = centerX * TILT_X_FACTOR,
+      degY = centerY * TILT_Y_FACTOR;
+    element.style.transform = `perspective(${String(PERSPECTIVE_PX)}px) rotateX(${String(degX)}deg) rotateY(${String(degY)}deg)`;
   },
   Home: Component = () => {
     const isChrome = navigator.userAgent.includes('Chrome'),
       $lang = useStore(language);
 
     onMount(() => {
-      const queryLang = useQuery(window.location.href).lang as AvailableLanguages;
-      if (availableLanguages.includes(queryLang)) {
-        language.set(queryLang);
+      const queryLang = useQuery(globalThis.location.href).lang;
+      if (
+        queryLang !== undefined &&
+        (availableLanguages as readonly string[]).includes(queryLang)
+      ) {
+        language.set(queryLang as AvailableLanguages);
       }
-      const img = document.querySelector('#tabdash_example') as HTMLImageElement | null;
-      if (!img) {
+      const img = document.querySelector('#tabdash_example');
+      if (!(img instanceof HTMLElement)) {
         return;
       }
-      const handleMouseMove = (e: MouseEvent) => {
-        animateImage(e, img);
+      const handleMouseMove = (mouseEvent: MouseEvent): void => {
+        animateImage(mouseEvent, img);
       };
       img.addEventListener('mousemove', handleMouseMove);
 
@@ -86,7 +94,10 @@ const animateImage = (e: MouseEvent, element: HTMLElement) => {
           <div class="w-full flex flex-col items-center">
             <For each={features}>
               {(feature, index) => (
-                <Feature imgSide={index() % 2 == 0 ? 'right' : 'left'} feature={feature} />
+                <Feature
+                  imgSide={index() % SCREEN_HALF_DIVISOR === EVEN_INDEX_MODULO ? 'right' : 'left'}
+                  feature={feature}
+                />
               )}
             </For>
           </div>

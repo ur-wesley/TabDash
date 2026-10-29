@@ -3,24 +3,41 @@
  * magnetic relative alignment, and grid snapping.
  */
 
-export const clamp = (val: number, min: number = 5, max: number = 95): number =>
-  Math.max(min, Math.min(max, val));
+const COORDINATE_DECIMAL_FACTOR = 10;
+const DEFAULT_CENTER_PERCENT = 50;
+const DEFAULT_GRID_STEP = 5;
+const DEFAULT_SNAP_THRESHOLD_PX = 10;
+const HALF_DIVISOR = 2;
+const MAX_POSITION_PERCENT = 95;
+const MIN_POSITION_PERCENT = 5;
+const MIN_GRID_STEP = 0;
+const PERCENT_FACTOR = 100;
 
-export const snapCoordinate = (val: number, snap: boolean = true, step: number = 5): number => {
-  if (!snap || step <= 0) {
-    return Math.round(val * 10) / 10;
+const clamp = (
+  value: number,
+  min: number = MIN_POSITION_PERCENT,
+  max: number = MAX_POSITION_PERCENT,
+): number => Math.max(min, Math.min(max, value));
+
+const snapCoordinate = (
+  value: number,
+  snap: boolean = true,
+  step: number = DEFAULT_GRID_STEP,
+): number => {
+  if (!snap || step <= MIN_GRID_STEP) {
+    return Math.round(value * COORDINATE_DECIMAL_FACTOR) / COORDINATE_DECIMAL_FACTOR;
   }
-  return Math.round(val / step) * step;
+  return Math.round(value / step) * step;
 };
 
-export interface ContainerBounds {
+interface ContainerBounds {
   readonly left: number;
   readonly top: number;
   readonly width: number;
   readonly height: number;
 }
 
-export interface ElementRect {
+interface ElementRect {
   readonly left: number;
   readonly top: number;
   readonly right: number;
@@ -31,13 +48,13 @@ export interface ElementRect {
   readonly centerY: number;
 }
 
-export interface AlignmentGuide {
+interface AlignmentGuide {
   readonly type: 'horizontal' | 'vertical';
   readonly positionPx: number;
   readonly positionPercent: number;
 }
 
-export interface SmartSnapOptions {
+interface SmartSnapOptions {
   readonly targetCenterX: number;
   readonly targetCenterY: number;
   readonly width: number;
@@ -49,18 +66,13 @@ export interface SmartSnapOptions {
   readonly thresholdPx?: number;
 }
 
-export interface SmartSnapResult {
-  readonly x: number;
-  readonly y: number;
+interface SmartSnapResult {
+  readonly percentX: number;
+  readonly percentY: number;
   readonly guides: readonly AlignmentGuide[];
 }
 
-/**
- * Calculates smart magnetic alignment between the dragged element and other canvas elements.
- * Checks relative edge-to-edge alignment (top-top, bottom-bottom, left-left, right-right, centers)
- * and falls back to grid increments when no relative edge is within threshold.
- */
-export const calculateSmartSnap = (options: SmartSnapOptions): SmartSnapResult => {
+const calculateSmartSnap = (options: SmartSnapOptions): SmartSnapResult => {
   const {
     targetCenterX,
     targetCenterY,
@@ -69,32 +81,30 @@ export const calculateSmartSnap = (options: SmartSnapOptions): SmartSnapResult =
     containerBounds,
     otherElements,
     snapEnabled = true,
-    gridStep = 5,
-    thresholdPx = 10,
+    gridStep = DEFAULT_GRID_STEP,
+    thresholdPx = DEFAULT_SNAP_THRESHOLD_PX,
   } = options;
 
   if (containerBounds.width <= 0 || containerBounds.height <= 0) {
-    return { guides: [], x: 50, y: 50 };
+    return { guides: [], percentX: DEFAULT_CENTER_PERCENT, percentY: DEFAULT_CENTER_PERCENT };
   }
 
-  // Smooth un-snapped movement when snapping is toggled off
   if (!snapEnabled) {
-    const rawX = ((targetCenterX - containerBounds.left) / containerBounds.width) * 100,
-      rawY = ((targetCenterY - containerBounds.top) / containerBounds.height) * 100;
+    const rawX = ((targetCenterX - containerBounds.left) / containerBounds.width) * PERCENT_FACTOR,
+      rawY = ((targetCenterY - containerBounds.top) / containerBounds.height) * PERCENT_FACTOR;
     return {
       guides: [],
-      x: clamp(Math.round(rawX * 10) / 10, 5, 95),
-      y: clamp(Math.round(rawY * 10) / 10, 5, 95),
+      percentX: clamp(Math.round(rawX * COORDINATE_DECIMAL_FACTOR) / COORDINATE_DECIMAL_FACTOR),
+      percentY: clamp(Math.round(rawY * COORDINATE_DECIMAL_FACTOR) / COORDINATE_DECIMAL_FACTOR),
     };
   }
 
-  const draggedLeft = targetCenterX - width / 2,
-    draggedRight = targetCenterX + width / 2,
-    draggedTop = targetCenterY - height / 2,
-    draggedBottom = targetCenterY + height / 2,
+  const draggedLeft = targetCenterX - width / HALF_DIVISOR,
+    draggedRight = targetCenterX + width / HALF_DIVISOR,
+    draggedTop = targetCenterY - height / HALF_DIVISOR,
+    draggedBottom = targetCenterY + height / HALF_DIVISOR,
     guides: AlignmentGuide[] = [];
 
-  // --- Vertical Alignment (X axis / vertical guide lines) ---
   interface SnapCandidateX {
     diff: number;
     snappedCenterX: number;
@@ -109,22 +119,15 @@ export const calculateSmartSnap = (options: SmartSnapOptions): SmartSnapResult =
     }
   };
 
-  // Compare against other elements on canvas
   for (const other of otherElements) {
-    // 1. Same Left Border (flush left)
-    considerX(draggedLeft - other.left, other.left + width / 2, other.left);
-    // 2. Same Right Border (flush right)
-    considerX(draggedRight - other.right, other.right - width / 2, other.right);
-    // 3. Same Column Center
+    considerX(draggedLeft - other.left, other.left + width / HALF_DIVISOR, other.left);
+    considerX(draggedRight - other.right, other.right - width / HALF_DIVISOR, other.right);
     considerX(targetCenterX - other.centerX, other.centerX, other.centerX);
-    // 4. Side-by-side: Dragged left to Other right
-    considerX(draggedLeft - other.right, other.right + width / 2, other.right);
-    // 5. Side-by-side: Dragged right to Other left
-    considerX(draggedRight - other.left, other.left - width / 2, other.left);
+    considerX(draggedLeft - other.right, other.right + width / HALF_DIVISOR, other.right);
+    considerX(draggedRight - other.left, other.left - width / HALF_DIVISOR, other.left);
   }
 
-  // Check container horizontal center (50%)
-  const containerCenterX = containerBounds.left + containerBounds.width / 2;
+  const containerCenterX = containerBounds.left + containerBounds.width / HALF_DIVISOR;
   considerX(targetCenterX - containerCenterX, containerCenterX, containerCenterX);
 
   let finalCenterX = targetCenterX;
@@ -132,17 +135,18 @@ export const calculateSmartSnap = (options: SmartSnapOptions): SmartSnapResult =
     const candidate = bestCandidateX as SnapCandidateX;
     finalCenterX = candidate.snappedCenterX;
     guides.push({
-      positionPercent: ((candidate.guideXPx - containerBounds.left) / containerBounds.width) * 100,
+      positionPercent:
+        ((candidate.guideXPx - containerBounds.left) / containerBounds.width) * PERCENT_FACTOR,
       positionPx: candidate.guideXPx,
       type: 'vertical',
     });
-  } else if (gridStep > 0) {
-    const rawPctX = ((targetCenterX - containerBounds.left) / containerBounds.width) * 100,
+  } else if (gridStep > MIN_GRID_STEP) {
+    const rawPctX =
+        ((targetCenterX - containerBounds.left) / containerBounds.width) * PERCENT_FACTOR,
       snappedPctX = snapCoordinate(rawPctX, true, gridStep);
-    finalCenterX = containerBounds.left + (snappedPctX / 100) * containerBounds.width;
+    finalCenterX = containerBounds.left + (snappedPctX / PERCENT_FACTOR) * containerBounds.width;
   }
 
-  // --- Horizontal Alignment (Y axis / horizontal guide lines) ---
   interface SnapCandidateY {
     diff: number;
     snappedCenterY: number;
@@ -158,20 +162,14 @@ export const calculateSmartSnap = (options: SmartSnapOptions): SmartSnapResult =
   };
 
   for (const other of otherElements) {
-    // 1. Same Top Border (flush top)
-    considerY(draggedTop - other.top, other.top + height / 2, other.top);
-    // 2. Same Bottom Border (flush bottom)
-    considerY(draggedBottom - other.bottom, other.bottom - height / 2, other.bottom);
-    // 3. Same Row Center
+    considerY(draggedTop - other.top, other.top + height / HALF_DIVISOR, other.top);
+    considerY(draggedBottom - other.bottom, other.bottom - height / HALF_DIVISOR, other.bottom);
     considerY(targetCenterY - other.centerY, other.centerY, other.centerY);
-    // 4. Stacked: Dragged top to Other bottom
-    considerY(draggedTop - other.bottom, other.bottom + height / 2, other.bottom);
-    // 5. Stacked: Dragged bottom to Other top
-    considerY(draggedBottom - other.top, other.top - height / 2, other.top);
+    considerY(draggedTop - other.bottom, other.bottom + height / HALF_DIVISOR, other.bottom);
+    considerY(draggedBottom - other.top, other.top - height / HALF_DIVISOR, other.top);
   }
 
-  // Check container vertical center (50%)
-  const containerCenterY = containerBounds.top + containerBounds.height / 2;
+  const containerCenterY = containerBounds.top + containerBounds.height / HALF_DIVISOR;
   considerY(targetCenterY - containerCenterY, containerCenterY, containerCenterY);
 
   let finalCenterY = targetCenterY;
@@ -179,27 +177,30 @@ export const calculateSmartSnap = (options: SmartSnapOptions): SmartSnapResult =
     const candidate = bestCandidateY as SnapCandidateY;
     finalCenterY = candidate.snappedCenterY;
     guides.push({
-      positionPercent: ((candidate.guideYPx - containerBounds.top) / containerBounds.height) * 100,
+      positionPercent:
+        ((candidate.guideYPx - containerBounds.top) / containerBounds.height) * PERCENT_FACTOR,
       positionPx: candidate.guideYPx,
       type: 'horizontal',
     });
-  } else if (gridStep > 0) {
-    const rawPctY = ((targetCenterY - containerBounds.top) / containerBounds.height) * 100,
+  } else if (gridStep > MIN_GRID_STEP) {
+    const rawPctY =
+        ((targetCenterY - containerBounds.top) / containerBounds.height) * PERCENT_FACTOR,
       snappedPctY = snapCoordinate(rawPctY, true, gridStep);
-    finalCenterY = containerBounds.top + (snappedPctY / 100) * containerBounds.height;
+    finalCenterY = containerBounds.top + (snappedPctY / PERCENT_FACTOR) * containerBounds.height;
   }
 
-  const finalPctX = ((finalCenterX - containerBounds.left) / containerBounds.width) * 100,
-    finalPctY = ((finalCenterY - containerBounds.top) / containerBounds.height) * 100;
+  const finalPctX =
+      ((finalCenterX - containerBounds.left) / containerBounds.width) * PERCENT_FACTOR,
+    finalPctY = ((finalCenterY - containerBounds.top) / containerBounds.height) * PERCENT_FACTOR;
 
   return {
     guides,
-    x: clamp(Math.round(finalPctX * 10) / 10, 5, 95),
-    y: clamp(Math.round(finalPctY * 10) / 10, 5, 95),
+    percentX: clamp(Math.round(finalPctX * COORDINATE_DECIMAL_FACTOR) / COORDINATE_DECIMAL_FACTOR),
+    percentY: clamp(Math.round(finalPctY * COORDINATE_DECIMAL_FACTOR) / COORDINATE_DECIMAL_FACTOR),
   };
 };
 
-export interface PercentageInput {
+interface PercentageInput {
   readonly clientX: number;
   readonly clientY: number;
   readonly bounds: ContainerBounds;
@@ -207,26 +208,39 @@ export interface PercentageInput {
   readonly step?: number;
 }
 
-export const calculatePercentage = ({
+const calculatePercentage = ({
   clientX,
   clientY,
   bounds,
   snap = true,
-  step = 5,
-}: PercentageInput): { x: number; y: number } => {
-  if (bounds.width <= 0 || bounds.height <= 0) {
-    return { x: 50, y: 50 };
+  step = DEFAULT_GRID_STEP,
+}: PercentageInput): { percentX: number; percentY: number } => {
+  if (bounds.width <= MIN_GRID_STEP || bounds.height <= MIN_GRID_STEP) {
+    return { percentX: DEFAULT_CENTER_PERCENT, percentY: DEFAULT_CENTER_PERCENT };
   }
 
-  const rawX = ((clientX - bounds.left) / bounds.width) * 100,
-    rawY = ((clientY - bounds.top) / bounds.height) * 100,
-    clampedX = clamp(rawX, 5, 95),
-    clampedY = clamp(rawY, 5, 95),
+  const rawX = ((clientX - bounds.left) / bounds.width) * PERCENT_FACTOR,
+    rawY = ((clientY - bounds.top) / bounds.height) * PERCENT_FACTOR,
+    clampedX = clamp(rawX),
+    clampedY = clamp(rawY),
     finalX = snapCoordinate(clampedX, snap, step),
     finalY = snapCoordinate(clampedY, snap, step);
 
   return {
-    x: clamp(finalX, 5, 95),
-    y: clamp(finalY, 5, 95),
+    percentX: clamp(finalX),
+    percentY: clamp(finalY),
   };
+};
+
+export {
+  calculatePercentage,
+  calculateSmartSnap,
+  clamp,
+  snapCoordinate,
+  type AlignmentGuide,
+  type ContainerBounds,
+  type ElementRect,
+  type PercentageInput,
+  type SmartSnapOptions,
+  type SmartSnapResult,
 };

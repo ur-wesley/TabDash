@@ -2,18 +2,20 @@ import type { Database, Statement } from 'bun:sqlite';
 import { Browser } from '../types/stats.js';
 import type { AvailableBrowser, StatisticResponse } from '../types/stats.js';
 
-export function normalizeBrowser(raw: string | null | undefined): AvailableBrowser | null {
-  if (!raw) {
+const ZERO_COUNT = 0;
+
+export const normalizeBrowser = (raw: string | null | undefined): AvailableBrowser | null => {
+  if (raw === null || raw === undefined || raw === '') {
     return null;
   }
   const lower = raw.trim().toLowerCase();
-  for (const b of Browser) {
-    if (b.toLowerCase() === lower) {
-      return b;
+  for (const browserName of Browser) {
+    if (browserName.toLowerCase() === lower) {
+      return browserName;
     }
   }
   return null;
-}
+};
 
 export class StorageService {
   private readonly db: Database;
@@ -27,7 +29,7 @@ export class StorageService {
     []
   >;
 
-  constructor(db: Database) {
+  public constructor(db: Database) {
     this.db = db;
     this.getSettingStmt = this.db.prepare('SELECT data FROM settings WHERE key = ?');
     this.hasSettingStmt = this.db.prepare('SELECT 1 FROM settings WHERE key = ?');
@@ -53,21 +55,24 @@ export class StorageService {
     `);
   }
 
-  getSetting(key: string): string | null {
+  public getSetting(key: string): string | null {
     const row = this.getSettingStmt.get(key);
-    return row ? row.data : null;
+    if (row === null || row === undefined) {
+      return null;
+    }
+    return row.data;
   }
 
-  saveSetting(key: string, data: string): { created: boolean } {
+  public saveSetting(key: string, data: string): { created: boolean } {
     const exists = this.hasSettingStmt.get(key) !== null,
       now = Date.now();
     this.upsertSettingStmt.run(key, data, now, now);
     return { created: !exists };
   }
 
-  recordInstall(id: string, rawBrowser: string): boolean {
+  public recordInstall(id: string, rawBrowser: string): boolean {
     const browser = normalizeBrowser(rawBrowser);
-    if (!browser || !id.trim()) {
+    if (browser === null || id.trim() === '') {
       return false;
     }
 
@@ -75,33 +80,32 @@ export class StorageService {
       this.insertInstallStmt.run(id.trim(), browser, Date.now());
       return true;
     } catch {
-      // Primary key constraint violation (already installed) or invalid
       return false;
     }
   }
 
-  recordDeinstall(id: string, rawBrowser: string): boolean {
+  public recordDeinstall(id: string, rawBrowser: string): boolean {
     const browser = normalizeBrowser(rawBrowser);
-    if (!browser || !id.trim()) {
+    if (browser === null || id.trim() === '') {
       return false;
     }
 
     const result = this.updateDeinstallStmt.run(Date.now(), id.trim(), browser);
-    return result.changes > 0;
+    return result.changes > ZERO_COUNT;
   }
 
-  getStatistics(): StatisticResponse {
+  public getStatistics(): StatisticResponse {
     const initialStats: StatisticResponse = {
-        Chrome: { deinstalls: 0, installs: 0 },
-        Edge: { deinstalls: 0, installs: 0 },
-        Firefox: { deinstalls: 0, installs: 0 },
-        Safari: { deinstalls: 0, installs: 0 },
+        Chrome: { deinstalls: ZERO_COUNT, installs: ZERO_COUNT },
+        Edge: { deinstalls: ZERO_COUNT, installs: ZERO_COUNT },
+        Firefox: { deinstalls: ZERO_COUNT, installs: ZERO_COUNT },
+        Safari: { deinstalls: ZERO_COUNT, installs: ZERO_COUNT },
       },
       rows = this.getStatsStmt.all();
     for (const row of rows) {
-      const b = normalizeBrowser(row.browser);
-      if (b && initialStats[b]) {
-        initialStats[b] = {
+      const browserKey = normalizeBrowser(row.browser);
+      if (browserKey !== null && initialStats[browserKey] !== undefined) {
+        initialStats[browserKey] = {
           deinstalls: row.deinstalls,
           installs: row.installs,
         };

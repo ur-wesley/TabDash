@@ -1,7 +1,7 @@
 import { ResultAsync } from '@ur-wesley/ts-prelude/result';
 import type { Setting } from '../../types/settings';
 
-export class SyncService {
+class SyncService {
   private readonly companionBase: string;
 
   constructor(companionBase?: string) {
@@ -55,4 +55,6 @@ export class SyncService {
   }
 }
 
-export const syncService = new SyncService();
+const syncService = new SyncService();
+
+export { SyncService, syncService };

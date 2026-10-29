@@ -1,13 +1,14 @@
-import { Select as KobalteSelect } from '@kobalte/core/select';
 import { Show, createUniqueId, splitProps } from 'solid-js';
+import { Select as KobalteSelect } from '@kobalte/core/select';
+
 import { cn } from '../../lib/utils';
 
-export interface SelectOption {
+interface SelectOption {
   readonly value: string;
   readonly name: string;
 }
 
-export interface SelectProps {
+interface SelectProps {
   id?: string;
   label?: string;
   placeholder?: string;
@@ -19,7 +20,7 @@ export interface SelectProps {
   class?: string;
 }
 
-export function Select(props: SelectProps) {
+function Select(props: SelectProps) {
   const [local, others] = splitProps(props, [
       'id',
       'label',
@@ -102,3 +103,5 @@ export function Select(props: SelectProps) {
     </KobalteSelect>
   );
 }
+
+export { Select, type SelectOption, type SelectProps };

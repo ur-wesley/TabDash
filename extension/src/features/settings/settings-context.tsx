@@ -19,8 +19,9 @@ import type {
 import { storageService } from '../../services/storage-service';
 import { wallpaperService } from '../../services/wallpaper-service';
 import { defaultFlowOrder, defaultPositions } from '../layout/layout-defaults';
+import { isSetting } from '../../lib/type-guards';
 
-export interface SettingsActions {
+interface SettingsActions {
   setSettings: (settings: Setting) => void;
   updateGeneral: (patch: Partial<GeneralSetting>) => void;
   updateBackground: (patch: Partial<BackgroundSetting>) => void;
@@ -43,12 +44,12 @@ export interface SettingsActions {
   saveSettings: () => Promise<void>;
 }
 
-export type SettingsContextValue = readonly [state: Setting, actions: SettingsActions];
+type SettingsContextValue = readonly [state: Setting, actions: SettingsActions];
 
 const SettingsContext = createContext<SettingsContextValue>(),
   ROTATION_INTERVAL_MS = 1000 * 60 * 15; // 15 minutes
 
-export function createSettingsStore(initialSettings: Setting): SettingsContextValue {
+function createSettingsStore(initialSettings: Setting): SettingsContextValue {
   const [state, setState] = createStore<Setting>(initialSettings);
   let saveTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -77,9 +78,9 @@ export function createSettingsStore(initialSettings: Setting): SettingsContextVa
         scheduleSave();
       },
       refreshImage: async () => {
-        const collections = state.background?.collections ?? [];
-        const res = await wallpaperService.consumeNext(collections);
-        const nextData = res.isOk() ? res.value : null;
+        const collections = state.background?.collections ?? [],
+          res = await wallpaperService.consumeNext(collections),
+          nextData = res.isOk() ? res.value : null;
 
         if (nextData) {
           setState('background', 'image', nextData);
@@ -88,7 +89,7 @@ export function createSettingsStore(initialSettings: Setting): SettingsContextVa
           return nextData;
         }
         return (
-          state.background?.image ?? { src: '', next: '', author: '', profile: '', origin: '' }
+          state.background?.image ?? { author: '', next: '', origin: '', profile: '', src: '' }
         );
       },
       removeShortcut: (shortcut) => {
@@ -265,11 +266,14 @@ const FALLBACK_DEFAULT_SETTINGS: Setting = {
   },
 };
 
-export async function fetchDefaultSettings(): Promise<Setting> {
+async function fetchDefaultSettings(): Promise<Setting> {
   try {
     const res = await fetch('/defaultSettings.json');
     if (res.ok) {
-      return (await res.json()) as Setting;
+      const payload: unknown = await res.json();
+      if (isSetting(payload)) {
+        return payload;
+      }
     }
   } catch {
     // Ignore
@@ -277,7 +281,7 @@ export async function fetchDefaultSettings(): Promise<Setting> {
   return FALLBACK_DEFAULT_SETTINGS;
 }
 
-export function SettingsProvider(props: { initialSettings?: Setting; children: JSX.Element }) {
+function SettingsProvider(props: { initialSettings?: Setting; children: JSX.Element }) {
   const store = createSettingsStore(props.initialSettings ?? FALLBACK_DEFAULT_SETTINGS),
     [state, actions] = store;
 
@@ -327,10 +331,19 @@ export function SettingsProvider(props: { initialSettings?: Setting; children: J
   return <SettingsContext.Provider value={store}>{props.children}</SettingsContext.Provider>;
 }
 
-export function useSettingsContext(): SettingsContextValue {
+function useSettingsContext(): SettingsContextValue {
   const ctx = useContext(SettingsContext);
   if (!ctx) {
     throw new Error('useSettingsContext must be used within a SettingsProvider');
   }
   return ctx;
 }
+
+export {
+  createSettingsStore,
+  fetchDefaultSettings,
+  SettingsProvider,
+  type SettingsActions,
+  type SettingsContextValue,
+  useSettingsContext,
+};

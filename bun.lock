@@ -17,7 +17,7 @@
     },
     "backend": {
       "name": "tabdash_backend",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "crypto-js": "^4.2.0",
       },
@@ -28,7 +28,7 @@
     },
     "companion": {
       "name": "@ur-wesley/tabdash-companion",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@astrojs/node": "^2.0.2",
         "@astrojs/solid-js": "^1.2.3",
@@ -47,7 +47,7 @@
     },
     "extension": {
       "name": "@ur-wesley/tabdash-extension",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "dependencies": {
         "@corvu/utils": "^0.4.2",
         "@kobalte/core": "^0.13.14",

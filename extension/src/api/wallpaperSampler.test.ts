@@ -6,6 +6,20 @@ import {
 } from './wallpaperSampler.js';
 import type { Thumb } from './wallpaperSampler.js';
 
+const NATURAL_SIZE = 100;
+const NATURAL_WIDE = 200;
+const VIEW_HEIGHT = 100;
+const VIEW_WIDE = 200;
+const RECT_HEIGHT = 30;
+const RECT_WIDTH = 50;
+const RECT_LEFT = 10;
+const RECT_TOP = 20;
+const FULL_NATURAL = 200;
+const HALF_NATURAL = 100;
+const AVG_MID = 128;
+const CHANNEL_MAX = 255;
+const ORIGIN = 0;
+
 describe('wallpaperSampler - resolveBackgroundSource', () => {
   it('prefers the active image over static', () => {
     const src = resolveBackgroundSource({
@@ -44,67 +58,96 @@ describe('wallpaperSampler - resolveBackgroundSource', () => {
 
 describe('wallpaperSampler - coverSourceRect', () => {
   it('maps 1:1 when image and viewport match', () => {
-    const r = coverSourceRect(
-      { h: 100, w: 200 },
-      { h: 100, w: 200 },
-      { h: 30, w: 50, x: 10, y: 20 },
+    const mapped = coverSourceRect(
+      { height: NATURAL_SIZE, width: NATURAL_WIDE },
+      { height: NATURAL_SIZE, width: NATURAL_WIDE },
+      { height: RECT_HEIGHT, left: RECT_LEFT, top: RECT_TOP, width: RECT_WIDTH },
     );
-    expect(r.sx).toBeCloseTo(10);
-    expect(r.sy).toBeCloseTo(20);
-    expect(r.sw).toBeCloseTo(50);
-    expect(r.sh).toBeCloseTo(30);
+    expect(mapped.sourceX).toBeCloseTo(RECT_LEFT);
+    expect(mapped.sourceY).toBeCloseTo(RECT_TOP);
+    expect(mapped.sourceWidth).toBeCloseTo(RECT_WIDTH);
+    expect(mapped.sourceHeight).toBeCloseTo(RECT_HEIGHT);
   });
 
   it('centers the crop when the image is scaled to cover', () => {
-    // 100x100 image on a 200x100 viewport: scale 2, displayed 200x200,
-    // Vertically centered with -50px offset. Full viewport maps to full image.
-    const r = coverSourceRect(
-      { h: 100, w: 100 },
-      { h: 100, w: 200 },
-      { h: 100, w: 200, x: 0, y: 0 },
+    const mapped = coverSourceRect(
+      { height: NATURAL_SIZE, width: NATURAL_SIZE },
+      { height: VIEW_HEIGHT, width: VIEW_WIDE },
+      { height: VIEW_HEIGHT, left: ORIGIN, top: ORIGIN, width: VIEW_WIDE },
     );
-    expect(r.sx).toBeCloseTo(0);
-    expect(r.sy).toBeCloseTo(25);
-    expect(r.sw).toBeCloseTo(100);
-    expect(r.sh).toBeCloseTo(50);
+    expect(mapped.sourceX).toBeCloseTo(ORIGIN);
+    expect(mapped.sourceY).toBeCloseTo(25);
+    expect(mapped.sourceWidth).toBeCloseTo(NATURAL_SIZE);
+    expect(mapped.sourceHeight).toBeCloseTo(50);
   });
 
   it('clamps rects extending outside the viewport', () => {
-    const r = coverSourceRect(
-      { h: 200, w: 200 },
-      { h: 200, w: 200 },
-      { h: 100, w: 100, x: -50, y: -50 },
+    const mapped = coverSourceRect(
+      { height: FULL_NATURAL, width: FULL_NATURAL },
+      { height: FULL_NATURAL, width: FULL_NATURAL },
+      { height: NATURAL_SIZE, left: -50, top: -50, width: NATURAL_SIZE },
     );
-    expect(r.sx).toBeCloseTo(0);
-    expect(r.sy).toBeCloseTo(0);
-    expect(r.sw).toBeCloseTo(50);
-    expect(r.sh).toBeCloseTo(50);
+    expect(mapped.sourceX).toBeCloseTo(ORIGIN);
+    expect(mapped.sourceY).toBeCloseTo(ORIGIN);
+    expect(mapped.sourceWidth).toBeCloseTo(50);
+    expect(mapped.sourceHeight).toBeCloseTo(50);
   });
 });
 
 describe('wallpaperSampler - averageThumbRegion', () => {
   const thumb: Thumb = {
-    // 2x2: red, green / blue, white
     data: new Uint8ClampedArray([
-      255, 0, 0, 255, 0, 255, 0, 255, 0, 0, 255, 255, 255, 255, 255, 255,
+      CHANNEL_MAX,
+      0,
+      0,
+      CHANNEL_MAX,
+      0,
+      CHANNEL_MAX,
+      0,
+      CHANNEL_MAX,
+      0,
+      0,
+      CHANNEL_MAX,
+      CHANNEL_MAX,
+      CHANNEL_MAX,
+      CHANNEL_MAX,
+      CHANNEL_MAX,
+      CHANNEL_MAX,
     ]),
-    w: 2,
-    h: 2,
-    naturalW: 200,
-    naturalH: 200,
+    naturalHeight: FULL_NATURAL,
+    naturalWidth: FULL_NATURAL,
+    thumbHeight: 2,
+    thumbWidth: 2,
   };
 
   it('averages the full image', () => {
-    const avg = averageThumbRegion(thumb, { sh: 200, sw: 200, sx: 0, sy: 0 });
-    expect(avg).toEqual({ b: 128, g: 128, r: 128 });
+    const avg = averageThumbRegion(thumb, {
+      sourceHeight: FULL_NATURAL,
+      sourceWidth: FULL_NATURAL,
+      sourceX: ORIGIN,
+      sourceY: ORIGIN,
+    });
+    expect(avg).toEqual({ blue: AVG_MID, green: AVG_MID, red: AVG_MID });
   });
 
   it('averages a sub-region (top-left quadrant = red)', () => {
-    const avg = averageThumbRegion(thumb, { sh: 100, sw: 100, sx: 0, sy: 0 });
-    expect(avg).toEqual({ b: 0, g: 0, r: 255 });
+    const avg = averageThumbRegion(thumb, {
+      sourceHeight: HALF_NATURAL,
+      sourceWidth: HALF_NATURAL,
+      sourceX: ORIGIN,
+      sourceY: ORIGIN,
+    });
+    expect(avg).toEqual({ blue: ORIGIN, green: ORIGIN, red: CHANNEL_MAX });
   });
 
   it('returns null for empty regions', () => {
-    expect(averageThumbRegion(thumb, { sh: 100, sw: 0, sx: 0, sy: 0 })).toBeNull();
+    expect(
+      averageThumbRegion(thumb, {
+        sourceHeight: HALF_NATURAL,
+        sourceWidth: ORIGIN,
+        sourceX: ORIGIN,
+        sourceY: ORIGIN,
+      }),
+    ).toBeNull();
   });
 });

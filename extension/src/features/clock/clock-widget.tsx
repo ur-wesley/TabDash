@@ -3,7 +3,7 @@ import type { Component } from 'solid-js';
 import type { ClockSetting, DateSetting } from '../../../types/settings';
 import Time from '../../api/time';
 
-export interface ClockWidgetProps {
+interface ClockWidgetProps {
   locale: string;
   clockSetting?: ClockSetting;
   dateSetting?: DateSetting;
@@ -11,7 +11,7 @@ export interface ClockWidgetProps {
   showDate?: boolean;
 }
 
-export const ClockWidget: Component<ClockWidgetProps> = (props) => {
+const ClockWidget: Component<ClockWidgetProps> = (props) => {
   const showTime = () => props.showTime ?? true,
     showDate = () => props.showDate ?? true,
     timeInstance = createMemo(
@@ -49,3 +49,5 @@ export const ClockWidget: Component<ClockWidgetProps> = (props) => {
     </div>
   );
 };
+
+export { ClockWidget, type ClockWidgetProps };

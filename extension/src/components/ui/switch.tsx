@@ -1,8 +1,9 @@
-import { Switch as KobalteSwitch } from '@kobalte/core/switch';
 import { Show, splitProps } from 'solid-js';
+import { Switch as KobalteSwitch } from '@kobalte/core/switch';
+
 import { cn } from '../../lib/utils';
 
-export interface SwitchProps {
+interface SwitchProps {
   id?: string;
   label?: string;
   description?: string;
@@ -12,7 +13,7 @@ export interface SwitchProps {
   class?: string;
 }
 
-export function Switch(props: SwitchProps) {
+function Switch(props: SwitchProps) {
   const [local, others] = splitProps(props, [
     'id',
     'label',
@@ -63,3 +64,5 @@ export function Switch(props: SwitchProps) {
     </KobalteSwitch>
   );
 }
+
+export { Switch, type SwitchProps };

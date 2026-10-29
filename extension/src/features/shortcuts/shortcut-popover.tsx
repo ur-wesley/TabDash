@@ -9,14 +9,14 @@ import { Switch } from '../../components/ui/switch';
 import { useI18n } from '../../i18n';
 import { IconUpload } from './icon-upload';
 
-export interface ShortcutPopoverProps {
+interface ShortcutPopoverProps {
   open: boolean;
   shortcut: ShortcutSetting;
   onSave: (updated: ShortcutSetting) => void;
   onDelete: () => void;
 }
 
-export const ShortcutPopover: Component<ShortcutPopoverProps> = (props) => {
+const ShortcutPopover: Component<ShortcutPopoverProps> = (props) => {
   const { t } = useI18n(),
     menu = useMenuContext(),
     [name, setName] = createSignal(props.shortcut.name),
@@ -83,3 +83,5 @@ export const ShortcutPopover: Component<ShortcutPopoverProps> = (props) => {
     </ContextMenu.Content>
   );
 };
+
+export { ShortcutPopover, type ShortcutPopoverProps };

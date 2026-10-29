@@ -5,14 +5,13 @@ import { fr } from './fr.js';
 import { availableLanguages } from './types.js';
 import type { AvailableLanguages, Dict, MessageKey } from './types.js';
 
-export const dictionaries: Record<AvailableLanguages, Dict> = {
-  de,
-  en,
-  es,
-  fr,
-};
-
-export const messages = {} as Record<MessageKey, Record<AvailableLanguages, string>>;
+const dictionaries: Record<AvailableLanguages, Dict> = {
+    de,
+    en,
+    es,
+    fr,
+  },
+  messages = {} as Record<MessageKey, Record<AvailableLanguages, string>>;
 
 for (const key of Object.keys(en) as MessageKey[]) {
   messages[key] = {
@@ -23,5 +22,15 @@ for (const key of Object.keys(en) as MessageKey[]) {
   };
 }
 
-export { availableLanguages, de, en, es, fr };
-export type { AvailableLanguages, Dict, MessageKey };
+export {
+  availableLanguages,
+  de,
+  dictionaries,
+  en,
+  es,
+  fr,
+  messages,
+  type AvailableLanguages,
+  type Dict,
+  type MessageKey,
+};

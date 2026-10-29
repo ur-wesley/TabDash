@@ -7,7 +7,7 @@ import { messages } from '../lang.js';
 
 const Goodbye: Component = () => {
   const $lang = useStore(language),
-    { id, browser } = useQuery(window.location.href);
+    { id, browser } = useQuery(globalThis.location.href);
   createEffect(() => {
     void fetch(`${import.meta.env.PUBLIC_BACKEND_BASE}/deinstall?id=${id}&browser=${browser}`);
   });

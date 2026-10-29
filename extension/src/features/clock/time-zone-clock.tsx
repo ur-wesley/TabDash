@@ -1,12 +1,12 @@
 import { For, Show, createSignal, onCleanup } from 'solid-js';
 import type { Component } from 'solid-js';
 
-export interface TimeZoneClockProps {
+interface TimeZoneClockProps {
   timeZones?: string[];
   locale?: string;
 }
 
-export const TimeZoneClock: Component<TimeZoneClockProps> = (props) => {
+const TimeZoneClock: Component<TimeZoneClockProps> = (props) => {
   const [now, setNow] = createSignal(new Date()),
     timer = setInterval(() => {
       setNow(new Date());
@@ -43,3 +43,5 @@ export const TimeZoneClock: Component<TimeZoneClockProps> = (props) => {
     </Show>
   );
 };
+
+export { TimeZoneClock, type TimeZoneClockProps };

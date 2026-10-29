@@ -1,8 +1,9 @@
-import { Show, createSignal, createMemo } from 'solid-js';
+import { Show, createMemo, createSignal } from 'solid-js';
 import type { Component } from 'solid-js';
 import type { AvailableLanguages } from '../../lang';
 import { availableLanguages, helpLinks } from '../../lang';
 import { theme } from '../../../types/settings';
+import type { GeneralSetting } from '../../../types/settings';
 import { Button } from '../../components/ui/button';
 import { ColorPicker } from '../../components/ui/color-picker';
 import { Input } from '../../components/ui/input';
@@ -37,11 +38,11 @@ const languageLabels: Record<AvailableLanguages, string> = {
   })),
   searchEngineOptions: readonly SelectOption[] = SEARCH_ENGINE_OPTIONS;
 
-export interface SettingsSheetProps {
+interface SettingsSheetProps {
   readonly onCustomizeLayout?: () => void;
 }
 
-export const SettingsSheet: Component<SettingsSheetProps> = (props) => {
+const SettingsSheet: Component<SettingsSheetProps> = (props) => {
   const { t, locale, setLocale } = useI18n(),
     [state, actions] = useSettingsContext(),
     [isOpen, setIsOpen] = createSignal(false),
@@ -162,7 +163,8 @@ export const SettingsSheet: Component<SettingsSheetProps> = (props) => {
                       value={state.general.locale}
                       options={languageOptions}
                       onChange={(val) => {
-                        actions.updateGeneral({ locale: val as AvailableLanguages });
+                        const settingLocale = val as GeneralSetting['locale'];
+                        actions.updateGeneral({ locale: settingLocale });
                         setLocale(val as AvailableLanguages);
                       }}
                     />
@@ -327,3 +329,5 @@ export const SettingsSheet: Component<SettingsSheetProps> = (props) => {
     </Sheet>
   );
 };
+
+export { SettingsSheet, type SettingsSheetProps };

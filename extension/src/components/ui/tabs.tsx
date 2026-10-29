@@ -1,9 +1,10 @@
-import { Tabs as KobalteTabs } from '@kobalte/core/tabs';
 import { splitProps } from 'solid-js';
 import type { Component, JSX } from 'solid-js';
+import { Tabs as KobalteTabs } from '@kobalte/core/tabs';
+
 import { cn } from '../../lib/utils';
 
-export interface TabsRootProps {
+interface TabsRootProps {
   value?: string;
   defaultValue?: string;
   onChange?: (value: string) => void;
@@ -69,25 +70,25 @@ const TabsRoot: Component<TabsRootProps> = (props) => {
         {local.children}
       </KobalteTabs.Content>
     );
-  };
+  },
+  TabsIndicator: Component<{ class?: string }> = (props) => {
+    const [local, others] = splitProps(props, ['class']);
+    return (
+      <KobalteTabs.Indicator
+        class={cn(
+          'absolute left-0 top-1 bottom-1 rounded-lg bg-[var(--tab-selected-bg)] shadow-sm border border-[var(--tab-indicator-border)] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] z-0 pointer-events-none data-[resizing=true]:transition-none',
+          local.class,
+        )}
+        {...others}
+      />
+    );
+  },
+  Tabs = Object.assign(TabsRoot, {
+    Content: TabsContent,
+    Indicator: TabsIndicator,
+    List: TabsList,
+    Root: TabsRoot,
+    Trigger: TabsTrigger,
+  });
 
-export const TabsIndicator: Component<{ class?: string }> = (props) => {
-  const [local, others] = splitProps(props, ['class']);
-  return (
-    <KobalteTabs.Indicator
-      class={cn(
-        'absolute left-0 top-1 bottom-1 rounded-lg bg-[var(--tab-selected-bg)] shadow-sm border border-[var(--tab-indicator-border)] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] z-0 pointer-events-none data-[resizing=true]:transition-none',
-        local.class,
-      )}
-      {...others}
-    />
-  );
-};
-
-export const Tabs = Object.assign(TabsRoot, {
-  Content: TabsContent,
-  Indicator: TabsIndicator,
-  List: TabsList,
-  Root: TabsRoot,
-  Trigger: TabsTrigger,
-});
+export { Tabs, TabsIndicator, type TabsRootProps };

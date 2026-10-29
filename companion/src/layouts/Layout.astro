@@ -1,25 +1,34 @@
 ---
-import HelpMenu from "../components/HelpMenu.astro";
 import GeneralMenu from "../components/GeneralMenu";
+import HelpMenu from "../components/HelpMenu.astro";
 import "../components/styles/index.scss";
 
-const { frontmatter } = Astro.props;
-const onlineVersion =
-  import.meta.env.PUBLIC_ONLINE_BASE ?? 'https://online.tabdash.wesley.fyi',
+const DOC_LANG_PATH_INDEX = 4,
+ DOC_LANG_SEGMENT_OFFSET = 2,
+ PREV_STEP = 1,
+ NO_MATCH_INDEX = -1,
 
+ { frontmatter } = Astro.props,
+ onlineVersion =
+  import.meta.env.PUBLIC_ONLINE_BASE ?? 'https://online.tabdash.wesley.fyi',
  urlParts = Astro.url.toString().split("/"),
  allSettings = await Astro.glob("../pages/docs/**/*.md"),
- settings = allSettings.filter((s) => {
-	const l = s.file?.split("/"),
-	 lang = l.at(-2);
-	return lang == urlParts[4] && s.frontmatter.title;
-}),
+ settings = allSettings.filter((setting) => {
+  const pathSegments = setting.file?.split("/") ?? [],
+   docLang = pathSegments.at(-DOC_LANG_SEGMENT_OFFSET);
+  return docLang === urlParts[DOC_LANG_PATH_INDEX] && setting.frontmatter.title;
+ }),
  currentIndex = settings.findIndex(
-	(m) => m.frontmatter.title == frontmatter.title
-),
- prev = currentIndex - 1 > -1 ? settings[currentIndex - 1] : null,
- next =
-	currentIndex + 1 < settings.length ? settings[currentIndex + 1] : null;
+  (entry) => entry.frontmatter.title === frontmatter.title
+ );
+let prev;
+if (currentIndex - PREV_STEP > NO_MATCH_INDEX) {
+ prev = settings[currentIndex - PREV_STEP];
+}
+let next;
+if (currentIndex + PREV_STEP < settings.length) {
+ next = settings[currentIndex + PREV_STEP];
+}
 ---
 
 <!DOCTYPE html>

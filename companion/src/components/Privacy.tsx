@@ -10,7 +10,7 @@ const Privacy: Component = () => {
   return (
     <section class="privacy">
       <div>
-        <Show when={$lang() == 'en'}>
+        <Show when={$lang() === 'en'}>
           <h1>TabDash Privacy Policy</h1>
           <p>
             TabDash is a browser extension that replaces the default new tab page with a custom
@@ -31,7 +31,7 @@ const Privacy: Component = () => {
           </ul>
           <p>Last updated: January 18, 2023.</p>
         </Show>
-        <Show when={$lang() == 'de'}>
+        <Show when={$lang() === 'de'}>
           <h1>TabDash Datenschutzbestimmungen</h1>
           <p>
             TabDash ist eine Browsererweiterung, die die standardmäßige Seite für neue

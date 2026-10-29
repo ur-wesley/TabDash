@@ -17,23 +17,33 @@ describe('auto-contrast - parseBrightnessFactor', () => {
 
 describe('auto-contrast - effectiveWidgetSurface', () => {
   it('composites translucent widget backgrounds over the wallpaper sample', () => {
-    // Default dark translucent widget over a bright wallpaper region.
-    const surface = effectiveWidgetSurface('rgba(64, 64, 64, 0.4)', { b: 255, g: 255, r: 255 });
-    // 0.4 * 64 + 0.6 * 255 = ~179
-    expect(surface.r).toBeGreaterThan(160);
-    expect(surface.r).toBeLessThan(195);
-    expect(surface.a).toBe(1);
+    const surface = effectiveWidgetSurface('rgba(64, 64, 64, 0.4)', {
+      blue: 255,
+      green: 255,
+      red: 255,
+    });
+    expect(surface.red).toBeGreaterThan(160);
+    expect(surface.red).toBeLessThan(195);
+    expect(surface.alpha).toBe(1);
   });
 
   it('keeps opaque widget backgrounds independent of the wallpaper', () => {
-    const surface = effectiveWidgetSurface('#eeeeee', { b: 0, g: 0, r: 0 });
-    expect(surface).toEqual({ a: 1, b: 238, g: 238, r: 238 });
+    const surface = effectiveWidgetSurface('#eeeeee', { blue: 0, green: 0, red: 0 });
+    expect(surface).toEqual({ alpha: 1, blue: 238, green: 238, red: 238 });
   });
 
   it('applies backdrop brightness to the wallpaper sample', () => {
-    const normal = effectiveWidgetSurface('rgba(64, 64, 64, 0.4)', { b: 100, g: 100, r: 100 }),
-      bright = effectiveWidgetSurface('rgba(64, 64, 64, 0.4)', { b: 100, g: 100, r: 100 }, '160%');
-    expect(bright.r).toBeGreaterThan(normal.r);
+    const normal = effectiveWidgetSurface('rgba(64, 64, 64, 0.4)', {
+        blue: 100,
+        green: 100,
+        red: 100,
+      }),
+      bright = effectiveWidgetSurface(
+        'rgba(64, 64, 64, 0.4)',
+        { blue: 100, green: 100, red: 100 },
+        '160%',
+      );
+    expect(bright.red).toBeGreaterThan(normal.red);
   });
 });
 
@@ -44,8 +54,6 @@ describe('auto-contrast - pickBestTextColor', () => {
   });
 
   it('keeps the preferred color when it already has the best contrast', () => {
-    // Bright yellow has higher contrast on black than pure white does not;
-    // White wins here — but a preferred color equal to the winner is kept.
     const res = pickBestTextColor('#000000', { preferredTextColor: '#ffffff' });
     expect(res.color).toBe('#ffffff');
     expect(res.ratio).toBeCloseTo(21, 0);
@@ -59,19 +67,19 @@ describe('auto-contrast - pickBestTextColor', () => {
 
 describe('auto-contrast - autoWidgetTextColor', () => {
   it('picks black text for a translucent widget over a bright photo region', () => {
-    const res = autoWidgetTextColor('rgba(64, 64, 64, 0.4)', { b: 220, g: 235, r: 240 });
+    const res = autoWidgetTextColor('rgba(64, 64, 64, 0.4)', { blue: 220, green: 235, red: 240 });
     expect(res.color).toBe('#000000');
   });
 
   it('picks white text for a translucent widget over a dark photo region', () => {
-    const res = autoWidgetTextColor('rgba(64, 64, 64, 0.4)', { b: 25, g: 14, r: 10 });
+    const res = autoWidgetTextColor('rgba(64, 64, 64, 0.4)', { blue: 25, green: 14, red: 10 });
     expect(res.color).toBe('#ffffff');
   });
 
   it('per-widget regions can disagree on the same photo', () => {
     const bg = 'rgba(64, 64, 64, 0.4)',
-      bright = autoWidgetTextColor(bg, { b: 245, g: 245, r: 245 }),
-      dark = autoWidgetTextColor(bg, { b: 5, g: 5, r: 5 });
+      bright = autoWidgetTextColor(bg, { blue: 245, green: 245, red: 245 }),
+      dark = autoWidgetTextColor(bg, { blue: 5, green: 5, red: 5 });
     expect(bright.color).not.toBe(dark.color);
   });
 });

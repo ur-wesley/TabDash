@@ -1,8 +1,8 @@
-export const availableLanguages = ['de', 'en', 'fr', 'es'] as const;
+const availableLanguages = ['de', 'en', 'fr', 'es'] as const;
 
-export type AvailableLanguages = (typeof availableLanguages)[number];
+type AvailableLanguages = (typeof availableLanguages)[number];
 
-export type MessageKey =
+type MessageKey =
   | 'add'
   | 'appearance'
   | 'auto focus'
@@ -176,4 +176,6 @@ export type MessageKey =
   | 'widget theme'
   | 'widgets';
 
-export type Dict = Record<MessageKey, string>;
+type Dict = Record<MessageKey, string>;
+
+export { availableLanguages, type AvailableLanguages, type Dict, type MessageKey };

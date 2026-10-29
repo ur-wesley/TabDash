@@ -4,11 +4,11 @@ import type { SearchSetting } from '../../../types/settings';
 import { searchQuery } from '../../api/search';
 import { useI18n } from '../../i18n';
 
-export interface SearchBarProps {
+interface SearchBarProps {
   settings?: SearchSetting;
 }
 
-export const SearchBar: Component<SearchBarProps> = (props) => {
+const SearchBar: Component<SearchBarProps> = (props) => {
   const { t } = useI18n();
   let inputRef: HTMLInputElement | undefined;
 
@@ -63,3 +63,5 @@ export const SearchBar: Component<SearchBarProps> = (props) => {
     </form>
   );
 };
+
+export { SearchBar, type SearchBarProps };

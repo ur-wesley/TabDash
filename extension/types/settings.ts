@@ -1,6 +1,6 @@
-import type { AvailableLanguages } from '../src/lang.js';
+type AvailableLanguages = 'de' | 'en';
 
-export interface Setting {
+interface Setting {
   id: string;
   general: GeneralSetting;
   background: BackgroundSetting;
@@ -15,7 +15,7 @@ export interface Setting {
   widgetSetting: WidgetSetting;
 }
 
-export interface GeneralSetting {
+interface GeneralSetting {
   theme: Theme;
   locale: AvailableLanguages;
   username: string;
@@ -24,7 +24,7 @@ export interface GeneralSetting {
   title: string;
 }
 
-export interface BackgroundSetting {
+interface BackgroundSetting {
   active: boolean;
   backdropActive: boolean;
   backdrop: BackdropSetting;
@@ -34,7 +34,7 @@ export interface BackgroundSetting {
   image: BackgroundData;
 }
 
-export interface BackgroundData {
+interface BackgroundData {
   src: string;
   next: string;
   author: string;
@@ -42,32 +42,32 @@ export interface BackgroundData {
   profile: string;
 }
 
-export interface BackdropSetting {
+interface BackdropSetting {
   blur: string;
   saturate: string;
   brightness: string;
 }
 
-export interface ClockSetting {
+interface ClockSetting {
   showSeconds: boolean;
 }
 
-export interface DateSetting {
+interface DateSetting {
   weekday: DateFormat;
   date: DateFormat;
   month: DateFormat;
 }
 
-export type WidgetId = 'clock' | 'greeting' | 'weather' | 'searchbar' | 'shortcuts';
+type WidgetId = 'clock' | 'greeting' | 'weather' | 'searchbar' | 'shortcuts';
 
-export interface WidgetCanvasPosition {
+interface WidgetCanvasPosition {
   x: number;
   y: number;
 }
 
-export type LayoutMode = 'canvas' | 'flow';
+type LayoutMode = 'canvas' | 'flow';
 
-export interface LayoutSetting {
+interface LayoutSetting {
   showClock: boolean;
   showDate: boolean;
   showGreeting: boolean;
@@ -82,21 +82,21 @@ export interface LayoutSetting {
   flowOrder?: WidgetId[];
 }
 
-export interface ShortcutAppereance {
+interface ShortcutAppereance {
   style: ShortcutStyle;
   elementsPerLine: number;
   col?: number;
   iconOnly?: boolean;
 }
 
-export interface ShortcutSetting {
+interface ShortcutSetting {
   name: string;
   icon: string;
   link: string;
   newTab?: boolean;
 }
 
-export interface WeatherSetting {
+interface WeatherSetting {
   unit: WeatherUnit;
   showIcon: boolean;
   showText: boolean;
@@ -107,18 +107,18 @@ export interface WeatherSetting {
   showMinMax?: boolean;
 }
 
-export interface SearchSetting {
+interface SearchSetting {
   focus: boolean;
   newTab: boolean;
   engine: string;
 }
 
-export interface WidgetSetting {
+interface WidgetSetting {
   light: WidgetAppereance;
   dark: WidgetAppereance;
 }
 
-export interface WidgetAppereance {
+interface WidgetAppereance {
   textColor: string;
   textSize: string;
   background: string;
@@ -129,7 +129,7 @@ export interface WidgetAppereance {
   backdrop: BackdropSetting;
 }
 
-export interface UnsplashImage {
+interface UnsplashImage {
   id?: string;
   links: {
     download_location: string;
@@ -146,13 +146,44 @@ export interface UnsplashImage {
   };
 }
 
-export interface CacheSetting {
+interface CacheSetting {
   images: UnsplashImage[];
 }
 
-export const theme = ['light', 'dark', 'system', 'automatic'] as const;
-export type Theme = (typeof theme)[number];
+const theme = ['light', 'dark', 'system', 'automatic'] as const;
 
-export type WeatherUnit = 'metric' | 'imperial';
-export type DateFormat = 'long' | '2-digit' | 'short' | 'narrow' | 'numeric';
-export type ShortcutStyle = 'large' | 'medium' | 'small' | 'text';
+type Theme = (typeof theme)[number];
+
+type WeatherUnit = 'metric' | 'imperial';
+
+type DateFormat = 'long' | '2-digit' | 'short' | 'narrow' | 'numeric';
+
+type ShortcutStyle = 'large' | 'medium' | 'small' | 'text';
+
+export type {
+  AvailableLanguages,
+  BackdropSetting,
+  BackgroundData,
+  BackgroundSetting,
+  CacheSetting,
+  ClockSetting,
+  DateFormat,
+  DateSetting,
+  GeneralSetting,
+  LayoutMode,
+  LayoutSetting,
+  SearchSetting,
+  Setting,
+  ShortcutAppereance,
+  ShortcutSetting,
+  ShortcutStyle,
+  Theme,
+  UnsplashImage,
+  WeatherSetting,
+  WeatherUnit,
+  WidgetAppereance,
+  WidgetCanvasPosition,
+  WidgetId,
+  WidgetSetting,
+};
+export { theme };

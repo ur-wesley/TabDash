@@ -2,7 +2,7 @@ import type { Component, JSX } from 'solid-js';
 import { ContextMenu } from '../../components/ui/context-menu';
 import { useI18n } from '../../i18n';
 
-export interface WidgetContextMenuProps {
+interface WidgetContextMenuProps {
   readonly title: string;
   readonly disabled?: boolean;
   readonly content: JSX.Element;
@@ -13,10 +13,13 @@ export interface WidgetContextMenuProps {
  * Keeps the native menu for editable fields: stops the event before it
  * reaches the Kobalte trigger on an ancestor.
  */
-function guardEditableFields(e: MouseEvent): void {
-  const target = e.target as HTMLElement | null;
-  if (target?.closest?.('input, textarea, select, [contenteditable="true"]')) {
-    e.stopPropagation();
+function guardEditableFields(event: MouseEvent): void {
+  const { target } = event;
+  if (!(target instanceof HTMLElement)) {
+    return;
+  }
+  if (target.closest('input, textarea, select, [contenteditable="true"]') !== null) {
+    event.stopPropagation();
   }
 }
 
@@ -25,7 +28,7 @@ function guardEditableFields(e: MouseEvent): void {
  * mirroring the quicklinks (shortcuts) behaviour. Built on Kobalte's ContextMenu
  * primitive so nested floating UI (e.g. Select dropdowns) doesn't dismiss the popup.
  */
-export const WidgetContextMenu: Component<WidgetContextMenuProps> = (props) => {
+const WidgetContextMenu: Component<WidgetContextMenuProps> = (props) => {
   const { t } = useI18n();
 
   return (
@@ -42,3 +45,5 @@ export const WidgetContextMenu: Component<WidgetContextMenuProps> = (props) => {
     </ContextMenu>
   );
 };
+
+export { type WidgetContextMenuProps, WidgetContextMenu };

@@ -2,14 +2,14 @@ import { Show, children } from 'solid-js';
 import type { Component, JSX } from 'solid-js';
 import { cn } from '../../lib/utils';
 
-export interface CategorySectionProps {
+interface CategorySectionProps {
   title: string;
   helpLink?: string;
   class?: string;
   children?: JSX.Element;
 }
 
-export const CategorySection: Component<CategorySectionProps> = (props) => {
+const CategorySection: Component<CategorySectionProps> = (props) => {
   const resolvedChildren = children(() => props.children);
 
   return (
@@ -34,3 +34,5 @@ export const CategorySection: Component<CategorySectionProps> = (props) => {
     </section>
   );
 };
+
+export { CategorySection, type CategorySectionProps };
