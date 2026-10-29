@@ -33,6 +33,12 @@ yarn-error.log*
 
 todo.txt
 
+# local browser profiles / lint scratch
+extension/.chrome-test-profile/
+ox-*.json
+ox-*.txt
+ext-*.json
+
 # Beads / Dolt files (added by bd init)
 .dolt/
 *.db

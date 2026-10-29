@@ -1,6 +1,6 @@
-import { createContext, onMount, useContext } from 'solid-js';
+import { createContext, onCleanup, onMount, useContext } from 'solid-js';
 import type { JSX } from 'solid-js';
-import { createStore, produce } from 'solid-js/store';
+import { createStore, produce, unwrap } from 'solid-js/store';
 import type {
   BackgroundData,
   BackgroundSetting,
@@ -16,10 +16,10 @@ import type {
   WeatherSetting,
   WidgetSetting,
 } from '../../../types/settings';
-import { storageService } from '../../services/storage-service';
+import { StorageService } from '../../services/storage-service';
 import { wallpaperService } from '../../services/wallpaper-service';
 import { defaultFlowOrder, defaultPositions } from '../layout/layout-defaults';
-import { isSetting } from '../../lib/type-guards';
+import { isPlainObject, isSetting } from '../../lib/type-guards';
 
 interface SettingsActions {
   setSettings: (settings: Setting) => void;
@@ -42,29 +42,45 @@ interface SettingsActions {
   refreshImage: () => Promise<BackgroundData>;
   resetToDefault: () => Promise<void>;
   saveSettings: () => Promise<void>;
+  flushSave: () => Promise<void>;
+  replaceSettings: (settings: Setting) => void;
 }
 
 type SettingsContextValue = readonly [state: Setting, actions: SettingsActions];
 
 const SettingsContext = createContext<SettingsContextValue>(),
-  ROTATION_INTERVAL_MS = 1000 * 60 * 15; // 15 minutes
+  ROTATION_INTERVAL_MS = 1000 * 60 * 15,
+  cloneSettingForStorage = (source: Setting): Setting => {
+    const plain = JSON.parse(JSON.stringify(unwrap(source))) as Setting;
+    plain.cache = { images: [] };
+    return plain;
+  };
 
 function createSettingsStore(initialSettings: Setting): SettingsContextValue {
   const [state, setState] = createStore<Setting>(initialSettings);
   let saveTimer: ReturnType<typeof setTimeout> | undefined;
 
-  const saveSettings = async (): Promise<void> => {
-      const sanitized: Setting = {
-        ...state,
-        cache: { images: [] },
-      };
-      await storageService.set({ settings: sanitized });
+  const storageForState = (): StorageService => new StorageService(state.general?.sync ?? false),
+    saveSettings = async (): Promise<void> => {
+      const sanitized = cloneSettingForStorage(state);
+      const result = await storageForState().set({ settings: sanitized });
+      if (result.isErr()) {
+        throw result.error;
+      }
+    },
+    flushSave = async (): Promise<void> => {
+      if (saveTimer !== undefined) {
+        clearTimeout(saveTimer);
+        saveTimer = undefined;
+      }
+      await saveSettings();
     },
     scheduleSave = () => {
       if (saveTimer !== undefined) {
         clearTimeout(saveTimer);
       }
       saveTimer = setTimeout(() => {
+        saveTimer = undefined;
         void saveSettings();
       }, 400);
     },
@@ -84,8 +100,8 @@ function createSettingsStore(initialSettings: Setting): SettingsContextValue {
 
         if (nextData) {
           setState('background', 'image', nextData);
-          await storageService.set({ bgtimestamp: Date.now() });
-          void saveSettings();
+          await storageForState().set({ bgtimestamp: Date.now() });
+          await saveSettings();
           return nextData;
         }
         return (
@@ -97,11 +113,15 @@ function createSettingsStore(initialSettings: Setting): SettingsContextValue {
         scheduleSave();
       },
       resetToDefault: async () => {
-        await storageService.remove('settings');
-        await storageService.remove('bgtimestamp');
+        await storageForState().remove('settings');
+        await storageForState().remove('bgtimestamp');
         await wallpaperService.clear();
         const defaultSettings = await fetchDefaultSettings();
         setState(defaultSettings);
+      },
+      flushSave,
+      replaceSettings: (settings) => {
+        setState(settings);
       },
       saveSettings,
       setSettings: (settings) => {
@@ -281,47 +301,92 @@ async function fetchDefaultSettings(): Promise<Setting> {
   return FALLBACK_DEFAULT_SETTINGS;
 }
 
+function parseStoredSetting(value: unknown): Setting | null {
+  if (isSetting(value)) {
+    return value;
+  }
+  if (isPlainObject(value) && isSetting(value.settings)) {
+    return value.settings;
+  }
+  return null;
+}
+
+async function loadSettingsFromStorage(): Promise<Setting | null> {
+  for (const sync of [false, true] as const) {
+    const stored = await new StorageService(sync).get<unknown>('settings');
+    if (stored.isErr()) {
+      continue;
+    }
+    const parsed = parseStoredSetting(stored.value);
+    if (parsed) {
+      return parsed;
+    }
+  }
+  return null;
+}
+
+function normalizeLoadedLayout(loaded: Setting): void {
+  if (!loaded.layout) {
+    return;
+  }
+  if (loaded.layout.showSearchbar === undefined && loaded.layout.showSearch !== undefined) {
+    loaded.layout.showSearchbar = loaded.layout.showSearch;
+  }
+  if (loaded.layout.showSearch === undefined && loaded.layout.showSearchbar !== undefined) {
+    loaded.layout.showSearch = loaded.layout.showSearchbar;
+  }
+}
+
+function bindSettingsFlush(flush: () => Promise<void>): () => void {
+  const onPageHide = () => {
+    void flush();
+  };
+  const onVisibilityChange = () => {
+    if (document.visibilityState === 'hidden') {
+      void flush();
+    }
+  };
+  window.addEventListener('pagehide', onPageHide);
+  document.addEventListener('visibilitychange', onVisibilityChange);
+  return () => {
+    window.removeEventListener('pagehide', onPageHide);
+    document.removeEventListener('visibilitychange', onVisibilityChange);
+  };
+}
+
 function SettingsProvider(props: { initialSettings?: Setting; children: JSX.Element }) {
   const store = createSettingsStore(props.initialSettings ?? FALLBACK_DEFAULT_SETTINGS),
     [state, actions] = store;
 
   onMount(() => {
+    onCleanup(bindSettingsFlush(() => actions.flushSave()));
+
     void (async () => {
-      // If not given initialSettings, load from storage
+      let syncOnSave = state.general?.sync ?? false;
+      let backgroundActive = state.background.active;
+
       if (!props.initialSettings) {
-        const stored = await storageService.get<{ settings?: Setting }>('settings');
-        if (stored.isOk() && stored.value?.settings) {
-          const loaded = stored.value.settings;
-          if (loaded.layout) {
-            if (
-              loaded.layout.showSearchbar === undefined &&
-              loaded.layout.showSearch !== undefined
-            ) {
-              loaded.layout.showSearchbar = loaded.layout.showSearch;
-            }
-            if (
-              loaded.layout.showSearch === undefined &&
-              loaded.layout.showSearchbar !== undefined
-            ) {
-              loaded.layout.showSearch = loaded.layout.showSearchbar;
-            }
-          }
-          actions.setSettings(loaded);
+        const loaded = await loadSettingsFromStorage();
+        if (loaded) {
+          normalizeLoadedLayout(loaded);
+          actions.replaceSettings(loaded);
+          syncOnSave = loaded.general?.sync ?? false;
+          backgroundActive = loaded.background.active;
         } else {
           const def = await fetchDefaultSettings();
-          actions.setSettings(def);
+          actions.replaceSettings(def);
+          syncOnSave = def.general?.sync ?? false;
+          backgroundActive = def.background.active;
+          await actions.flushSave();
         }
       }
 
-      // Check background rotation
-      if (state.background.active) {
-        const storedTime = await storageService.get<{ bgtimestamp?: number }>('bgtimestamp'),
+      if (backgroundActive) {
+        const storedTime = await new StorageService(syncOnSave).get<number>('bgtimestamp'),
           timestamp =
-            storedTime.isOk() && typeof storedTime.value?.bgtimestamp === 'number'
-              ? storedTime.value.bgtimestamp
-              : 0,
+            storedTime.isOk() && typeof storedTime.value === 'number' ? storedTime.value : 0,
           isExpired = Date.now() - timestamp > ROTATION_INTERVAL_MS;
-        if (isExpired || !state.background.image?.src) {
+        if (isExpired) {
           void actions.refreshImage();
         }
       }

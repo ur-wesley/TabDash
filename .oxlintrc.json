@@ -49,6 +49,7 @@
     ".beads/**",
     ".astro/**",
     "bundle/**",
+    "extension/.chrome-test-profile/**",
     "extension/public/**",
     "extension/src/assets/**",
     "**/*.d.ts"

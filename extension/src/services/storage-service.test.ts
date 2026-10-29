@@ -8,10 +8,10 @@ describe('StorageService', () => {
       setResult = await service.set({ testKey: { greeting: 'hello' } });
     expect(setResult.isOk()).toBe(true);
 
-    const getResult = await service.get<{ testKey: { greeting: string } }>('testKey');
+    const getResult = await service.get<{ greeting: string }>('testKey');
     expect(getResult.isOk()).toBe(true);
     if (getResult.isOk()) {
-      expect(getResult.value?.testKey.greeting).toBe('hello');
+      expect(getResult.value?.greeting).toBe('hello');
     }
 
     const removeResult = await service.remove('testKey');

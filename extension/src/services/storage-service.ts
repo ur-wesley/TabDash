@@ -2,7 +2,11 @@ import { ResultAsync } from '@ur-wesley/ts-prelude/result';
 import { isPlainObject, isStorageRecord } from '../lib/type-guards';
 
 const memoryStorage = new Map<string, string>(),
-  parseJsonValue = (raw: string): unknown => JSON.parse(raw);
+  parseJsonValue = (raw: string): unknown => JSON.parse(raw),
+  extensionGlobal = (): { chrome?: typeof chrome; browser?: typeof chrome } =>
+    globalThis as { chrome?: typeof chrome; browser?: typeof chrome };
+
+type ExtensionStorageArea = chrome.storage.StorageArea;
 
 export class StorageService {
   private readonly sync: boolean;
@@ -11,25 +15,39 @@ export class StorageService {
     this.sync = sync;
   }
 
-  private isChromeStorage(): boolean {
-    return (
-      typeof chrome !== 'undefined' &&
-      chrome.storage !== undefined &&
-      (import.meta.env.VITE_IS_EXTENSION === 'true' || Boolean(chrome.storage.local))
-    );
+  private extensionStorageArea(): ExtensionStorageArea | null {
+    const storage = extensionGlobal().chrome?.storage ?? extensionGlobal().browser?.storage;
+    if (!storage) {
+      return null;
+    }
+    return this.sync ? storage.sync : storage.local;
   }
 
-  public get<T extends Record<string, unknown> = Record<string, unknown>>(
-    key: string,
-  ): ResultAsync<T | null, Error> {
+  private isExtensionStorage(): boolean {
+    return this.extensionStorageArea() !== null;
+  }
+
+  private isStoredValue(value: unknown): boolean {
+    if (value === null || value === undefined) {
+      return false;
+    }
+    if (typeof value === 'number' || typeof value === 'string' || typeof value === 'boolean') {
+      return true;
+    }
+    return isStorageRecord(value);
+  }
+
+  public get<T>(key: string): ResultAsync<T | null, Error> {
     return ResultAsync.fromPromise(
       new Promise<T | null>((resolve, reject) => {
         try {
-          if (this.isChromeStorage()) {
-            const area = this.sync ? chrome.storage.sync : chrome.storage.local;
+          const area = this.extensionStorageArea();
+          if (area !== null) {
             area.get(key, (items) => {
-              if (chrome.runtime !== undefined && chrome.runtime.lastError) {
-                reject(new Error(chrome.runtime.lastError.message));
+              const runtime =
+                extensionGlobal().chrome?.runtime ?? extensionGlobal().browser?.runtime;
+              if (runtime?.lastError) {
+                reject(new Error(runtime.lastError.message));
                 return;
               }
               const bag = isPlainObject(items) ? items : {},
@@ -38,13 +56,15 @@ export class StorageService {
                 resolve(null);
                 return;
               }
-              if (isStorageRecord(value)) {
+              if (this.isStoredValue(value)) {
                 resolve(value as T);
                 return;
               }
-              reject(new Error('Stored value is not a valid object payload'));
+              reject(new Error('Stored value is not a valid payload'));
             });
-          } else if (globalThis.window !== undefined && globalThis.localStorage) {
+            return;
+          }
+          if (globalThis.window !== undefined && globalThis.localStorage) {
             const raw = globalThis.localStorage.getItem(key);
             if (raw === null || raw === '') {
               resolve(null);
@@ -52,30 +72,30 @@ export class StorageService {
             }
             try {
               const parsed: unknown = parseJsonValue(raw);
-              if (isStorageRecord(parsed)) {
+              if (this.isStoredValue(parsed)) {
                 resolve(parsed as T);
                 return;
               }
-              reject(new Error('Stored JSON is not a valid object payload'));
+              reject(new Error('Stored JSON is not a valid payload'));
             } catch (error) {
               reject(new Error(`Failed to parse localStorage JSON: ${String(error)}`));
             }
-          } else {
-            const raw = memoryStorage.get(key);
-            if (raw === undefined || raw === '') {
-              resolve(null);
+            return;
+          }
+          const raw = memoryStorage.get(key);
+          if (raw === undefined || raw === '') {
+            resolve(null);
+            return;
+          }
+          try {
+            const parsed: unknown = parseJsonValue(raw);
+            if (this.isStoredValue(parsed)) {
+              resolve(parsed as T);
               return;
             }
-            try {
-              const parsed: unknown = parseJsonValue(raw);
-              if (isStorageRecord(parsed)) {
-                resolve(parsed as T);
-                return;
-              }
-              reject(new Error('Stored JSON is not a valid object payload'));
-            } catch (error) {
-              reject(new Error(`Failed to parse memory JSON: ${String(error)}`));
-            }
+            reject(new Error('Stored JSON is not a valid payload'));
+          } catch (error) {
+            reject(new Error(`Failed to parse memory JSON: ${String(error)}`));
           }
         } catch (error) {
           reject(error instanceof Error ? error : new Error(String(error)));
@@ -89,26 +109,30 @@ export class StorageService {
     return ResultAsync.fromPromise(
       new Promise<void>((resolve, reject) => {
         try {
-          if (this.isChromeStorage()) {
-            const area = this.sync ? chrome.storage.sync : chrome.storage.local;
+          const area = this.extensionStorageArea();
+          if (area !== null) {
             area.set(items, () => {
-              if (chrome.runtime !== undefined && chrome.runtime.lastError) {
-                reject(new Error(chrome.runtime.lastError.message));
+              const runtime =
+                extensionGlobal().chrome?.runtime ?? extensionGlobal().browser?.runtime;
+              if (runtime?.lastError) {
+                reject(new Error(runtime.lastError.message));
                 return;
               }
               resolve();
             });
-          } else if (globalThis.window !== undefined && globalThis.localStorage) {
-            for (const [entryKey, entryValue] of Object.entries(items)) {
-              globalThis.localStorage.setItem(entryKey, JSON.stringify({ [entryKey]: entryValue }));
-            }
-            resolve();
-          } else {
-            for (const [entryKey, entryValue] of Object.entries(items)) {
-              memoryStorage.set(entryKey, JSON.stringify({ [entryKey]: entryValue }));
-            }
-            resolve();
+            return;
           }
+          if (globalThis.window !== undefined && globalThis.localStorage) {
+            for (const [entryKey, entryValue] of Object.entries(items)) {
+              globalThis.localStorage.setItem(entryKey, JSON.stringify(entryValue));
+            }
+            resolve();
+            return;
+          }
+          for (const [entryKey, entryValue] of Object.entries(items)) {
+            memoryStorage.set(entryKey, JSON.stringify(entryValue));
+          }
+          resolve();
         } catch (error) {
           reject(error instanceof Error ? error : new Error(String(error)));
         }
@@ -121,22 +145,26 @@ export class StorageService {
     return ResultAsync.fromPromise(
       new Promise<void>((resolve, reject) => {
         try {
-          if (this.isChromeStorage()) {
-            const area = this.sync ? chrome.storage.sync : chrome.storage.local;
+          const area = this.extensionStorageArea();
+          if (area !== null) {
             area.remove(key, () => {
-              if (chrome.runtime !== undefined && chrome.runtime.lastError) {
-                reject(new Error(chrome.runtime.lastError.message));
+              const runtime =
+                extensionGlobal().chrome?.runtime ?? extensionGlobal().browser?.runtime;
+              if (runtime?.lastError) {
+                reject(new Error(runtime.lastError.message));
                 return;
               }
               resolve();
             });
-          } else if (globalThis.window !== undefined && globalThis.localStorage) {
+            return;
+          }
+          if (globalThis.window !== undefined && globalThis.localStorage) {
             globalThis.localStorage.removeItem(key);
             resolve();
-          } else {
-            memoryStorage.delete(key);
-            resolve();
+            return;
           }
+          memoryStorage.delete(key);
+          resolve();
         } catch (error) {
           reject(error instanceof Error ? error : new Error(String(error)));
         }
@@ -149,22 +177,26 @@ export class StorageService {
     return ResultAsync.fromPromise(
       new Promise<void>((resolve, reject) => {
         try {
-          if (this.isChromeStorage()) {
-            const area = this.sync ? chrome.storage.sync : chrome.storage.local;
+          const area = this.extensionStorageArea();
+          if (area !== null) {
             area.clear(() => {
-              if (chrome.runtime !== undefined && chrome.runtime.lastError) {
-                reject(new Error(chrome.runtime.lastError.message));
+              const runtime =
+                extensionGlobal().chrome?.runtime ?? extensionGlobal().browser?.runtime;
+              if (runtime?.lastError) {
+                reject(new Error(runtime.lastError.message));
                 return;
               }
               resolve();
             });
-          } else if (globalThis.window !== undefined && globalThis.localStorage) {
+            return;
+          }
+          if (globalThis.window !== undefined && globalThis.localStorage) {
             globalThis.localStorage.clear();
             resolve();
-          } else {
-            memoryStorage.clear();
-            resolve();
+            return;
           }
+          memoryStorage.clear();
+          resolve();
         } catch (error) {
           reject(error instanceof Error ? error : new Error(String(error)));
         }
